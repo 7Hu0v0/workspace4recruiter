@@ -1,0 +1,2345 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QiruiHu 个人工作台</title>
+  <style>
+    :root {
+      --tencent-blue: #006EFF;
+      --tencent-blue-light: #E6F0FF;
+      --tencent-blue-dark: #0052D9;
+      --tencent-blue-hover: #E0ECFF;
+      --bg: #F3F4F6;
+      --surface: #FFFFFF;
+      --text: #1D2129;
+      --text-secondary: #86909C;
+      --text-tertiary: #C9CDD4;
+      --border: #E5E6EB;
+      --border-light: #F0F1F3;
+      --shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 4px 24px rgba(0, 0, 0, 0.08);
+      --radius: 8px;
+      --radius-lg: 12px;
+      --sidebar-bg: #1F2937;
+      --sidebar-bg-2: #111827;
+      --sidebar-text: #E5E7EB;
+      --sidebar-muted: #9CA3AF;
+      --sidebar-border: rgba(255,255,255,0.08);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    .app-shell {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      min-height: 100vh;
+    }
+
+    /* ============ Sidebar ============ */
+    .sidebar {
+      background: linear-gradient(180deg, var(--sidebar-bg) 0%, var(--sidebar-bg-2) 100%);
+      color: var(--sidebar-text);
+      padding: 24px 0;
+      display: flex;
+      flex-direction: column;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      z-index: 10;
+    }
+
+    .sidebar-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 20px 20px;
+      border-bottom: 1px solid var(--sidebar-border);
+    }
+    .sidebar-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--tencent-blue) 0%, var(--tencent-blue-dark) 100%);
+      display: grid;
+      place-items: center;
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .sidebar-brand h1 {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+    .sidebar-brand p {
+      font-size: 11px;
+      color: var(--sidebar-muted);
+      margin-top: 2px;
+    }
+
+    .folder-tree {
+      flex: 0 0 auto;
+      padding: 12px 0 4px;
+      overflow-y: auto;
+    }
+
+    /* Root folder */
+    .root-folder {
+      margin-bottom: 4px;
+    }
+    .root-folder-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 20px;
+      cursor: pointer;
+      user-select: none;
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 0.3px;
+    }
+    .root-folder-header:hover {
+      background: rgba(255,255,255,0.04);
+    }
+    .root-folder-header .arrow {
+      display: inline-block;
+      width: 12px;
+      text-align: center;
+      font-size: 9px;
+      transition: transform 0.15s;
+      color: var(--sidebar-muted);
+    }
+    .root-folder.collapsed .arrow {
+      transform: rotate(-90deg);
+    }
+    .root-folder-icon {
+      font-size: 14px;
+    }
+    .root-folder-count {
+      margin-left: auto;
+      background: rgba(0, 110, 255, 0.25);
+      color: #93C5FD;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 10px;
+    }
+
+    /* Sub-folder (周/月/半年) */
+    .sub-folder {
+      margin-left: 28px;
+      margin-top: 2px;
+    }
+    .root-folder.collapsed .sub-folder { display: none; }
+
+    .sub-folder-header {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px 6px 8px;
+      cursor: pointer;
+      user-select: none;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--sidebar-muted);
+      border-radius: 4px;
+      margin: 0 8px;
+    }
+    .sub-folder-header:hover {
+      background: rgba(255,255,255,0.04);
+      color: var(--sidebar-text);
+    }
+    .sub-folder-header .arrow {
+      display: inline-block;
+      width: 10px;
+      text-align: center;
+      font-size: 8px;
+      transition: transform 0.15s;
+      color: var(--sidebar-muted);
+    }
+    .sub-folder.collapsed .arrow {
+      transform: rotate(-90deg);
+    }
+    .sub-folder.collapsed .sub-folder-content { display: none; }
+    .sub-folder-icon { font-size: 12px; }
+    .sub-folder-count {
+      margin-left: auto;
+      font-size: 10px;
+      color: var(--sidebar-muted);
+      font-weight: 700;
+    }
+
+    /* Period items (specific time periods) */
+    .sub-folder-content {
+      margin-left: 12px;
+      padding-left: 8px;
+      border-left: 1px dashed rgba(255,255,255,0.08);
+    }
+    .period-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      color: var(--sidebar-text);
+      margin: 1px 8px 1px 0;
+      transition: background 0.12s;
+    }
+    .period-item:hover {
+      background: rgba(255,255,255,0.06);
+    }
+    .period-item.active {
+      background: var(--tencent-blue);
+      color: #fff;
+    }
+    .period-item .period-label {
+      flex: 1;
+      font-variant-numeric: tabular-nums;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .period-item .period-status {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .period-item .period-status.empty { background: transparent; border: 1px solid var(--sidebar-muted); }
+    .period-item .period-status.plan { background: #FBBF24; }
+    .period-item .period-status.review { background: #34D399; }
+    .period-item .period-status.both { background: #60A5FA; }
+    .period-item .delete-period {
+      opacity: 0;
+      background: none;
+      border: none;
+      color: var(--sidebar-muted);
+      cursor: pointer;
+      font-size: 12px;
+      padding: 0 2px;
+      transition: opacity 0.12s, color 0.12s;
+    }
+    .period-item:hover .delete-period { opacity: 1; }
+    .period-item .delete-period:hover { color: #FCA5A5; }
+
+    /* Add period buttons */
+    .add-period-row {
+      display: flex;
+      gap: 4px;
+      padding: 4px 10px 4px 8px;
+      margin: 2px 8px 4px 12px;
+      flex-wrap: wrap;
+    }
+    .add-period-btn {
+      background: transparent;
+      border: 1px dashed rgba(255,255,255,0.18);
+      color: var(--sidebar-muted);
+      font-size: 10.5px;
+      padding: 3px 7px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.12s;
+      font-weight: 600;
+    }
+    .add-period-btn:hover {
+      background: rgba(0, 110, 255, 0.18);
+      color: #93C5FD;
+      border-color: rgba(0, 110, 255, 0.4);
+    }
+
+    .empty-periods {
+      font-size: 11px;
+      color: var(--sidebar-muted);
+      padding: 4px 10px;
+      font-style: italic;
+      opacity: 0.6;
+    }
+
+    /* CRM folder */
+    .crm-folder {
+      border-top: 1px solid var(--sidebar-border);
+      padding: 8px 20px 12px;
+      margin-top: 2px;
+    }
+    .crm-folder-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--sidebar-muted);
+      letter-spacing: 0.3px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .crm-button {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 8px;
+      border: 1px solid rgba(0, 110, 255, 0.4);
+      background: linear-gradient(135deg, rgba(0, 110, 255, 0.15) 0%, rgba(0, 82, 217, 0.15) 100%);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+      text-decoration: none;
+    }
+    .crm-button:hover {
+      background: linear-gradient(135deg, rgba(0, 110, 255, 0.3) 0%, rgba(0, 82, 217, 0.3) 100%);
+      border-color: rgba(0, 110, 255, 0.6);
+    }
+    .crm-button-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      background: var(--tencent-blue);
+      display: grid;
+      place-items: center;
+      font-size: 11px;
+      font-weight: 800;
+    }
+    .crm-button .crm-arrow {
+      margin-left: auto;
+      font-size: 14px;
+      opacity: 0.6;
+    }
+    .crm-button.active {
+      background: linear-gradient(135deg, rgba(0, 110, 255, 0.3) 0%, rgba(0, 82, 217, 0.3) 100%);
+      border-color: rgba(0, 110, 255, 0.6);
+    }
+    .crm-config-link {
+      display: block;
+      margin-top: 6px;
+      padding: 6px 12px;
+      text-align: center;
+      font-size: 11px;
+      color: var(--sidebar-muted);
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 6px;
+      cursor: pointer;
+      width: 100%;
+      transition: all 0.15s;
+    }
+    .crm-config-link:hover {
+      background: rgba(255,255,255,0.12);
+      color: #fff;
+      border-color: rgba(0,110,255,0.3);
+    }
+
+    .mingdan-iframe-wrapper {
+      height: calc(100vh - 140px);
+      margin: 0 0 24px;
+      padding: 0;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: #fff;
+      position: relative;
+    }
+
+    /* 拉宽腾讯文档内容：把 iframe 渲染成比容器更大的尺寸，
+       再用 transform: scale 等比缩放回容器宽度，
+       使表格列、单元格变大、横向空白消失。 */
+    .mingdan-iframe-wrapper iframe {
+      border: none;
+      width: 100%;
+      height: 100%;
+      transform-origin: top left;
+    }
+
+    /* 缩放控制条 */
+    .mingdan-zoom-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 8px;
+      padding: 8px 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      width: fit-content;
+      box-shadow: var(--shadow);
+    }
+    .mingdan-zoom-bar .zoom-label {
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .mingdan-zoom-bar .zoom-btn {
+      width: 26px;
+      height: 26px;
+      border: 1px solid var(--border);
+      background: #fff;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      color: var(--text);
+      display: grid;
+      place-items: center;
+      transition: all 0.15s;
+      font-weight: 600;
+    }
+    .mingdan-zoom-bar .zoom-btn:hover {
+      background: var(--tencent-blue-light);
+      border-color: var(--tencent-blue);
+      color: var(--tencent-blue);
+    }
+    .mingdan-zoom-bar .zoom-slider {
+      width: 180px;
+      height: 4px;
+      -webkit-appearance: none;
+      appearance: none;
+      background: var(--border);
+      border-radius: 2px;
+      outline: none;
+      cursor: pointer;
+    }
+    .mingdan-zoom-bar .zoom-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      background: var(--tencent-blue);
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid #fff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+    .mingdan-zoom-bar .zoom-slider::-moz-range-thumb {
+      width: 16px;
+      height: 16px;
+      background: var(--tencent-blue);
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid #fff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+    .mingdan-zoom-bar .zoom-value {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--tencent-blue);
+      min-width: 48px;
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+    }
+    .mingdan-zoom-bar .zoom-reset {
+      font-size: 12px;
+      color: var(--text-secondary);
+      background: none;
+      border: 1px solid var(--border);
+      padding: 4px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .mingdan-zoom-bar .zoom-reset:hover {
+      background: var(--tencent-blue-light);
+      color: var(--tencent-blue);
+      border-color: var(--tencent-blue);
+    }
+
+    /* Tracking sub-folder inside CRM */
+    .crm-sub-folder { margin: 6px 0 0 0; }
+    .crm-sub-header {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      user-select: none;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--sidebar-muted);
+      transition: background 0.12s;
+    }
+    .crm-sub-header:hover { background: rgba(255,255,255,0.05); color: #fff; }
+    .crm-sub-header .arrow {
+      font-size: 8px;
+      transition: transform 0.15s;
+      color: var(--sidebar-muted);
+    }
+    .crm-sub-folder.collapsed .arrow { transform: rotate(-90deg); }
+    .crm-sub-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-left: 18px;
+      padding: 5px 8px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 12px;
+      color: var(--sidebar-muted);
+      transition: all 0.12s;
+    }
+    .crm-sub-item:hover, .crm-sub-item.active { background: rgba(0,110,255,0.15); color: #fff; }
+    .crm-sub-item .track-count {
+      margin-left: auto;
+      font-size: 10px;
+      background: rgba(0,110,255,0.25);
+      color: #93C5FD;
+      padding: 1px 6px;
+      border-radius: 8px;
+      font-weight: 700;
+    }
+    .crm-sub-folder.collapsed .crm-sub-item { display: none; }
+
+    /* Tracking table */
+    .tracking-view { max-width: 100%; }
+    .tracking-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .tracking-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+    .tracking-table th {
+      background: #F5F7FA;
+      padding: 10px 12px;
+      text-align: left;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      border-bottom: 2px solid #E8ECF1;
+      letter-spacing: 0.3px;
+    }
+    .tracking-table td {
+      padding: 8px 12px;
+      border-bottom: 1px solid #F0F2F5;
+      font-size: 13px;
+      color: var(--text-primary);
+    }
+    .tracking-table tr:last-child td { border-bottom: none; }
+    .tracking-table tr:hover td { background: #F8FAFE; }
+    .tracking-table input[type="text"] {
+      width: 100%;
+      border: 1px solid transparent;
+      padding: 6px 8px;
+      border-radius: 4px;
+      font-size: 13px;
+      font-family: inherit;
+      background: transparent;
+      transition: border-color 0.15s;
+      box-sizing: border-box;
+    }
+    .tracking-table input[type="text"]:focus {
+      outline: none;
+      border-color: var(--tencent-blue);
+      background: #fff;
+      box-shadow: 0 0 0 2px rgba(0,110,255,0.08);
+    }
+    .tracking-table select {
+      width: 100%;
+      border: 1px solid transparent;
+      padding: 6px 8px;
+      border-radius: 4px;
+      font-size: 13px;
+      font-family: inherit;
+      background: transparent;
+      color: var(--text-primary);
+      cursor: pointer;
+      box-sizing: border-box;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+    .tracking-table select:focus {
+      outline: none;
+      border-color: var(--tencent-blue);
+      background: #fff;
+      box-shadow: 0 0 0 2px rgba(0,110,255,0.08);
+    }
+    .tracking-table .delete-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 5px;
+      border: none;
+      background: transparent;
+      color: #C0C4CC;
+      cursor: pointer;
+      font-size: 16px;
+      display: grid;
+      place-items: center;
+      transition: all 0.12s;
+    }
+    .tracking-table .delete-btn:hover { background: #FFF1F0; color: #FF4D4F; }
+    .btn-add-track {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: 6px;
+      border: 1px dashed #D0D5DD;
+      background: #fff;
+      color: var(--text-secondary);
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.15s;
+      margin-top: 12px;
+    }
+    .btn-add-track:hover {
+      border-color: var(--tencent-blue);
+      color: var(--tencent-blue);
+      background: #F0F5FF;
+    }
+    .track-empty {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-tertiary);
+      font-size: 13px;
+      line-height: 1.8;
+    }
+    .track-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .sync-btn {
+      padding: 7px 16px;
+      border: 1.5px dashed var(--tencent-blue);
+      background: #F0F5FF;
+      color: var(--tencent-blue);
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      transition: all 0.15s;
+    }
+    .sync-btn:hover {
+      background: var(--tencent-blue);
+      color: #fff;
+      border-style: solid;
+    }
+    .btn-agg-sync {
+      padding: 7px 16px;
+      border: 1.5px solid var(--tencent-blue);
+      background: var(--tencent-blue);
+      color: #fff;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      transition: all 0.15s;
+    }
+    .btn-agg-sync:hover {
+      background: #004DC4;
+      border-color: #004DC4;
+    }
+    .track-agg-info {
+      font-size: 12px;
+      color: var(--text-tertiary);
+      margin-bottom: 12px;
+      padding: 8px 12px;
+      background: #F7F8FA;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+    }
+
+    /* 进度筛选条 */
+    .track-filter-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+      padding: 6px 10px;
+      background: #F9FAFB;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+    .track-filter-bar .filter-label {
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-weight: 600;
+      margin-right: 4px;
+    }
+    .filter-pill {
+      padding: 4px 12px;
+      border: 1px solid var(--border);
+      background: #fff;
+      border-radius: 14px;
+      cursor: pointer;
+      font-size: 12px;
+      color: var(--text-secondary);
+      transition: all 0.15s;
+      white-space: nowrap;
+      user-select: none;
+    }
+    .filter-pill:hover {
+      border-color: var(--tencent-blue);
+      color: var(--tencent-blue);
+    }
+    .filter-pill.active {
+      background: var(--tencent-blue);
+      color: #fff;
+      border-color: var(--tencent-blue);
+      font-weight: 600;
+    }
+    .filter-pill .count {
+      font-size: 11px;
+      opacity: 0.7;
+    }
+    .filter-pill.active .count {
+      opacity: 1;
+    }
+
+    /* ============ Main Content ============ */
+    .main-content {
+      padding: 28px 36px 48px;
+      max-width: 1100px;
+      overflow-y: auto;
+      height: 100vh;
+    }
+
+    .page-header {
+      margin-bottom: 24px;
+    }
+    .breadcrumb {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .breadcrumb span { color: var(--text-tertiary); }
+    .breadcrumb .crumb-current { color: var(--text); font-weight: 600; }
+
+    .page-header h2 {
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .page-header .date-range {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-top: 6px;
+    }
+    .date-badge {
+      background: var(--tencent-blue-light);
+      color: var(--tencent-blue);
+      padding: 4px 12px;
+      border-radius: 16px;
+      font-weight: 700;
+      font-size: 13px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .date-badge.is-current {
+      background: #00B42A;
+      color: #fff;
+    }
+    .date-badge.is-current::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #fff;
+      animation: pulse 1.6s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    .panel-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      transition: box-shadow 0.2s, border-color 0.2s;
+    }
+    .panel:focus-within {
+      box-shadow: var(--shadow-lg), 0 0 0 3px var(--tencent-blue-light);
+      border-color: var(--tencent-blue);
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border-light);
+      background: #FAFBFC;
+    }
+    .panel-header h3 {
+      font-size: 14px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .panel-header h3 .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .dot-plan { background: var(--tencent-blue); }
+    .dot-review { background: #00B42A; }
+
+    .save-indicator {
+      font-size: 11px;
+      color: var(--text-tertiary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.3s;
+    }
+    .save-indicator.saved { color: #00B42A; }
+    .save-indicator .save-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .panel-body {
+      padding: 14px 18px;
+    }
+
+    .editable-area {
+      width: 100%;
+      min-height: 280px;
+      border: none;
+      outline: none;
+      font-size: 14px;
+      line-height: 1.85;
+      resize: vertical;
+      font-family: inherit;
+      color: var(--text);
+      background: transparent;
+    }
+    .editable-area::placeholder {
+      color: var(--text-tertiary);
+      font-size: 13px;
+    }
+
+    .panel-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 18px 18px;
+    }
+    .btn {
+      padding: 7px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--text);
+      transition: all 0.15s;
+    }
+    .btn:hover { background: var(--bg); }
+    .btn-primary {
+      background: var(--tencent-blue);
+      color: #fff;
+      border-color: var(--tencent-blue);
+    }
+    .btn-primary:hover {
+      background: var(--tencent-blue-dark);
+      border-color: var(--tencent-blue-dark);
+    }
+    .btn-ghost {
+      background: transparent;
+      border-color: transparent;
+      color: var(--text-secondary);
+      font-size: 12px;
+    }
+    .btn-ghost:hover {
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .word-count {
+      font-size: 12px;
+      color: var(--text-tertiary);
+      margin-left: auto;
+    }
+
+    /* ============ Empty State ============ */
+    .main-empty {
+      display: grid;
+      place-items: center;
+      height: 70vh;
+      text-align: center;
+    }
+    .main-empty-icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+      opacity: 0.4;
+    }
+    .main-empty h3 {
+      font-size: 18px;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+    }
+    .main-empty p {
+      font-size: 13px;
+      color: var(--text-tertiary);
+    }
+
+    /* ============ Toast ============ */
+    .toast {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1D2129;
+      color: #fff;
+      padding: 10px 24px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+      z-index: 999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    .toast.show { opacity: 1; }
+
+    /* ============ Responsive ============ */
+    @media (max-width: 900px) {
+      .app-shell { grid-template-columns: 1fr; }
+      .sidebar {
+        position: static;
+        height: auto;
+      }
+      .main-content {
+        padding: 20px;
+        height: auto;
+      }
+      .panel-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <!-- ========== Sidebar ========== -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="sidebar-avatar">QH</div>
+        <div>
+          <h1>QiruiHu</h1>
+          <p>AI Recruiting · 个人工作台</p>
+        </div>
+      </div>
+
+      <div class="folder-tree" id="folder-tree">
+        <!-- Root folder: 规划与复盘 -->
+        <div class="root-folder" id="root-planning" data-key="planning">
+          <div class="root-folder-header" data-toggle="root-planning">
+            <span class="arrow">▼</span>
+            <span class="root-folder-icon">📁</span>
+            <span>规划与复盘</span>
+            <span class="root-folder-count" id="planning-total">0</span>
+          </div>
+
+          <!-- Weekly sub-folder -->
+          <div class="sub-folder" id="folder-weekly" data-key="weekly">
+            <div class="sub-folder-header" data-toggle="folder-weekly">
+              <span class="arrow">▼</span>
+              <span class="sub-folder-icon">📅</span>
+              <span>周规划</span>
+              <span class="sub-folder-count" id="weekly-count">0</span>
+            </div>
+            <div class="sub-folder-content" id="weekly-list"></div>
+            <div class="add-period-row">
+              <button class="add-period-btn" data-add="weekly" data-offset="0">+ 本周</button>
+              <button class="add-period-btn" data-add="weekly" data-offset="1">+ 下周</button>
+              <button class="add-period-btn" data-add="weekly" data-offset="-1">+ 上周</button>
+            </div>
+          </div>
+
+          <!-- Monthly sub-folder -->
+          <div class="sub-folder" id="folder-monthly" data-key="monthly">
+            <div class="sub-folder-header" data-toggle="folder-monthly">
+              <span class="arrow">▼</span>
+              <span class="sub-folder-icon">📆</span>
+              <span>月规划</span>
+              <span class="sub-folder-count" id="monthly-count">0</span>
+            </div>
+            <div class="sub-folder-content" id="monthly-list"></div>
+            <div class="add-period-row">
+              <button class="add-period-btn" data-add="monthly" data-offset="0">+ 本月</button>
+              <button class="add-period-btn" data-add="monthly" data-offset="1">+ 下月</button>
+              <button class="add-period-btn" data-add="monthly" data-offset="-1">+ 上月</button>
+            </div>
+          </div>
+
+          <!-- Half-year sub-folder -->
+          <div class="sub-folder" id="folder-halfyear" data-key="halfyear">
+            <div class="sub-folder-header" data-toggle="folder-halfyear">
+              <span class="arrow">▼</span>
+              <span class="sub-folder-icon">🗓</span>
+              <span>半年规划</span>
+              <span class="sub-folder-count" id="halfyear-count">0</span>
+            </div>
+            <div class="sub-folder-content" id="halfyear-list"></div>
+            <div class="add-period-row">
+              <button class="add-period-btn" data-add="halfyear" data-offset="0">+ 本半年</button>
+              <button class="add-period-btn" data-add="halfyear" data-offset="1">+ 下一半年</button>
+              <button class="add-period-btn" data-add="halfyear" data-offset="-1">+ 上一半年</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CRM folder -->
+      <div class="crm-folder">
+        <div class="crm-folder-title">
+          <span>📁</span>
+          <span>CRM 系统</span>
+        </div>
+        <a class="crm-button" id="crm-btn" target="_blank">
+          <span class="crm-button-icon">CR</span>
+          <span>大模型人才 CRM</span>
+          <span class="crm-arrow">↗</span>
+        </a>
+        <button class="crm-config-link" id="crm-config">设置链接</button>
+
+        <!-- 人脉运营表格 -->
+        <button class="crm-button" id="mingdan-btn" style="margin-top:8px;">
+          <span class="crm-button-icon">📊</span>
+          <span>人脉运营表格</span>
+          <span class="crm-arrow">↗</span>
+        </button>
+        <button class="crm-config-link" id="mingdan-config">设置名单链接</button>
+
+        <!-- 人选运营 -->
+        <div class="root-folder" id="root-tracking" data-key="tracking" style="margin-top:6px;">
+          <div class="root-folder-header" data-toggle="root-tracking">
+            <span class="arrow">▼</span>
+            <span class="root-folder-icon">📋</span>
+            <span>人选运营</span>
+            <span class="root-folder-count" id="tracking-total">0</span>
+          </div>
+
+          <!-- Track Weekly -->
+          <div class="sub-folder" id="folder-track-weekly" data-key="track-weekly">
+            <div class="sub-folder-header" data-toggle="folder-track-weekly">
+              <span class="arrow">▼</span>
+              <span class="sub-folder-icon">📅</span>
+              <span>周运营</span>
+              <span class="sub-folder-count" id="track-weekly-count">0</span>
+            </div>
+            <div class="sub-folder-content" id="track-weekly-list"></div>
+            <div class="add-period-row">
+              <button class="add-period-btn" data-add="track-weekly" data-offset="0">+ 本周</button>
+              <button class="add-period-btn" data-add="track-weekly" data-offset="1">+ 下周</button>
+              <button class="add-period-btn" data-add="track-weekly" data-offset="-1">+ 上周</button>
+            </div>
+          </div>
+
+          <!-- Track Monthly -->
+          <div class="sub-folder" id="folder-track-monthly" data-key="track-monthly">
+            <div class="sub-folder-header" data-toggle="folder-track-monthly">
+              <span class="arrow">▼</span>
+              <span class="sub-folder-icon">📆</span>
+              <span>月运营</span>
+              <span class="sub-folder-count" id="track-monthly-count">0</span>
+            </div>
+            <div class="sub-folder-content" id="track-monthly-list"></div>
+            <div class="add-period-row">
+              <button class="add-period-btn" data-add="track-monthly" data-offset="0">+ 本月</button>
+              <button class="add-period-btn" data-add="track-monthly" data-offset="1">+ 下月</button>
+              <button class="add-period-btn" data-add="track-monthly" data-offset="-1">+ 上月</button>
+            </div>
+          </div>
+
+          <!-- Track Half-year -->
+          <div class="sub-folder" id="folder-track-halfyear" data-key="track-halfyear">
+            <div class="sub-folder-header" data-toggle="folder-track-halfyear">
+              <span class="arrow">▼</span>
+              <span class="sub-folder-icon">🗓</span>
+              <span>半年运营</span>
+              <span class="sub-folder-count" id="track-halfyear-count">0</span>
+            </div>
+            <div class="sub-folder-content" id="track-halfyear-list"></div>
+            <div class="add-period-row">
+              <button class="add-period-btn" data-add="track-halfyear" data-offset="0">+ 本半年</button>
+              <button class="add-period-btn" data-add="track-halfyear" data-offset="1">+ 下一半年</button>
+              <button class="add-period-btn" data-add="track-halfyear" data-offset="-1">+ 上一半年</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ========== Main Content ========== -->
+    <main class="main-content" id="main-content"></main>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+  (function() {
+    'use strict';
+
+    // ============ Constants ============
+    var STORAGE_PREFIX = 'qirui-workbench-';
+    var PERIOD_TYPES = {
+      weekly: { name: '周规划', icon: '📅' },
+      monthly: { name: '月规划', icon: '📆' },
+      halfyear: { name: '半年规划', icon: '🗓' }
+    };
+
+    // ============ Date Helpers ============
+    function pad(n) { return n < 10 ? '0' + n : '' + n; }
+
+    function fmtDate(d) {
+      return d.getFullYear() + '.' + (d.getMonth() + 1) + '.' + d.getDate();
+    }
+
+    function getWeekRange(offsetWeeks) {
+      offsetWeeks = offsetWeeks || 0;
+      var now = new Date();
+      var day = now.getDay(); // 0=Sun, 1=Mon, ..., 6=Sat
+      var diffToMonday = (day === 0 ? -6 : 1 - day);
+      var monday = new Date(now);
+      monday.setDate(now.getDate() + diffToMonday + offsetWeeks * 7);
+      monday.setHours(0,0,0,0);
+      var friday = new Date(monday);
+      friday.setDate(monday.getDate() + 4);
+      var label = fmtDate(monday) + '-' + (friday.getMonth() + 1) + '.' + pad(friday.getDate());
+      return {
+        label: label,
+        start: fmtDate(monday),
+        end: (friday.getMonth() + 1) + '.' + pad(friday.getDate()),
+        startDate: monday,
+        endDate: friday,
+        sortKey: monday.getTime()
+      };
+    }
+
+    function getMonthRange(offsetMonths) {
+      offsetMonths = offsetMonths || 0;
+      var now = new Date();
+      var target = new Date(now.getFullYear(), now.getMonth() + offsetMonths, 1);
+      var y = target.getFullYear();
+      var m = target.getMonth() + 1;
+      var lastDay = new Date(y, m, 0).getDate();
+      return {
+        label: y + '.' + m + '.1-' + m + '.' + lastDay,
+        sortKey: target.getTime()
+      };
+    }
+
+    function getHalfYearRange(offsetHalf) {
+      offsetHalf = offsetHalf || 0;
+      var now = new Date();
+      var y = now.getFullYear();
+      var currentHalf = now.getMonth() < 6 ? 0 : 1; // 0=H1, 1=H2
+      var totalHalf = currentHalf + offsetHalf;
+      // Adjust year if totalHalf goes negative or > 1
+      y = y + Math.floor(totalHalf / 2);
+      var h = ((totalHalf % 2) + 2) % 2;
+      var halfName = h === 0 ? 'H1' : 'H2';
+      return {
+        label: y + ' ' + halfName,
+        sortKey: new Date(y, h === 0 ? 0 : 6, 1).getTime()
+      };
+    }
+
+    function getRange(type, offset) {
+      if (type === 'weekly') return getWeekRange(offset);
+      if (type === 'monthly') return getMonthRange(offset);
+      if (type === 'halfyear') return getHalfYearRange(offset);
+    }
+
+    function getCurrentRange(type) {
+      return getRange(type, 0);
+    }
+
+    function isCurrentPeriod(type, label) {
+      return getCurrentRange(type).label === label;
+    }
+
+    // ============ Storage ============
+    function getListKey(type) {
+      return STORAGE_PREFIX + 'list-' + type;
+    }
+    function getEntryKey(type, label) {
+      return STORAGE_PREFIX + type + '-' + label;
+    }
+    function getMetaKey(type) {
+      return STORAGE_PREFIX + 'meta-' + type;
+    }
+
+    function loadList(type) {
+      try {
+        var raw = localStorage.getItem(getListKey(type));
+        return raw ? JSON.parse(raw) : [];
+      } catch (e) { return []; }
+    }
+    function saveList(type, list) {
+      localStorage.setItem(getListKey(type), JSON.stringify(list));
+    }
+
+    function loadCollapsedState() {
+      try {
+        var raw = localStorage.getItem(STORAGE_PREFIX + 'collapsed');
+        return raw ? JSON.parse(raw) : {};
+      } catch (e) { return {}; }
+    }
+    function saveCollapsedState(state) {
+      localStorage.setItem(STORAGE_PREFIX + 'collapsed', JSON.stringify(state));
+    }
+
+    function loadEntry(type, label, field) {
+      var data = JSON.parse(localStorage.getItem(getEntryKey(type, label)) || '{}');
+      return data[field] || '';
+    }
+    function loadEntryData(type, label) {
+      return JSON.parse(localStorage.getItem(getEntryKey(type, label)) || '{}');
+    }
+    function saveEntry(type, label, field, value) {
+      var data = loadEntryData(type, label);
+      data[field] = value;
+      data[field + '_savedAt'] = new Date().toLocaleString('zh-CN', { hour12: false });
+      localStorage.setItem(getEntryKey(type, label), JSON.stringify(data));
+      return data[field + '_savedAt'];
+    }
+    function clearEntryField(type, label, field) {
+      var data = loadEntryData(type, label);
+      delete data[field];
+      delete data[field + '_savedAt'];
+      localStorage.setItem(getEntryKey(type, label), JSON.stringify(data));
+    }
+
+    // ============ Add / Remove periods ============
+    function addPeriod(type, offset) {
+      var range = getRange(type, offset);
+      var list = loadList(type);
+      // Dedupe by label
+      if (list.indexOf(range.label) === -1) {
+        list.push(range.label);
+        // Sort: ascending by sortKey
+        list.sort(function(a, b) {
+          return getRange(type, 0); // unused here
+        });
+        // Actually sort by computing their sort keys
+        list.sort(function(x, y) {
+          var rx = getRangeByLabel(type, x);
+          var ry = getRangeByLabel(type, y);
+          return rx.sortKey - ry.sortKey;
+        });
+        saveList(type, list);
+        showToast('已添加 ' + PERIOD_TYPES[type].name + '：' + range.label);
+      } else {
+        showToast(range.label + ' 已存在');
+      }
+      renderSidebar();
+      // Auto-select the newly added period
+      selectPeriod(type, range.label);
+    }
+
+    function getRangeByLabel(type, label) {
+      // Reconstruct sortKey from label
+      if (type === 'weekly') {
+        // label format: YYYY.M.D-M.D
+        var parts = label.split('-');
+        var startStr = parts[0];
+        var startParts = startStr.split('.').map(Number);
+        return {
+          label: label,
+          sortKey: new Date(startParts[0], startParts[1] - 1, startParts[2]).getTime()
+        };
+      } else if (type === 'monthly') {
+        var parts = label.split('.').map(Number);
+        return {
+          label: label,
+          sortKey: new Date(parts[0], parts[1] - 1, 1).getTime()
+        };
+      } else if (type === 'halfyear') {
+        var match = label.match(/(\d+)\s+(H[12])/);
+        if (match) {
+          var y = Number(match[1]);
+          var m = match[2] === 'H1' ? 0 : 6;
+          return {
+            label: label,
+            sortKey: new Date(y, m, 1).getTime()
+          };
+        }
+      }
+      return { label: label, sortKey: 0 };
+    }
+
+    function removePeriod(type, label) {
+      var list = loadList(type);
+      var idx = list.indexOf(label);
+      if (idx === -1) return;
+      if (!confirm('确认删除 ' + label + ' 的所有内容？此操作不可恢复。')) return;
+      list.splice(idx, 1);
+      saveList(type, list);
+      localStorage.removeItem(getEntryKey(type, label));
+      showToast('已删除 ' + label);
+      // If currently viewing, clear view
+      if (state.selected && state.selected.type === type && state.selected.label === label) {
+        state.selected = null;
+      }
+      renderSidebar();
+      renderMain();
+    }
+
+    // ============ State ============
+    var state = {
+      selected: null, // { type, label }
+      collapsed: loadCollapsedState()
+    };
+
+    // ============ Toast ============
+    var toastTimer;
+    function showToast(msg) {
+      var t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(function() { t.classList.remove('show'); }, 2000);
+    }
+
+    function esc(str) {
+      return String(str).replace(/[&<>"']/g, function(c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+      });
+    }
+
+    function countWords(text) {
+      var cleaned = String(text).replace(/[\s\n\r]+/g, '').replace(/[^\u4e00-\u9fa5a-zA-Z0-9]/g, '');
+      return cleaned.length;
+    }
+
+    // ============ Sidebar ============
+    function getStatus(type, label) {
+      var data = loadEntryData(type, label);
+      var hasPlan = !!(data.plan && data.plan.trim());
+      var hasReview = !!(data.review && data.review.trim());
+      if (hasPlan && hasReview) return 'both';
+      if (hasPlan) return 'plan';
+      if (hasReview) return 'review';
+      return 'empty';
+    }
+
+    function renderPeriodList(type) {
+      var list = loadList(type);
+      var listEl = document.getElementById(type + '-list');
+      if (list.length === 0) {
+        listEl.innerHTML = '<div class="empty-periods">暂无，点击下方按钮添加</div>';
+        return;
+      }
+      // Sort ascending by sortKey
+      var sorted = list.slice().sort(function(a, b) {
+        return getRangeByLabel(type, a).sortKey - getRangeByLabel(type, b).sortKey;
+      });
+      listEl.innerHTML = sorted.map(function(label) {
+        var status = getStatus(type, label);
+        var active = state.selected && state.selected.type === type && state.selected.label === label;
+        return '<div class="period-item ' + (active ? 'active' : '') + '" ' +
+               'data-type="' + type + '" data-label="' + esc(label) + '">' +
+               '<span class="period-status ' + status + '" title="状态"></span>' +
+               '<span class="period-label">' + esc(label) + '</span>' +
+               '<button class="delete-period" data-delete-type="' + type + '" data-delete-label="' + esc(label) + '" title="删除">✕</button>' +
+             '</div>';
+      }).join('');
+    }
+
+    function renderSidebar() {
+      // Update planning counts
+      var weeklyList = loadList('weekly');
+      var monthlyList = loadList('monthly');
+      var halfyearList = loadList('halfyear');
+      var total = weeklyList.length + monthlyList.length + halfyearList.length;
+
+      document.getElementById('planning-total').textContent = total;
+      document.getElementById('weekly-count').textContent = weeklyList.length;
+      document.getElementById('monthly-count').textContent = monthlyList.length;
+      document.getElementById('halfyear-count').textContent = halfyearList.length;
+
+      // Render planning period lists
+      renderPeriodList('weekly');
+      renderPeriodList('monthly');
+      renderPeriodList('halfyear');
+
+      // Update tracking counts & render track period lists
+      updateAllTrackCounts();
+      renderTrackPeriodList('track-weekly');
+      renderTrackPeriodList('track-monthly');
+      renderTrackPeriodList('track-halfyear');
+
+      // Apply collapsed state (all folders)
+      ['root-planning', 'folder-weekly', 'folder-monthly', 'folder-halfyear',
+       'root-tracking', 'folder-track-weekly', 'folder-track-monthly', 'folder-track-halfyear'
+      ].forEach(function(id) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        if (state.collapsed[id]) el.classList.add('collapsed');
+        else el.classList.remove('collapsed');
+      });
+
+      // Highlight active mingdan item
+      var mingdanItem = document.getElementById('mingdan-btn');
+      if (mingdanItem) {
+        var isMingdanActive = state.selected && state.selected.type === 'mingdan';
+        mingdanItem.classList.toggle('active', isMingdanActive);
+      }
+    }
+
+    function selectPeriod(type, label) {
+      state.selected = { type: type, label: label };
+      // Persist last selection
+      localStorage.setItem(STORAGE_PREFIX + 'last-selection', JSON.stringify(state.selected));
+      renderSidebar();
+      renderMain();
+    }
+
+    // ============ Main View ============
+    function renderMain() {
+      var main = document.getElementById('main-content');
+      // Reset max-width for non-mingdan views
+      main.style.maxWidth = '';
+      main.style.padding = '';
+
+      // Track-* types → delegate to renderTrackingView
+      if (state.selected && state.selected.type && state.selected.type.indexOf('track-') === 0) {
+        renderTrackingView(state.selected.type, state.selected.label);
+        return;
+      }
+
+      // Mingdan type → delegate to renderMingdanView
+      if (state.selected && state.selected.type === 'mingdan') {
+        renderMingdanView();
+        return;
+      }
+
+      if (!state.selected) {
+        renderEmptyState(main);
+        return;
+      }
+      var type = state.selected.type;
+      var label = state.selected.label;
+      var meta = PERIOD_TYPES[type];
+      var planData = loadEntry(type, label, 'plan');
+      var reviewData = loadEntry(type, label, 'review');
+      var planSavedAt = loadEntry(type, label, 'plan_savedAt') || '';
+      var reviewSavedAt = loadEntry(type, label, 'review_savedAt') || '';
+      var isCurrent = isCurrentPeriod(type, label);
+
+      var planPlaceholder, reviewPlaceholder;
+      if (type === 'weekly') {
+        planPlaceholder = '本周重点关注方向\n关键候选人跟进计划\n团队沟通安排\n其他重要事项';
+        reviewPlaceholder = '本周完成的关键事项\n候选人触达 / 面试数据\n遇到的问题与解决方案\n经验沉淀与改进点';
+      } else if (type === 'monthly') {
+        planPlaceholder = '本月核心招聘目标\n重点团队 / 方向\nPipeline 规划\n跨团队协作事项';
+        reviewPlaceholder = '本月招聘数据（触达 / 面试 / Offer）\nPipeline 健康度分析\n方向与方法论沉淀\n下月改进计划';
+      } else {
+        planPlaceholder = '核心目标与 OKR\n重点人才方向布局\n团队建设与能力提升\n关键里程碑';
+        reviewPlaceholder = '目标达成情况\n核心招聘数据复盘\n方法论文档沉淀\n下一步策略调整';
+      }
+
+      var typeLabel = type === 'halfyear' ? '半年' : (type === 'monthly' ? '月' : '周');
+
+      main.innerHTML =
+        '<div class="page-header">' +
+          '<div class="breadcrumb">' +
+            '<span>规划与复盘</span>' +
+            '<span>›</span>' +
+            '<span>' + esc(meta.name) + '</span>' +
+            '<span>›</span>' +
+            '<span class="crumb-current">' + esc(label) + '</span>' +
+          '</div>' +
+          '<h2>' + esc(meta.name) + '</h2>' +
+          '<p class="date-range">' +
+            '<span class="date-badge' + (isCurrent ? ' is-current' : '') + '">' +
+              (isCurrent ? '当前' : '已归档') + ' · ' + esc(label) +
+            '</span>' +
+          '</p>' +
+        '</div>' +
+        '<div class="panel-grid">' +
+          // Plan Panel
+          '<div class="panel">' +
+            '<div class="panel-header">' +
+              '<h3><span class="dot dot-plan"></span> ' + esc(typeLabel) + '规划</h3>' +
+              '<div class="save-indicator' + (planSavedAt ? ' saved' : '') + '" id="plan-indicator">' +
+                (planSavedAt ? '已保存 ' + esc(planSavedAt) : '') +
+              '</div>' +
+            '</div>' +
+            '<div class="panel-body">' +
+              '<textarea class="editable-area" id="plan-editor" placeholder="' + esc(planPlaceholder) + '">' + esc(planData) + '</textarea>' +
+            '</div>' +
+            '<div class="panel-actions">' +
+              '<button class="btn btn-primary" id="plan-save">保存规划</button>' +
+              '<button class="btn btn-ghost" id="plan-clear">清空</button>' +
+              '<span class="word-count" id="plan-wc">' + countWords(planData) + ' 字</span>' +
+            '</div>' +
+          '</div>' +
+          // Review Panel
+          '<div class="panel">' +
+            '<div class="panel-header">' +
+              '<h3><span class="dot dot-review"></span> ' + esc(typeLabel) + '复盘</h3>' +
+              '<div class="save-indicator' + (reviewSavedAt ? ' saved' : '') + '" id="review-indicator">' +
+                (reviewSavedAt ? '已保存 ' + esc(reviewSavedAt) : '') +
+              '</div>' +
+            '</div>' +
+            '<div class="panel-body">' +
+              '<textarea class="editable-area" id="review-editor" placeholder="' + esc(reviewPlaceholder) + '">' + esc(reviewData) + '</textarea>' +
+            '</div>' +
+            '<div class="panel-actions">' +
+              '<button class="btn btn-primary" id="review-save">保存复盘</button>' +
+              '<button class="btn btn-ghost" id="review-clear">清空</button>' +
+              '<span class="word-count" id="review-wc">' + countWords(reviewData) + ' 字</span>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+
+      bindMainEvents();
+    }
+
+    function renderEmptyState(main) {
+      main.innerHTML =
+        '<div class="main-empty">' +
+          '<div class="main-empty-icon">📂</div>' +
+          '<h3>选择一个时间段开始</h3>' +
+          '<p>从左侧文件夹中添加「本周/下周/本月/下月/本半年」等时间段，点击进入即可编辑</p>' +
+        '</div>';
+    }
+
+    // ============ Main Events ============
+    function bindMainEvents() {
+      var planEditor = document.getElementById('plan-editor');
+      var reviewEditor = document.getElementById('review-editor');
+
+      function doSave(editor, type) {
+        var savedAt = saveEntry(state.selected.type, state.selected.label, type, editor.value);
+        var ind = document.getElementById(type + '-indicator');
+        ind.textContent = '已保存 ' + savedAt;
+        ind.classList.add('saved');
+        updateWordCount(type, editor.value);
+        renderSidebar(); // refresh status dot
+        showToast(type === 'plan' ? '规划已保存' : '复盘已保存');
+      }
+      function doClear(editor, type) {
+        if (!editor.value.trim() || confirm('确认清空' + (type === 'plan' ? '规划' : '复盘') + '内容？')) {
+          editor.value = '';
+          clearEntryField(state.selected.type, state.selected.label, type);
+          document.getElementById(type + '-indicator').textContent = '';
+          document.getElementById(type + '-indicator').classList.remove('saved');
+          updateWordCount(type, '');
+          renderSidebar();
+          showToast(type === 'plan' ? '规划已清空' : '复盘已清空');
+        }
+      }
+      function updateWordCount(type, text) {
+        document.getElementById(type + '-wc').textContent = countWords(text) + ' 字';
+      }
+
+      document.getElementById('plan-save').addEventListener('click', function() { doSave(planEditor, 'plan'); });
+      document.getElementById('review-save').addEventListener('click', function() { doSave(reviewEditor, 'review'); });
+      document.getElementById('plan-clear').addEventListener('click', function() { doClear(planEditor, 'plan'); });
+      document.getElementById('review-clear').addEventListener('click', function() { doClear(reviewEditor, 'review'); });
+
+      // Cmd+S / Ctrl+S
+      function keyHandler(e) {
+        if ((e.metaKey || e.ctrlKey) && e.key === 's') {
+          e.preventDefault();
+          if (document.activeElement === planEditor) doSave(planEditor, 'plan');
+          else if (document.activeElement === reviewEditor) doSave(reviewEditor, 'review');
+        }
+      }
+      document.addEventListener('keydown', keyHandler);
+
+      // Live word count + auto-save on blur
+      planEditor.addEventListener('input', function() { updateWordCount('plan', planEditor.value); });
+      reviewEditor.addEventListener('input', function() { updateWordCount('review', reviewEditor.value); });
+      planEditor.addEventListener('blur', function() {
+        if (planEditor.value !== loadEntry(state.selected.type, state.selected.label, 'plan')) {
+          doSave(planEditor, 'plan');
+        }
+      });
+      reviewEditor.addEventListener('blur', function() {
+        if (reviewEditor.value !== loadEntry(state.selected.type, state.selected.label, 'review')) {
+          doSave(reviewEditor, 'review');
+        }
+      });
+    }
+
+    // ============ Sidebar Event Delegation ============
+    document.getElementById('folder-tree').addEventListener('click', function(e) {
+      var target = e.target;
+
+      // Delete button
+      if (target.matches('[data-delete-type]')) {
+        e.stopPropagation();
+        removePeriod(target.dataset.deleteType, target.dataset.deleteLabel);
+        return;
+      }
+
+      // Period item click
+      var periodItem = target.closest('.period-item');
+      if (periodItem) {
+        selectPeriod(periodItem.dataset.type, periodItem.dataset.label);
+        return;
+      }
+
+      // Toggle folder
+      var toggle = target.closest('[data-toggle]');
+      if (toggle) {
+        var id = toggle.dataset.toggle;
+        state.collapsed[id] = !state.collapsed[id];
+        saveCollapsedState(state.collapsed);
+        renderSidebar();
+        return;
+      }
+
+      // Add period button
+      var addBtn = target.closest('[data-add]');
+      if (addBtn) {
+        var type = addBtn.dataset.add;
+        var offset = parseInt(addBtn.dataset.offset, 10);
+        addPeriod(type, offset);
+        return;
+      }
+    });
+
+    // Tracing sidebar clicks (inside CRM folder, outside folder-tree)
+    document.querySelector('.crm-folder').addEventListener('click', function(e) {
+      var target = e.target;
+
+      // Delete button for track periods
+      if (target.matches('[data-delete-type]')) {
+        e.stopPropagation();
+        var dType = target.dataset.deleteType;
+        var dLabel = target.dataset.deleteLabel;
+        if (dType && dType.indexOf('track-') === 0) {
+          // Remove track period
+          if (confirm('确定删除该时间段及其所有人选数据吗？此操作不可恢复。')) {
+            var list = loadTrackList(dType);
+            var idx = list.indexOf(dLabel);
+            if (idx !== -1) {
+              list.splice(idx, 1);
+              saveTrackList(dType, list);
+              // Remove entry data
+              localStorage.removeItem(getTrackEntriesKey(dType, dLabel));
+              renderSidebar();
+              // Clear main view if this was selected
+              if (state.selected && state.selected.type === dType && state.selected.label === dLabel) {
+                state.selected = null;
+                localStorage.removeItem(STORAGE_PREFIX + 'last-selection');
+                renderMain();
+              }
+              showToast('已删除');
+            }
+          }
+          return;
+        }
+        // For planning periods, delegate to removePeriod
+        removePeriod(dType, dLabel);
+        return;
+      }
+
+      // Toggle folder
+      var toggle = target.closest('[data-toggle]');
+      if (toggle) {
+        var id = toggle.dataset.toggle;
+        state.collapsed[id] = !state.collapsed[id];
+        saveCollapsedState(state.collapsed);
+        renderSidebar();
+        return;
+      }
+
+      // Period item click (track-* types)
+      var periodItem = target.closest('.period-item');
+      if (periodItem) {
+        var pType = periodItem.dataset.type;
+        if (pType && pType.indexOf('track-') === 0) {
+          selectPeriod(pType, periodItem.dataset.label);
+          return;
+        }
+      }
+
+      // Add period button (track-* types)
+      var addBtn = target.closest('[data-add]');
+      if (addBtn) {
+        var aType = addBtn.dataset.add;
+        if (aType && aType.indexOf('track-') === 0) {
+          var offset = parseInt(addBtn.dataset.offset, 10);
+          addTrackPeriod(aType, offset);
+          return;
+        }
+      }
+    });
+
+    // ============ CRM ============
+    function getCrmUrl() { return localStorage.getItem(STORAGE_PREFIX + 'crm-url') || ''; }
+    function updateCrmButton() {
+      var url = getCrmUrl();
+      var btn = document.getElementById('crm-btn');
+      if (url) btn.href = url; else btn.removeAttribute('href');
+    }
+    document.getElementById('crm-btn').addEventListener('click', function(e) {
+      if (!getCrmUrl()) {
+        e.preventDefault();
+        showToast('请先设置 CRM 链接');
+        promptCrmUrl();
+      }
+    });
+    document.getElementById('crm-config').addEventListener('click', promptCrmUrl);
+    function promptCrmUrl() {
+      var current = getCrmUrl();
+      var url = prompt(
+        '请输入大模型人才 CRM 系统的链接地址：\n\n' +
+        '示例: https://example.com/crm/index.html\n' +
+        '或本地文件: file:///path/to/index.html',
+        current
+      );
+      if (url !== null) {
+        localStorage.setItem(STORAGE_PREFIX + 'crm-url', url);
+        updateCrmButton();
+        showToast('CRM 链接已更新');
+      }
+    }
+
+    // ============ 人脉运营表格 ============
+    var MINGDAN_KEY = STORAGE_PREFIX + 'mingdan-url';
+    var MINGDAN_ZOOM_KEY = STORAGE_PREFIX + 'mingdan-zoom';
+    var MINGDAN_ZOOM_DEFAULT = 1.5;
+    var MINGDAN_ZOOM_MIN = 0.5;
+    var MINGDAN_ZOOM_MAX = 3.0;
+    function getMingdanUrl() { return localStorage.getItem(MINGDAN_KEY) || ''; }
+    function getMingdanZoom() {
+      var v = parseFloat(localStorage.getItem(MINGDAN_ZOOM_KEY));
+      if (isNaN(v) || v <= 0) return MINGDAN_ZOOM_DEFAULT;
+      return Math.max(MINGDAN_ZOOM_MIN, Math.min(MINGDAN_ZOOM_MAX, v));
+    }
+    function setMingdanZoom(z) {
+      localStorage.setItem(MINGDAN_ZOOM_KEY, String(z));
+    }
+    document.getElementById('mingdan-config').addEventListener('click', function() {
+      var current = getMingdanUrl();
+      var url = prompt(
+        '请输入人脉运营表格（腾讯文档）的链接地址：\n\n' +
+        '当前: ' + (current || '未设置'),
+        current
+      );
+      if (url !== null) {
+        localStorage.setItem(MINGDAN_KEY, url);
+        showToast('人脉运营表格链接已更新');
+      }
+    });
+    document.getElementById('mingdan-btn').addEventListener('click', function() {
+      if (!getMingdanUrl()) {
+        showToast('请先设置人脉运营表格链接');
+        document.getElementById('mingdan-config').click();
+        return;
+      }
+      selectPeriod('mingdan', '人脉运营表格');
+    });
+
+    function renderMingdanView() {
+      var main = document.getElementById('main-content');
+      // 人脉运营表格：去掉 max-width 限制，铺满整个内容区
+      main.style.maxWidth = 'none';
+      main.style.padding = '28px 24px 24px';
+      var url = getMingdanUrl();
+      if (!url) {
+        main.innerHTML =
+          '<div class="page-header">' +
+            '<div class="breadcrumb"><span>CRM 系统</span><span>›</span><span>人脉运营表格</span></div>' +
+            '<h2>人脉运营表格</h2>' +
+          '</div>' +
+          '<div class="empty-state">' +
+            '<div class="empty-icon">📊</div>' +
+            '<div class="empty-text">尚未设置人脉运营表格链接</div>' +
+            '<button class="empty-action" onclick="document.getElementById(\'mingdan-config\').click()">设置链接</button>' +
+          '</div>';
+        return;
+      }
+      var zoom = getMingdanZoom();
+      var zoomPct = Math.round(zoom * 100);
+      main.innerHTML =
+        '<div class="page-header">' +
+          '<div class="breadcrumb"><span>CRM 系统</span><span>›</span><span>人脉运营表格</span></div>' +
+          '<h2>人脉运营表格</h2>' +
+          '<p class="date-range"><span style="font-size:11px;color:var(--text-tertiary);">胡启瑞开源规划 & 人脉名单</span></p>' +
+          '<div class="mingdan-zoom-bar">' +
+            '<span class="zoom-label">缩放</span>' +
+            '<button class="zoom-btn" id="mingdan-zoom-out" title="缩小">−</button>' +
+            '<input type="range" class="zoom-slider" id="mingdan-zoom-slider" ' +
+              'min="' + MINGDAN_ZOOM_MIN + '" max="' + MINGDAN_ZOOM_MAX + '" step="0.05" value="' + zoom + '">' +
+            '<button class="zoom-btn" id="mingdan-zoom-in" title="放大">+</button>' +
+            '<span class="zoom-value" id="mingdan-zoom-value">' + zoomPct + '%</span>' +
+            '<button class="zoom-reset" id="mingdan-zoom-reset" title="恢复默认 ' + (MINGDAN_ZOOM_DEFAULT*100) + '%">重置</button>' +
+          '</div>' +
+        '</div>' +
+        '<div class="mingdan-iframe-wrapper">' +
+          '<iframe id="mingdan-iframe" src="' + esc(url) + '" ' +
+            'allow="clipboard-read;clipboard-write" ' +
+            'sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-modals">' +
+          '</iframe>' +
+        '</div>';
+
+      // 应用缩放
+      var iframe = document.getElementById('mingdan-iframe');
+      function applyZoom(z) {
+        iframe.style.transform = 'scale(' + z + ')';
+        iframe.style.transformOrigin = 'top left';
+        document.getElementById('mingdan-zoom-value').textContent = Math.round(z * 100) + '%';
+        var slider = document.getElementById('mingdan-zoom-slider');
+        if (slider) slider.value = z;
+      }
+      applyZoom(zoom);
+
+      // 绑定事件
+      document.getElementById('mingdan-zoom-slider').addEventListener('input', function(e) {
+        var z = parseFloat(e.target.value);
+        applyZoom(z);
+        setMingdanZoom(z);
+      });
+      document.getElementById('mingdan-zoom-in').addEventListener('click', function() {
+        var z = Math.min(MINGDAN_ZOOM_MAX, getMingdanZoom() + 0.1);
+        applyZoom(z);
+        setMingdanZoom(z);
+      });
+      document.getElementById('mingdan-zoom-out').addEventListener('click', function() {
+        var z = Math.max(MINGDAN_ZOOM_MIN, getMingdanZoom() - 0.1);
+        applyZoom(z);
+        setMingdanZoom(z);
+      });
+      document.getElementById('mingdan-zoom-reset').addEventListener('click', function() {
+        applyZoom(MINGDAN_ZOOM_DEFAULT);
+        setMingdanZoom(MINGDAN_ZOOM_DEFAULT);
+        showToast('已恢复默认缩放 ' + (MINGDAN_ZOOM_DEFAULT*100) + '%');
+      });
+
+      // Ctrl/Cmd + 滚轮缩放
+      iframe.addEventListener('wheel', function(e) {
+        if (e.ctrlKey || e.metaKey) {
+          e.preventDefault();
+          var z = getMingdanZoom();
+          if (e.deltaY < 0) z = Math.min(MINGDAN_ZOOM_MAX, z + 0.1);
+          else z = Math.max(MINGDAN_ZOOM_MIN, z - 0.1);
+          applyZoom(z);
+          setMingdanZoom(z);
+        }
+      }, { passive: false });
+    }
+
+    // ============ 人选运营 (Time-based Tracking) ============
+    var TRACK_TYPES = {
+      'track-weekly': { name: '周运营', icon: '📅', baseType: 'weekly' },
+      'track-monthly': { name: '月运营', icon: '📆', baseType: 'monthly' },
+      'track-halfyear': { name: '半年运营', icon: '🗓', baseType: 'halfyear' }
+    };
+
+    function getTrackPeriodKey(type) {
+      return STORAGE_PREFIX + 'track-periods-' + type;
+    }
+    function loadTrackList(type) {
+      try { return JSON.parse(localStorage.getItem(getTrackPeriodKey(type)) || '[]'); }
+      catch (e) { return []; }
+    }
+    function saveTrackList(type, list) {
+      localStorage.setItem(getTrackPeriodKey(type), JSON.stringify(list));
+    }
+
+    function addTrackPeriod(type, offset) {
+      var list = loadTrackList(type);
+      var baseType = TRACK_TYPES[type].baseType;
+      var range = getRange(baseType, offset);
+      if (list.indexOf(range.label) !== -1) { showToast('该时间段已存在'); return; }
+      list.push(range.label);
+      // Sort
+      list.sort(function(a, b) {
+        return getRangeByLabel(baseType, a).sortKey - getRangeByLabel(baseType, b).sortKey;
+      });
+      saveTrackList(type, list);
+      renderSidebar();
+    }
+
+    function getTrackEntriesKey(type, label) {
+      return STORAGE_PREFIX + 'track-entries-' + type + '-' + label;
+    }
+    function loadTrackEntries(type, label) {
+      try { return JSON.parse(localStorage.getItem(getTrackEntriesKey(type, label)) || '[]'); }
+      catch (e) { return []; }
+    }
+    function saveTrackEntries(type, label, entries) {
+      localStorage.setItem(getTrackEntriesKey(type, label), JSON.stringify(entries));
+    }
+
+    function isTrackCurrentPeriod(type, label) {
+      var baseType = TRACK_TYPES[type].baseType;
+      return label === getCurrentRange(baseType).label;
+    }
+
+    // Return child track periods that fall within a parent period
+    function getChildTrackPeriods(parentType, parentLabel) {
+      if (parentType === 'track-monthly') {
+        // parentLabel: "2026.7.1-7.31"
+        var parts = parentLabel.split('.');
+        var year = parseInt(parts[0], 10);
+        var month = parseInt(parts[1], 10);
+        var weekList = loadTrackList('track-weekly');
+        var children = [];
+        weekList.forEach(function(wLabel) {
+          var wParts = wLabel.split('-')[0].split('.');
+          var wYear = parseInt(wParts[0], 10);
+          var wMonth = parseInt(wParts[1], 10);
+          if (wYear === year && wMonth === month) {
+            children.push({ type: 'track-weekly', label: wLabel });
+          }
+        });
+        return children;
+      }
+      if (parentType === 'track-halfyear') {
+        // parentLabel: "2026 H2"
+        var match = parentLabel.match(/(\d+)\s+(H[12])/);
+        if (!match) return [];
+        var hyear = parseInt(match[1], 10);
+        var half = match[2];
+        var sm = half === 'H1' ? 1 : 7;
+        var em = half === 'H1' ? 6 : 12;
+        var monthList = loadTrackList('track-monthly');
+        var children = [];
+        monthList.forEach(function(mLabel) {
+          var mParts = mLabel.split('.');
+          var mYear = parseInt(mParts[0], 10);
+          var mMonth = parseInt(mParts[1], 10);
+          if (mYear === hyear && mMonth >= sm && mMonth <= em) {
+            children.push({ type: 'track-monthly', label: mLabel });
+          }
+        });
+        return children;
+      }
+      return [];
+    }
+
+    function renderTrackPeriodList(type) {
+      var list = loadTrackList(type);
+      var listEl = document.getElementById(type + '-list');
+      if (!listEl) return;
+      if (list.length === 0) {
+        listEl.innerHTML = '<div class="empty-periods">暂无，点击下方按钮添加</div>';
+        return;
+      }
+      var baseType = TRACK_TYPES[type].baseType;
+      var sorted = list.slice().sort(function(a, b) {
+        return getRangeByLabel(baseType, a).sortKey - getRangeByLabel(baseType, b).sortKey;
+      });
+      listEl.innerHTML = sorted.map(function(label) {
+        var entries = loadTrackEntries(type, label);
+        var status = entries.length > 0 ? 'has-content' : '';
+        var active = state.selected && state.selected.type === type && state.selected.label === label;
+        return '<div class="period-item ' + (active ? 'active' : '') + '" ' +
+               'data-type="' + type + '" data-label="' + esc(label) + '">' +
+               '<span class="period-status ' + (status || 'empty') + '" title="' + entries.length + ' 人"></span>' +
+               '<span class="period-label">' + esc(label) + ' (' + entries.length + ')</span>' +
+               '<button class="delete-period" data-delete-type="' + type + '" data-delete-label="' + esc(label) + '" title="删除">✕</button>' +
+             '</div>';
+      }).join('');
+    }
+
+    function renderTrackingView(type, label) {
+      var main = document.getElementById('main-content');
+      var allEntries = loadTrackEntries(type, label);
+      var baseType = TRACK_TYPES[type].baseType;
+      var isCurrent = isTrackCurrentPeriod(type, label);
+      var isAggregate = (type === 'track-monthly' || type === 'track-halfyear');
+
+      // ---- Filter ----
+      var filterProgress = (main.dataset && main.dataset.trackFilter) || '全部';
+      // Build filtered array with original indices preserved
+      var filtered = [];
+      allEntries.forEach(function(e, i) {
+        if (filterProgress === '全部' || e.progress === filterProgress) {
+          filtered.push({ entry: e, origIdx: i });
+        }
+      });
+
+      // Count entries per progress for filter badges
+      var progressCounts = {};
+      allEntries.forEach(function(e) {
+        var p = e.progress || '未建联';
+        progressCounts[p] = (progressCounts[p] || 0) + 1;
+      });
+      var progressOrder = ['全部', '未建联', '已建联', '已推荐', '流程中'];
+      var filterBar = '<div class="track-filter-bar"><span class="filter-label">进度筛选</span>';
+      progressOrder.forEach(function(p) {
+        var count = p === '全部' ? allEntries.length : (progressCounts[p] || 0);
+        filterBar += '<button class="filter-pill' + (filterProgress === p ? ' active' : '') + '" data-filter="' + p + '">' +
+          p + ' <span class="count">' + count + '</span></button>';
+      });
+      filterBar += '</div>';
+
+      // ---- Aggregate info for monthly / half-year ----
+      var childPeriods = [];
+      var childName = '';
+      if (isAggregate) {
+        childPeriods = getChildTrackPeriods(type, label);
+        childName = type === 'track-monthly' ? '周' : '月';
+      }
+
+      var rows = filtered.map(function(item) {
+        var entry = item.entry;
+        var origIdx = item.origIdx;
+        return '<tr data-track-orig-idx="' + origIdx + '">' +
+          '<td><input type="text" data-track-idx="' + origIdx + '" data-track-field="name" value="' + esc(entry.name || '') + '" placeholder="输入姓名"></td>' +
+          '<td><input type="text" data-track-idx="' + origIdx + '" data-track-field="company" value="' + esc(entry.company || '') + '" placeholder="当前公司"></td>' +
+          '<td><select data-track-idx="' + origIdx + '" data-track-field="source">' +
+            '<option value="">-</option>' +
+            '<option value="脉脉"' + (entry.source === '脉脉' ? ' selected' : '') + '>脉脉</option>' +
+            '<option value="Boss"' + (entry.source === 'Boss' ? ' selected' : '') + '>Boss</option>' +
+            '<option value="LinkedIn"' + (entry.source === 'LinkedIn' ? ' selected' : '') + '>LinkedIn</option>' +
+            '<option value="人才库"' + (entry.source === '人才库' ? ' selected' : '') + '>人才库</option>' +
+          '</select></td>' +
+          '<td><select data-track-idx="' + origIdx + '" data-track-field="progress">' +
+            '<option value="">-</option>' +
+            '<option value="未建联"' + (entry.progress === '未建联' ? ' selected' : '') + '>未建联</option>' +
+            '<option value="已建联"' + (entry.progress === '已建联' ? ' selected' : '') + '>已建联</option>' +
+            '<option value="已推荐"' + (entry.progress === '已推荐' ? ' selected' : '') + '>已推荐</option>' +
+            '<option value="流程中"' + (entry.progress === '流程中' ? ' selected' : '') + '>流程中</option>' +
+          '</select></td>' +
+          '<td><input type="text" data-track-idx="' + origIdx + '" data-track-field="contact" value="' + esc(entry.contact || '') + '" placeholder="手机/微信/邮箱"></td>' +
+          '<td><input type="text" data-track-idx="' + origIdx + '" data-track-field="notes" value="' + esc(entry.notes || '') + '" placeholder="备注信息"></td>' +
+          '<td><button class="delete-btn" data-track-delete="' + origIdx + '" title="删除">✕</button></td>' +
+        '</tr>';
+      }).join('');
+
+      // Aggregate info line
+      var aggInfoLine = '';
+      if (isAggregate) {
+        var totalChildEntries = 0;
+        childPeriods.forEach(function(cp) {
+          totalChildEntries += loadTrackEntries(cp.type, cp.label).length;
+        });
+        aggInfoLine = '<div class="track-agg-info">' +
+          '子' + childName + '运营：' + childPeriods.length + ' 个时间段，共 ' + totalChildEntries + ' 条原始记录' +
+          '</div>';
+      }
+
+      main.innerHTML =
+        '<div class="page-header">' +
+          '<div class="breadcrumb">' +
+            '<span>人选运营</span>' +
+            '<span>›</span>' +
+            '<span>' + esc(TRACK_TYPES[type].name) + '</span>' +
+            '<span>›</span>' +
+            '<span class="crumb-current">' + esc(label) + '</span>' +
+          '</div>' +
+          '<h2>' + esc(TRACK_TYPES[type].name) + ' · ' + esc(label) + '</h2>' +
+          '<p class="date-range">' +
+            '<span class="date-badge' + (isCurrent ? ' is-current' : ' is-past') + '">' +
+              (isCurrent ? '当前周期 · ' : '') + allEntries.length + ' 人' +
+              (filterProgress !== '全部' ? '（筛选: ' + filtered.length + '）' : '') + '</span>' +
+          '</p>' +
+        '</div>' +
+        '<div class="tracking-view">' +
+          '<div class="track-toolbar">' +
+            '<button class="sync-btn" id="btn-sync-table" title="复制为表格格式，粘贴到腾讯文档">📋 同步到表格</button>' +
+            (isAggregate
+              ? '<button class="btn-agg-sync" id="btn-agg-sync">🔄 同步本' + (type === 'track-monthly' ? '月' : '半年') + '数据</button>'
+              : '<span class="track-toolbar-hint" style="font-size:11px;color:#999;">一键复制数据，粘贴进腾讯文档即可</span>') +
+          '</div>' +
+          filterBar +
+          aggInfoLine +
+          (filtered.length === 0 && (childPeriods.length === 0 || !isAggregate)
+            ? ('<div class="track-empty">' +
+                (filterProgress !== '全部' ? '当前筛选条件「' + filterProgress + '」无匹配人选' :
+                 (isAggregate ? '暂无数据，点击上方按钮从' + childName + '运营同步' : '暂无目标人选<br>点击下方按钮添加')) +
+              '</div>')
+            : '<table class="tracking-table">' +
+                '<thead><tr>' +
+                  '<th style="width:12%">姓名</th>' +
+                  '<th style="width:14%">目前公司</th>' +
+                  '<th style="width:11%">线索来源</th>' +
+                  '<th style="width:10%">当前进度</th>' +
+                  '<th style="width:15%">联系方式</th>' +
+                  '<th style="width:17%">备注</th>' +
+                  '<th style="width:44px"></th>' +
+                '</tr></thead>' +
+                '<tbody>' + rows + '</tbody>' +
+              '</table>') +
+          (!isAggregate && filterProgress === '全部' ? '<button class="btn-add-track" id="btn-add-track">+ 添加人选</button>' : '') +
+        '</div>';
+
+      bindTrackingEvents(type, label);
+    }
+
+    function bindTrackingEvents(type, label) {
+      var main = document.getElementById('main-content');
+
+      // Filter pills
+      var pills = main.querySelectorAll('.filter-pill');
+      pills.forEach(function(pill) {
+        pill.addEventListener('click', function() {
+          var fp = this.getAttribute('data-filter');
+          main.dataset.trackFilter = fp;
+          renderTrackingView(type, label);
+        });
+      });
+
+      // Add entry
+      var addBtn = document.getElementById('btn-add-track');
+      if (addBtn) {
+        addBtn.addEventListener('click', function() {
+          var entries = loadTrackEntries(type, label);
+          entries.push({ name: '', company: '', source: '', progress: '', contact: '', notes: '' });
+          saveTrackEntries(type, label, entries);
+          renderTrackingView(type, label);
+          renderSidebar();
+          showToast('已添加，请填写信息');
+        });
+      }
+
+      // Sync button
+      var syncBtn = document.getElementById('btn-sync-table');
+      if (syncBtn) {
+        syncBtn.addEventListener('click', function() {
+          var entries = loadTrackEntries(type, label);
+          if (entries.length === 0) {
+            showToast('暂无数据可同步');
+            return;
+          }
+          // Build TSV: headers + rows
+          var lines = ['姓名\t目前公司\t线索来源\t当前进度\t联系方式\t备注\t日期: ' + label];
+          entries.forEach(function(e) {
+            lines.push([e.name || '', e.company || '', e.source || '', e.progress || '', e.contact || '', e.notes || ''].join('\t'));
+          });
+          var tsv = lines.join('\n');
+          // Copy to clipboard
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(tsv).then(function() {
+              showToast('已复制 ' + entries.length + ' 条数据到剪贴板，请粘贴到腾讯文档');
+            });
+          } else {
+            // Fallback
+            var ta = document.createElement('textarea');
+            ta.value = tsv;
+            ta.style.position = 'fixed'; ta.style.left = '-9999px';
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+            showToast('已复制 ' + entries.length + ' 条数据到剪贴板');
+          }
+        });
+      }
+
+      // Aggregate sync button (monthly / half-year)
+      var aggBtn = document.getElementById('btn-agg-sync');
+      if (aggBtn) {
+        aggBtn.addEventListener('click', function() {
+          var childPeriods = getChildTrackPeriods(type, label);
+          if (childPeriods.length === 0) {
+            showToast('暂无子' + (type === 'track-monthly' ? '周' : '月') + '运营数据可同步');
+            return;
+          }
+          var merged = {};
+          var totalSrc = 0;
+          childPeriods.forEach(function(cp) {
+            var childEntries = loadTrackEntries(cp.type, cp.label);
+            totalSrc += childEntries.length;
+            childEntries.forEach(function(e) {
+              if (!e.name || !e.name.trim()) return;
+              var key = e.name.trim();
+              if (!merged[key]) {
+                merged[key] = {
+                  name: e.name,
+                  company: e.company || '',
+                  source: e.source || '',
+                  progress: e.progress || '',
+                  contact: e.contact || '',
+                  notes: e.notes || ''
+                };
+              } else {
+                // Merge: keep more informative fields
+                var existing = merged[key];
+                if (!existing.company && e.company) existing.company = e.company;
+                if (!existing.source && e.source) existing.source = e.source;
+                if (!existing.contact && e.contact) existing.contact = e.contact;
+                if (!existing.notes && e.notes) existing.notes = e.notes;
+                // Progress: prefer later stages
+                var progOrder = { '流程中': 4, '已推荐': 3, '已建联': 2, '未建联': 1 };
+                var curOrder = progOrder[existing.progress] || 0;
+                var newOrder = progOrder[e.progress] || 0;
+                if (newOrder > curOrder) existing.progress = e.progress;
+              }
+            });
+          });
+          var newEntries = Object.values(merged);
+          saveTrackEntries(type, label, newEntries);
+          renderTrackingView(type, label);
+          renderSidebar();
+          showToast('已从 ' + childPeriods.length + ' 个' + (type === 'track-monthly' ? '周' : '月') + '运营同步 ' + newEntries.length + ' 人（去重后）');
+        });
+      }
+
+      // Inline edit (input)
+      main.querySelectorAll('input[data-track-idx]').forEach(function(el) {
+        el.addEventListener('blur', function() {
+          var idx = parseInt(this.dataset.trackIdx, 10);
+          var field = this.dataset.trackField;
+          var entries = loadTrackEntries(type, label);
+          if (idx >= 0 && idx < entries.length) {
+            entries[idx][field] = this.value;
+            saveTrackEntries(type, label, entries);
+            renderSidebar();
+          }
+        });
+      });
+
+      // Inline edit (select)
+      main.querySelectorAll('select[data-track-idx]').forEach(function(el) {
+        el.addEventListener('change', function() {
+          var idx = parseInt(this.dataset.trackIdx, 10);
+          var field = this.dataset.trackField;
+          var entries = loadTrackEntries(type, label);
+          if (idx >= 0 && idx < entries.length) {
+            entries[idx][field] = this.value;
+            saveTrackEntries(type, label, entries);
+            // No need to re-render sidebar for select changes (count doesn't change)
+          }
+        });
+      });
+
+      // Delete entry
+      main.querySelectorAll('[data-track-delete]').forEach(function(el) {
+        el.addEventListener('click', function() {
+          var idx = parseInt(this.dataset.trackDelete, 10);
+          if (confirm('确定删除该人选吗？此操作不可恢复。')) {
+            var entries = loadTrackEntries(type, label);
+            entries.splice(idx, 1);
+            saveTrackEntries(type, label, entries);
+            renderTrackingView(type, label);
+            renderSidebar();
+            showToast('已删除');
+          }
+        });
+      });
+    }
+
+    function updateAllTrackCounts() {
+      var total = 0;
+      Object.keys(TRACK_TYPES).forEach(function(type) {
+        var list = loadTrackList(type);
+        var count = list.length;
+        var typePart = type.split('-')[1]; // weekly, monthly, halfyear
+        var countEl = document.getElementById('track-' + typePart + '-count');
+        if (countEl) countEl.textContent = count;
+        total += count;
+      });
+      var totalEl = document.getElementById('tracking-total');
+      if (totalEl) totalEl.textContent = total;
+    }
+
+    // ============ Init ============
+    function init() {
+      updateCrmButton();
+      // Set default mingdan URL if not already set
+      if (!getMingdanUrl()) {
+        localStorage.setItem(MINGDAN_KEY, 'https://doc.weixin.qq.com/sheet/e3_AYkAZAahAKsCNMt9MeY3SQ70lBHkV?scode=AJEAIQdfAAotgI1T1cAYkAZAahAKs&tab=i5n0v1');
+      }
+      // Migrate old tracking data if exists
+      var oldEntries = localStorage.getItem(STORAGE_PREFIX + 'tracking-entries');
+      if (oldEntries) {
+        try {
+          var parsed = JSON.parse(oldEntries);
+          if (parsed.length > 0) {
+            // Migrate to current week's tracking
+            var curWeek = getCurrentRange('weekly').label;
+            saveTrackEntries('track-weekly', curWeek, parsed);
+          }
+          localStorage.removeItem(STORAGE_PREFIX + 'tracking-entries');
+        } catch (e) {}
+      }
+      renderSidebar();
+      // Restore last selection if still valid
+      try {
+        var last = JSON.parse(localStorage.getItem(STORAGE_PREFIX + 'last-selection'));
+        if (last && last.type && last.type.indexOf('track-') === 0) {
+          var tList = loadTrackList(last.type);
+          if (tList.indexOf(last.label) !== -1) {
+            state.selected = last;
+          }
+        } else if (last && last.type === 'mingdan' && last.label === '人脉运营表格') {
+          state.selected = last;
+        } else if (last && loadList(last.type).indexOf(last.label) !== -1) {
+          state.selected = last;
+        }
+      } catch (e) {}
+      // Auto-select current week/month/halfyear if exists, else auto-create
+      if (!state.selected) {
+        var planningTypes = ['weekly', 'monthly', 'halfyear'];
+        var found = false;
+        for (var i = 0; i < planningTypes.length; i++) {
+          var t = planningTypes[i];
+          var cur = getCurrentRange(t);
+          var list = loadList(t);
+          if (list.indexOf(cur.label) !== -1) {
+            state.selected = { type: t, label: cur.label };
+            found = true;
+            break;
+          }
+        }
+        if (!found) {
+          // Auto-add current week, month, half-year planning
+          addPeriod('weekly', 0);
+          addPeriod('monthly', 0);
+          addPeriod('halfyear', 0);
+        }
+      }
+      // Auto-add current track periods if none exist
+      var trackTypes = ['track-weekly', 'track-monthly', 'track-halfyear'];
+      var allTrackEmpty = trackTypes.every(function(tt) { return loadTrackList(tt).length === 0; });
+      if (allTrackEmpty) {
+        addTrackPeriod('track-weekly', 0);
+        addTrackPeriod('track-monthly', 0);
+        addTrackPeriod('track-halfyear', 0);
+      }
+      renderSidebar();
+      renderMain();
+    }
+    init();
+  })();
+  </script>
+</body>
+</html>
