@@ -1,20 +1,8 @@
 # Recruiter Workbench
 
+[在线预览 Demo](https://7hu0v0.github.io/workspace4recruiter/demo.html)
+
 一个可由 agent 定制的招聘个人工作台。默认版本不包含个人姓名、公司信息、私有文档链接或预置候选人数据，浏览器直接打开即可使用。
-
-## Demo
-
-- [打开 Demo 展示页](demo.html)
-- [打开真实工作台](index.html)
-- [打开人才储备看板](talent-reserve.html)
-
-本地预览：
-
-```bash
-python3 -m http.server 8080
-```
-
-然后访问 `http://localhost:8080/demo.html`。
 
 ## 工作台启动
 
@@ -48,10 +36,7 @@ agent 应先阅读 [AGENTS.md](AGENTS.md) 和 [skills/recruiter-workbench/SKILL.
 python3 -m http.server 8080
 ```
 
-然后访问：
-
-- Demo 展示页：`http://localhost:8080/demo.html`
-- 真实工作台：`http://localhost:8080/index.html`
+然后访问 `http://localhost:8080/index.html`。
 
 也可以直接打开 `index.html`。如果要使用模块间跳转和浏览器权限，推荐用静态服务器。
 
