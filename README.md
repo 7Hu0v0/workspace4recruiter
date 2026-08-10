@@ -34,7 +34,10 @@ agent 应先阅读 [AGENTS.md](AGENTS.md) 和 [skills/recruiter-workbench/SKILL.
 python3 -m http.server 8080
 ```
 
-然后访问 `http://localhost:8080`。
+然后访问：
+
+- Demo 展示页：`http://localhost:8080/demo.html`
+- 真实工作台：`http://localhost:8080/index.html`
 
 也可以直接打开 `index.html`。如果要使用模块间跳转和浏览器权限，推荐用静态服务器。
 
@@ -50,6 +53,7 @@ python3 -m http.server 8080
 ```text
 .
 ├── AGENTS.md
+├── demo.html
 ├── index.html
 ├── talent-reserve.html
 ├── target-company/
