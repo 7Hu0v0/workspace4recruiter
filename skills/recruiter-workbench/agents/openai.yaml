@@ -1,0 +1,7 @@
+interface:
+  display_name: "Recruiter Workbench"
+  short_description: "启动并定制开源招聘工作台模板"
+  default_prompt: "Use $recruiter-workbench when I say 工作台启动 to guide setup and customize the recruiter workbench."
+
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,1745 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Talent Reserve | Recruiter Workbench</title>
+  <style>
+    :root {
+      --accent: #006EFF;
+      --accent-light: #E6F0FF;
+      --accent-dark: #0052D9;
+      --accent-hover: #E0ECFF;
+      --bg: #F3F4F6;
+      --surface: #FFFFFF;
+      --text: #1D2129;
+      --text-secondary: #86909C;
+      --text-tertiary: #C9CDD4;
+      --border: #E5E6EB;
+      --border-light: #F0F1F3;
+      --shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 4px 24px rgba(0, 0, 0, 0.08);
+      --radius: 8px;
+      --radius-lg: 12px;
+      --sidebar-bg: #1F2937;
+      --sidebar-bg-2: #111827;
+      --sidebar-text: #E5E7EB;
+      --sidebar-muted: #9CA3AF;
+      --sidebar-border: rgba(255,255,255,0.08);
+      --p0-color: #E74C3C;
+      --p1-color: #E67E22;
+      --p2-color: #2ECC71;
+      --p3-color: #95A5A6;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Monaco", "Menlo", "Kaiti SC", "STKaiti", "楷体", "KaiTi", "楷体_GB2312", serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ===== Top Bar ===== */
+    .topbar {
+      position: sticky; top: 0; z-index: 50;
+      background: linear-gradient(135deg, var(--sidebar-bg) 0%, var(--sidebar-bg-2) 100%);
+      color: var(--sidebar-text);
+      padding: 0 24px;
+      display: flex; align-items: center;
+      height: 56px;
+      gap: 16px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+    }
+    .back-btn {
+      display: flex; align-items: center; gap: 6px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid var(--sidebar-border);
+      color: var(--sidebar-text);
+      padding: 6px 14px;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-size: 13px;
+      font-family: inherit;
+      transition: background 0.15s;
+      white-space: nowrap;
+    }
+    .back-btn:hover { background: rgba(0,110,255,0.3); }
+    .topbar-title {
+      font-size: 18px; font-weight: 700;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .topbar-title .emoji { font-size: 22px; }
+    .topbar-spacer { flex: 1; }
+    .topbar-actions { display: flex; gap: 8px; align-items: center; }
+    .topbar-btn {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid var(--sidebar-border);
+      color: var(--sidebar-text);
+      padding: 6px 14px;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-size: 13px;
+      font-family: inherit;
+      transition: background 0.15s;
+    }
+    .topbar-btn:hover { background: rgba(0,110,255,0.3); }
+
+    /* ===== Project Tab Bar ===== */
+    .project-bar {
+      display: flex; align-items: flex-end; gap: 4px;
+      padding: 16px 24px 0;
+      background: var(--bg);
+      border-bottom: 2px solid var(--border);
+      overflow-x: auto;
+    }
+    .project-tab {
+      padding: 8px 18px;
+      border: 1px solid var(--border);
+      border-bottom: none;
+      background: #f3f4f6;
+      border-radius: 8px 8px 0 0;
+      cursor: pointer;
+      font-size: 13px;
+      color: var(--text-secondary);
+      transition: all 0.15s;
+      user-select: none;
+      font-weight: 500;
+      position: relative; top: 1px;
+      white-space: nowrap;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .project-tab:hover { color: var(--accent); }
+    .project-tab.active {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+      font-weight: 600;
+    }
+    .project-tab .tab-count {
+      font-size: 11px; opacity: 0.7;
+      background: rgba(0,0,0,0.1);
+      padding: 1px 6px; border-radius: 10px;
+    }
+    .project-tab.active .tab-count { opacity: 1; background: rgba(255,255,255,0.2); }
+    .project-tab .tab-delete {
+      margin-left: 4px; opacity: 0.4; font-size: 14px; line-height: 1;
+    }
+    .project-tab .tab-delete:hover { opacity: 1; color: var(--p0-color); }
+    .project-add-btn {
+      padding: 8px 14px;
+      border: 1px dashed var(--border);
+      border-bottom: none;
+      background: transparent;
+      border-radius: 8px 8px 0 0;
+      cursor: pointer;
+      font-size: 13px;
+      color: var(--text-secondary);
+      font-family: inherit;
+      transition: all 0.15s;
+      position: relative; top: 1px;
+    }
+    .project-add-btn:hover { color: var(--accent); border-color: var(--accent); }
+
+    /* ===== Board Container ===== */
+    .board-container {
+      padding: 20px 24px 48px;
+      min-height: calc(100vh - 56px - 50px);
+    }
+    .board-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .board-header h2 {
+      font-size: 22px; font-weight: 700; color: var(--text);
+    }
+    .board-header .board-desc {
+      font-size: 13px; color: var(--text-secondary); margin-top: 4px;
+    }
+    .board-toolbar {
+      display: flex; gap: 8px; align-items: center;
+    }
+    .tool-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 6px 14px;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-size: 13px;
+      font-family: inherit;
+      transition: all 0.15s;
+      display: flex; align-items: center; gap: 4px;
+    }
+    .tool-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .tool-btn.primary {
+      background: var(--accent); color: #fff; border-color: var(--accent);
+    }
+    .tool-btn.primary:hover { background: var(--accent-dark); color: #fff; }
+
+    /* ===== Kanban Board ===== */
+    .kanban {
+      display: flex;
+      gap: 16px;
+      overflow-x: auto;
+      padding-bottom: 24px;
+      min-height: 400px;
+    }
+    .kanban-column {
+      flex: 0 0 300px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      max-height: calc(100vh - 220px);
+    }
+    .column-header {
+      padding: 12px 14px 10px;
+      border-bottom: 1px solid var(--border-light);
+      display: flex; align-items: center; justify-content: space-between;
+      cursor: grab;
+    }
+    .column-header:active { cursor: grabbing; }
+    .column-title-wrap {
+      display: flex; align-items: center; gap: 6px;
+    }
+    .column-title {
+      font-size: 14px; font-weight: 600; color: var(--text);
+      border: none; background: transparent;
+      font-family: inherit;
+      outline: none;
+      width: 160px;
+    }
+    .column-title:focus {
+      border-bottom: 1px dashed var(--accent);
+    }
+    .column-count {
+      font-size: 11px; color: var(--text-secondary);
+      background: var(--bg);
+      padding: 2px 8px; border-radius: 10px;
+    }
+    .column-actions { display: flex; gap: 4px; }
+    .column-action-btn {
+      border: none; background: transparent;
+      cursor: pointer; font-size: 14px;
+      color: var(--text-tertiary);
+      padding: 2px 4px; border-radius: 4px;
+      transition: all 0.15s;
+      font-family: inherit;
+    }
+    .column-action-btn:hover { color: var(--text); background: var(--bg); }
+    .column-action-btn.danger:hover { color: var(--p0-color); }
+
+    .column-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
+      display: flex; flex-direction: column; gap: 8px;
+      min-height: 60px;
+    }
+    .column-body.drag-over {
+      background: var(--accent-light);
+      border: 2px dashed var(--accent);
+      border-radius: 6px;
+      margin: 2px;
+      padding: 8px;
+    }
+
+    /* ===== Talent Card ===== */
+    .talent-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--p3-color);
+      border-radius: var(--radius);
+      padding: 10px 12px;
+      cursor: grab;
+      transition: box-shadow 0.15s, opacity 0.15s;
+      position: relative;
+    }
+    .talent-card:hover { box-shadow: var(--shadow-lg); }
+    .talent-card:active { cursor: grabbing; }
+    .talent-card.dragging { opacity: 0.4; }
+    .talent-card.priority-p0 { border-left-color: var(--p0-color); }
+    .talent-card.priority-p1 { border-left-color: var(--p1-color); }
+    .talent-card.priority-p2 { border-left-color: var(--p2-color); }
+    .talent-card.priority-p3 { border-left-color: var(--p3-color); }
+
+    .card-top {
+      display: flex; align-items: flex-start; justify-content: space-between; gap: 8px;
+      margin-bottom: 6px;
+    }
+    .card-name {
+      font-size: 14px; font-weight: 600; color: var(--text);
+      flex: 1;
+    }
+    .card-name-input {
+      font-size: 14px; font-weight: 600; color: var(--text);
+      border: none; background: transparent;
+      font-family: inherit;
+      outline: none; width: 100%;
+      border-bottom: 1px dashed transparent;
+    }
+    .card-name-input:focus { border-bottom-color: var(--accent); }
+
+    .card-priority {
+      font-size: 10px; font-weight: 700;
+      padding: 1px 6px; border-radius: 4px;
+      white-space: nowrap;
+    }
+    .card-priority.p0 { background: var(--p0-color); color: #fff; }
+    .card-priority.p1 { background: var(--p1-color); color: #fff; }
+    .card-priority.p2 { background: var(--p2-color); color: #fff; }
+    .card-priority.p3 { background: var(--p3-color); color: #fff; }
+
+    .card-field {
+      display: flex; align-items: center; gap: 4px;
+      font-size: 12px; color: var(--text-secondary);
+      margin-top: 3px;
+    }
+    .card-field label {
+      min-width: 38px; font-size: 11px; color: var(--text-tertiary);
+    }
+    .card-field input, .card-field select {
+      flex: 1;
+      border: none; background: transparent;
+      font-family: inherit;
+      font-size: 12px; color: var(--text-secondary);
+      outline: none;
+      border-bottom: 1px dashed transparent;
+    }
+    .card-field input:focus, .card-field select:focus {
+      border-bottom-color: var(--accent);
+      color: var(--text);
+    }
+    /* 主页字段：超链接样式 + 跳转按钮 */
+    .card-field.link-field input {
+      color: var(--accent);
+      text-decoration: underline;
+      text-decoration-style: dotted;
+      text-underline-offset: 2px;
+      cursor: text;
+    }
+    .card-field.link-field input:placeholder-shown {
+      color: var(--text-secondary);
+      text-decoration: none;
+    }
+    .card-field.link-field input:focus {
+      color: var(--accent-dark);
+      text-decoration: none;
+      border-bottom-color: var(--accent);
+    }
+    .link-jump-btn {
+      flex-shrink: 0;
+      width: 22px; height: 22px; padding: 0;
+      border: 1px solid var(--border); border-radius: 4px;
+      background: var(--surface);
+      color: var(--accent);
+      cursor: pointer; font-size: 13px; line-height: 1;
+      display: inline-flex; align-items: center; justify-content: center;
+      transition: all 0.12s;
+      text-decoration: none;
+    }
+    .link-jump-btn:hover {
+      border-color: var(--accent);
+      background: var(--accent-light);
+      transform: scale(1.05);
+    }
+    .card-notes {
+      font-size: 11px; color: var(--text-tertiary);
+      margin-top: 4px; padding-top: 4px;
+      border-top: 1px solid var(--border-light);
+      word-break: break-word;
+    }
+    .card-notes-input {
+      font-size: 11px; color: var(--text-tertiary);
+      border: none; background: transparent;
+      font-family: inherit;
+      outline: none; width: 100%; resize: none;
+      min-height: 16px; line-height: 1.4;
+    }
+    .card-notes-input:focus { color: var(--text-secondary); }
+
+    .card-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-top: 6px;
+    }
+    .card-date { font-size: 10px; color: var(--text-tertiary); }
+    .card-delete {
+      border: none; background: transparent;
+      cursor: pointer; font-size: 13px;
+      color: var(--text-tertiary);
+      padding: 2px 4px; border-radius: 4px;
+      transition: all 0.15s;
+    }
+    .card-delete:hover { color: var(--p0-color); }
+
+    /* ===== Sticky Note (便利贴) ===== */
+    .card-sticky-btn {
+      display: inline-flex; align-items: center; gap: 4px;
+      border: 1px solid #FDE68A; background: #FFFBEB;
+      color: #B45309;
+      padding: 3px 8px; border-radius: 12px;
+      font-size: 11px; font-family: inherit;
+      cursor: pointer;
+      transition: all 0.15s;
+      position: relative;
+    }
+    .card-sticky-btn:hover {
+      border-color: #F59E0B;
+      background: #FEF3C7;
+    }
+    .card-sticky-btn .sticky-count {
+      background: var(--accent); color: #fff;
+      font-size: 9px; font-weight: 700;
+      min-width: 14px; height: 14px; line-height: 14px;
+      border-radius: 7px; padding: 0 4px;
+      text-align: center;
+    }
+    .card-sticky-row {
+      display: flex; align-items: center; gap: 6px;
+      margin-top: 4px;
+    }
+    .sticky-backdrop {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 100;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; transition: opacity 0.18s;
+    }
+    .sticky-backdrop.show { opacity: 1; }
+    .sticky-modal {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      width: 560px; max-width: 92vw;
+      max-height: 80vh; display: flex; flex-direction: column;
+      overflow: hidden;
+    }
+    .sticky-modal-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(180deg, #FFFBEB 0%, #FFFFFF 100%);
+    }
+    .sticky-modal-header h3 {
+      font-size: 15px; font-weight: 700; color: var(--text);
+      display: flex; align-items: center; gap: 6px;
+    }
+    .sticky-modal-close {
+      border: none; background: transparent;
+      font-size: 18px; color: var(--text-secondary);
+      cursor: pointer; padding: 4px 8px; border-radius: 4px;
+      font-family: inherit;
+    }
+    .sticky-modal-close:hover { background: var(--bg); color: var(--text); }
+    .sticky-modal-body {
+      flex: 1; display: flex; flex-direction: column;
+      max-height: 60vh; overflow: hidden;
+    }
+    .sticky-list {
+      flex: 1; overflow-y: auto; padding: 12px 20px;
+      display: flex; flex-direction: column; gap: 8px;
+      background: #FFFDF5;
+      min-height: 120px;
+    }
+    .sticky-empty {
+      text-align: center; padding: 32px 16px;
+      color: var(--text-tertiary); font-size: 12px;
+    }
+    .sticky-item {
+      background: #FFFBEB; border: 1px solid #FDE68A;
+      border-radius: 6px; padding: 8px 12px; position: relative;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .sticky-item .note-time {
+      font-size: 10px; color: #B45309;
+      font-family: "Monaco","Menlo",monospace;
+      margin-bottom: 4px; font-weight: 600;
+    }
+    .sticky-item .note-text {
+      font-size: 13px; color: var(--text);
+      line-height: 1.6;
+      white-space: pre-wrap; word-break: break-word;
+      padding-right: 22px;
+    }
+    .sticky-item .note-del {
+      position: absolute; top: 6px; right: 6px;
+      width: 18px; height: 18px; border: none;
+      background: transparent; color: #D97706;
+      cursor: pointer; font-size: 12px; padding: 0;
+      border-radius: 3px; opacity: 0; transition: opacity 0.12s;
+    }
+    .sticky-item:hover .note-del { opacity: 1; }
+    .sticky-item .note-del:hover { background: #FDE68A; color: #92400E; }
+    .sticky-input-row {
+      border-top: 1px solid #FDE68A;
+      background: #FFFBEB;
+      padding: 10px 16px;
+      display: flex; gap: 8px; align-items: flex-end;
+    }
+    .sticky-input-row textarea {
+      flex: 1; min-height: 56px; max-height: 140px; resize: vertical;
+      border: 1px solid #FDE68A; border-radius: 6px;
+      padding: 8px 10px;
+      font-size: 13px; font-family: inherit; line-height: 1.5;
+      background: #fff;
+    }
+    .sticky-input-row textarea:focus {
+      outline: none; border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(0,110,255,0.1);
+    }
+    .sticky-add-btn {
+      padding: 8px 16px;
+      border: 1px solid var(--accent); border-radius: 6px;
+      background: var(--accent); color: #fff;
+      font-size: 12px; font-weight: 600;
+      cursor: pointer; font-family: inherit; white-space: nowrap;
+      transition: opacity 0.12s;
+    }
+    .sticky-add-btn:hover { opacity: 0.9; }
+
+    /* ===== Add Card Button ===== */
+    .add-card-btn {
+      border: 1px dashed var(--border);
+      background: transparent;
+      color: var(--text-tertiary);
+      padding: 8px;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-size: 12px;
+      font-family: inherit;
+      transition: all 0.15s;
+      text-align: center;
+    }
+    .add-card-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-light);
+    }
+
+    /* ===== Empty State ===== */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-tertiary);
+    }
+    .empty-state .emoji { font-size: 48px; margin-bottom: 12px; }
+    .empty-state h3 { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
+    .empty-state p { font-size: 13px; }
+
+    /* ===== Modal ===== */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.4);
+      z-index: 100;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .modal-overlay.hidden { display: none; }
+    .modal {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      padding: 24px;
+      width: 420px; max-width: 90vw;
+      max-height: 80vh; overflow-y: auto;
+    }
+    .modal h3 { font-size: 18px; font-weight: 700; margin-bottom: 16px; }
+    .modal-field { margin-bottom: 14px; }
+    .modal-field label { display: block; font-size: 12px; color: var(--text-secondary); margin-bottom: 4px; }
+    .modal-field input, .modal-field select, .modal-field textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 8px 10px;
+      font-family: inherit;
+      font-size: 13px;
+      color: var(--text);
+      outline: none;
+    }
+    .modal-field input:focus, .modal-field select:focus, .modal-field textarea:focus {
+      border-color: var(--accent);
+    }
+    .modal-actions {
+      display: flex; gap: 8px; justify-content: flex-end;
+      margin-top: 20px;
+    }
+    .modal-btn {
+      padding: 8px 20px;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-size: 13px;
+      font-family: inherit;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      transition: all 0.15s;
+    }
+    .modal-btn:hover { border-color: var(--accent); }
+    .modal-btn.primary {
+      background: var(--accent); color: #fff; border-color: var(--accent);
+    }
+    .modal-btn.primary:hover { background: var(--accent-dark); }
+    .modal-btn.danger {
+      color: var(--p0-color); border-color: var(--p0-color);
+    }
+    .modal-btn.danger:hover { background: var(--p0-color); color: #fff; }
+
+    /* ===== Column editor inline ===== */
+    .column-editor {
+      display: flex; gap: 4px; align-items: center;
+    }
+    .column-editor input {
+      border: 1px solid var(--accent);
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-size: 13px;
+      font-family: inherit;
+      outline: none;
+      width: 120px;
+    }
+
+    /* ===== Toast ===== */
+    .toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+      background: var(--sidebar-bg);
+      color: #fff;
+      padding: 10px 24px;
+      border-radius: var(--radius);
+      font-size: 13px;
+      box-shadow: var(--shadow-lg);
+      z-index: 200;
+      opacity: 0;
+      transition: opacity 0.25s, transform 0.25s;
+      pointer-events: none;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(-4px); }
+
+    /* ===== Column color dot ===== */
+    .col-color-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      display: inline-block;
+      cursor: pointer;
+    }
+    .col-color-menu {
+      position: absolute; z-index: 10;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-lg);
+      padding: 6px;
+      display: flex; gap: 4px;
+    }
+    .col-color-opt {
+      width: 18px; height: 18px; border-radius: 50%;
+      cursor: pointer; border: 2px solid transparent;
+    }
+    .col-color-opt:hover { border-color: var(--text); }
+    .col-color-opt.selected { border-color: var(--accent); }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 768px) {
+      .topbar { padding: 0 12px; }
+      .topbar-title { font-size: 15px; }
+      .project-bar { padding: 12px 12px 0; }
+      .board-container { padding: 16px 12px 48px; }
+      .kanban-column { flex: 0 0 280px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== Top Bar ===== -->
+  <div class="topbar">
+    <button class="back-btn" onclick="goBack()" title="返回招聘工作台">
+      <span>←</span><span>返回工作台</span>
+    </button>
+    <div class="topbar-title">
+      <span class="emoji">🎯</span>
+      <span>专项人才储备</span>
+    </div>
+    <div class="topbar-spacer"></div>
+    <div class="topbar-actions">
+      <button class="topbar-btn" onclick="exportTSV()">📋 导出 TSV</button>
+      <button class="topbar-btn" onclick="exportJSON()">💾 导出 JSON</button>
+    </div>
+  </div>
+
+  <!-- ===== Project Tab Bar ===== -->
+  <div class="project-bar" id="project-bar"></div>
+
+  <!-- ===== Board Container ===== -->
+  <div class="board-container" id="board-container"></div>
+
+  <!-- ===== Modal ===== -->
+  <div class="modal-overlay hidden" id="modal-overlay">
+    <div class="modal" id="modal-content"></div>
+  </div>
+
+  <!-- ===== Toast ===== -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+  (function() {
+    'use strict';
+
+    // ============ Safe Storage ============
+    var _memStore = {};
+    var localStorage = {
+      getItem: function(k) { try { return window.localStorage.getItem(k); } catch(e) { return Object.prototype.hasOwnProperty.call(_memStore, k) ? _memStore[k] : null; } },
+      setItem: function(k, v) { try { window.localStorage.setItem(k, String(v)); } catch(e) { _memStore[k] = String(v); } },
+      removeItem: function(k) { try { window.localStorage.removeItem(k); } catch(e) { delete _memStore[k]; } }
+    };
+
+    var PREFIX = 'recruiter-workbench-';
+    var PROJECTS_KEY = PREFIX + 'talent-reserve-projects';
+    var ACTIVE_KEY = PREFIX + 'talent-reserve-active';
+
+    var COLUMN_COLORS = ['#006EFF', '#0052D9', '#7B68EE', '#E67E22', '#2ECC71', '#E74C3C', '#9B59B6', '#1ABC9C', '#F39C12', '#3498DB'];
+    var DEFAULT_COLUMNS = [
+      { id: 'col-1', title: '待触达', color: '#95A5A6' },
+      { id: 'col-2', title: '已触达', color: '#3498DB' },
+      { id: 'col-3', title: '有意向', color: '#9B59B6' },
+      { id: 'col-4', title: '面试中', color: '#E67E22' },
+      { id: 'col-5', title: 'Offer', color: '#2ECC71' },
+      { id: 'col-6', title: '已入职', color: '#006EFF' }
+    ];
+
+    var PRIORITIES = [
+      { value: 'p0', label: 'P0 立即触达' },
+      { value: 'p1', label: 'P1 人才池' },
+      { value: 'p2', label: 'P2 观察' },
+      { value: 'p3', label: 'P3 暂缓' }
+    ];
+
+    // ============ Data Layer ============
+
+    function loadProjects() {
+      try {
+        var list = JSON.parse(localStorage.getItem(PROJECTS_KEY) || '[]');
+        if (!Array.isArray(list) || list.length === 0) {
+          var defaultProj = {
+            id: 'proj-' + Date.now(),
+            name: '默认项目',
+            desc: '通用人才储备看板',
+            columns: JSON.parse(JSON.stringify(DEFAULT_COLUMNS)),
+            created: new Date().toISOString()
+          };
+          list = [defaultProj];
+          saveProjects(list);
+        }
+        return list;
+      } catch(e) {
+        return [{
+          id: 'proj-' + Date.now(),
+          name: '默认项目',
+          desc: '通用人才储备看板',
+          columns: JSON.parse(JSON.stringify(DEFAULT_COLUMNS)),
+          created: new Date().toISOString()
+        }];
+      }
+    }
+
+    function saveProjects(list) {
+      localStorage.setItem(PROJECTS_KEY, JSON.stringify(list));
+    }
+
+    function getActiveProjectId() {
+      return localStorage.getItem(ACTIVE_KEY) || null;
+    }
+
+    function setActiveProjectId(id) {
+      localStorage.setItem(ACTIVE_KEY, id);
+    }
+
+    function getActiveProject() {
+      var list = loadProjects();
+      var activeId = getActiveProjectId();
+      if (activeId) {
+        for (var i = 0; i < list.length; i++) {
+          if (list[i].id === activeId) return list[i];
+        }
+      }
+      return list[0];
+    }
+
+    function updateProject(proj) {
+      var list = loadProjects();
+      for (var i = 0; i < list.length; i++) {
+        if (list[i].id === proj.id) { list[i] = proj; break; }
+      }
+      saveProjects(list);
+    }
+
+    function getCardsKey(projId) {
+      return PREFIX + 'talent-reserve-cards-' + projId;
+    }
+
+    function loadCards(projId) {
+      try {
+        var cards = JSON.parse(localStorage.getItem(getCardsKey(projId)) || '[]');
+        return Array.isArray(cards) ? cards : [];
+      } catch(e) { return []; }
+    }
+
+    function saveCards(projId, cards) {
+      localStorage.setItem(getCardsKey(projId), JSON.stringify(cards));
+    }
+
+    function genId(prefix) {
+      return (prefix || 'id') + '-' + Date.now() + '-' + Math.random().toString(36).substr(2, 6);
+    }
+
+    function genColId() {
+      return 'col-' + Date.now() + '-' + Math.random().toString(36).substr(2, 4);
+    }
+
+    // ============ Rendering ============
+
+    function esc(s) {
+      if (s == null) return '';
+      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    // 规范化 URL：补 http:// 前缀，支持用户只填 github.com/xxx 的情况
+    function normalizeUrl(url) {
+      var u = String(url || '').trim();
+      if (!u) return '';
+      // 已有协议
+      if (/^https?:\/\//i.test(u)) return u;
+      // 邮箱
+      if (/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(u)) return 'mailto:' + u;
+      // 纯域名 / 路径（如 github.com/foo 或 foo.github.io）
+      if (/^[\w-]+(\.[\w-]+)+.*$/.test(u)) return 'http://' + u;
+      // 其他无法识别的当作普通字符串（点击无意义）
+      return u;
+    }
+
+    function showToast(msg) {
+      var t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      clearTimeout(t._timer);
+      t._timer = setTimeout(function(){ t.classList.remove('show'); }, 2200);
+    }
+
+    function renderProjectBar() {
+      var bar = document.getElementById('project-bar');
+      var projects = loadProjects();
+      var activeId = getActiveProject() ? getActiveProject().id : null;
+
+      var html = projects.map(function(p) {
+        var cardCount = loadCards(p.id).length;
+        return '<div class="project-tab' + (p.id === activeId ? ' active' : '') + '" data-proj-id="' + p.id + '">' +
+          '<span>' + esc(p.name) + '</span>' +
+          '<span class="tab-count">' + cardCount + '</span>' +
+          (projects.length > 1 ? '<span class="tab-delete" data-proj-delete="' + p.id + '" title="删除项目">×</span>' : '') +
+        '</div>';
+      }).join('');
+
+      html += '<button class="project-add-btn" id="btn-add-project">+ 新增项目</button>';
+
+      bar.innerHTML = html;
+
+      // Bind events
+      bar.querySelectorAll('.project-tab').forEach(function(tab) {
+        tab.addEventListener('click', function(e) {
+          if (e.target.classList.contains('tab-delete')) return;
+          var projId = this.getAttribute('data-proj-id');
+          setActiveProjectId(projId);
+          renderProjectBar();
+          renderBoard();
+        });
+      });
+
+      bar.querySelectorAll('.tab-delete').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          var projId = this.getAttribute('data-proj-delete');
+          deleteProject(projId);
+        });
+      });
+
+      var addBtn = document.getElementById('btn-add-project');
+      if (addBtn) addBtn.addEventListener('click', function() { showAddProjectModal(); });
+    }
+
+    function renderBoard() {
+      var proj = getActiveProject();
+      if (!proj) {
+        document.getElementById('board-container').innerHTML =
+          '<div class="empty-state"><div class="emoji">🎯</div><h3>暂无项目</h3><p>点击上方"+ 新增项目"创建第一个人才储备看板</p></div>';
+        return;
+      }
+
+      var cards = loadCards(proj.id);
+      var totalCards = cards.length;
+
+      var html =
+        '<div class="board-header">' +
+          '<div>' +
+            '<h2>' + esc(proj.name) + '</h2>' +
+            (proj.desc ? '<div class="board-desc">' + esc(proj.desc) + '</div>' : '') +
+          '</div>' +
+          '<div class="board-toolbar">' +
+            '<button class="tool-btn" onclick="editProjectInfo()">✏️ 项目设置</button>' +
+            '<button class="tool-btn" onclick="addColumn()">➕ 新增列</button>' +
+            '<button class="tool-btn primary" onclick="addCardPrompt()">+ 添加人才</button>' +
+          '</div>' +
+        '</div>' +
+        '<div class="kanban" id="kanban">' + renderColumns(proj, cards) + '</div>';
+
+      document.getElementById('board-container').innerHTML = html;
+
+      bindBoardEvents(proj, cards);
+    }
+
+    function renderColumns(proj, cards) {
+      return proj.columns.map(function(col) {
+        var colCards = cards.filter(function(c) { return c.columnId === col.id; });
+        return '<div class="kanban-column" data-col-id="' + col.id + '">' +
+          '<div class="column-header" draggable="true" data-col-id="' + col.id + '">' +
+            '<div class="column-title-wrap">' +
+              '<span class="col-color-dot" style="background:' + col.color + '" data-col-color="' + col.id + '" title="点击修改颜色"></span>' +
+              '<input type="text" class="column-title" value="' + esc(col.title) + '" data-col-id="' + col.id + '" placeholder="列名称">' +
+            '</div>' +
+            '<div class="column-actions">' +
+              '<span class="column-count">' + colCards.length + '</span>' +
+              '<button class="column-action-btn" data-col-add-card="' + col.id + '" title="添加人才">+</button>' +
+              '<button class="column-action-btn danger" data-col-delete="' + col.id + '" title="删除列">×</button>' +
+            '</div>' +
+          '</div>' +
+          '<div class="column-body" data-col-id="' + col.id + '">' +
+            colCards.map(function(card) { return renderCard(card, col.id); }).join('') +
+            '<button class="add-card-btn" data-col-add-card="' + col.id + '">+ 添加</button>' +
+          '</div>' +
+        '</div>';
+      }).join('');
+    }
+
+    function renderCard(card, colId) {
+      var priLabel = '';
+      PRIORITIES.forEach(function(p) {
+        if (p.value === card.priority) priLabel = p.label.split(' ')[0];
+      });
+      var dateStr = card.updated || card.created || '';
+      if (dateStr) {
+        var d = new Date(dateStr);
+        dateStr = (d.getMonth()+1) + '/' + d.getDate();
+      }
+      var stickyCount = (card.stickyNotes && card.stickyNotes.length) || 0;
+
+      return '<div class="talent-card priority-' + (card.priority || 'p3') + '" draggable="true" data-card-id="' + card.id + '" data-col-id="' + colId + '">' +
+        // 第 1 行：姓名
+        '<div class="card-top">' +
+          '<input type="text" class="card-name-input" data-card-id="' + card.id + '" data-field="name" value="' + esc(card.name || '') + '" placeholder="姓名">' +
+          '<span class="card-priority ' + (card.priority || 'p3') + '" data-card-priority="' + card.id + '">' + (priLabel || 'P3') + '</span>' +
+        '</div>' +
+        // 第 2 行：组织
+        '<div class="card-field">' +
+          '<label>组织</label>' +
+          '<input type="text" data-card-id="' + card.id + '" data-field="company" value="' + esc(card.company || '') + '" placeholder="组织/团队">' +
+        '</div>' +
+        // 第 3 行：职级/身份
+        '<div class="card-field">' +
+          '<label>职级</label>' +
+          '<input type="text" data-card-id="' + card.id + '" data-field="title" value="' + esc(card.title || '') + '" placeholder="职级 / 身份（如：高级研究员 / VP）">' +
+        '</div>' +
+        // 第 4 行：个人主页（超链接，可点击跳转）
+        '<div class="card-field link-field">' +
+          '<label>主页</label>' +
+          '<input type="text" data-card-id="' + card.id + '" data-field="source" value="' + esc(card.source || '') + '" placeholder="个人主页（GitHub / LinkedIn / 个人站）">' +
+          (card.source && card.source.trim()
+            ? '<a href="' + esc(normalizeUrl(card.source)) + '" target="_blank" rel="noopener noreferrer" class="link-jump-btn" title="在新标签页打开：' + esc(card.source) + '">↗</a>'
+            : '') +
+        '</div>' +
+        // 第 5 行：联系方式
+        '<div class="card-field">' +
+          '<label>联系</label>' +
+          '<input type="text" data-card-id="' + card.id + '" data-field="contact" value="' + esc(card.contact || '') + '" placeholder="手机 / 微信 / 邮箱">' +
+        '</div>' +
+        // 便利贴按钮：点开是详细备注
+        '<div class="card-sticky-row">' +
+          '<button class="card-sticky-btn" data-card-sticky="' + card.id + '" title="打开详细备注便利贴">📋 详细备注' +
+            (stickyCount > 0 ? ' <span class="sticky-count">' + stickyCount + '</span>' : '') +
+          '</button>' +
+        '</div>' +
+        '<div class="card-footer">' +
+          '<span class="card-date">' + dateStr + '</span>' +
+          '<button class="card-delete" data-card-delete="' + card.id + '" title="删除卡片">✕</button>' +
+        '</div>' +
+      '</div>';
+    }
+
+    // ============ Event Binding ============
+
+    function bindBoardEvents(proj, cards) {
+      var container = document.getElementById('board-container');
+
+      // Column title edit
+      container.querySelectorAll('.column-title').forEach(function(input) {
+        input.addEventListener('change', function() {
+          var colId = this.getAttribute('data-col-id');
+          proj.columns.forEach(function(c) {
+            if (c.id === colId) c.title = this.value;
+          }.bind(this));
+          updateProject(proj);
+        });
+      });
+
+      // Column color dot
+      container.querySelectorAll('.col-color-dot').forEach(function(dot) {
+        dot.addEventListener('click', function(e) {
+          e.stopPropagation();
+          var colId = this.getAttribute('data-col-color');
+          showColorPicker(this, colId, proj);
+        });
+      });
+
+      // Column add card
+      container.querySelectorAll('[data-col-add-card]').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          var colId = this.getAttribute('data-col-add-card');
+          addCardToColumn(proj, colId);
+        });
+      });
+
+      // Column delete
+      container.querySelectorAll('[data-col-delete]').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          var colId = this.getAttribute('data-col-delete');
+          if (proj.columns.length <= 1) { showToast('至少保留一列'); return; }
+          // Move cards in this column to first remaining column
+          var allCards = loadCards(proj.id);
+          var remainingCols = proj.columns.filter(function(c) { return c.id !== colId; });
+          var targetCol = remainingCols[0].id;
+          allCards.forEach(function(c) {
+            if (c.columnId === colId) c.columnId = targetCol;
+          });
+          proj.columns = remainingCols;
+          updateProject(proj);
+          saveCards(proj.id, allCards);
+          renderProjectBar();
+          renderBoard();
+          showToast('列已删除，卡片已移至"' + remainingCols[0].title + '"');
+        });
+      });
+
+      // Card field edits —— 所有字段都自动保存（input 事件 + debounce 300ms）
+      container.querySelectorAll('[data-card-id][data-field]').forEach(function(input) {
+        var field = input.getAttribute('data-field');
+        var cardId = input.getAttribute('data-card-id');
+        var saveFn = debounce(function() {
+          updateCardField(proj, cardId, field, this.value);
+        }.bind(input), 300);
+        // 实时自动保存：监听 input 事件，边输入边保存
+        input.addEventListener('input', saveFn);
+        // 兼容 change 事件（如 select 失焦）
+        input.addEventListener('change', saveFn);
+      });
+
+      // Card priority click
+      container.querySelectorAll('[data-card-priority]').forEach(function(el) {
+        el.addEventListener('click', function(e) {
+          e.stopPropagation();
+          var cardId = this.getAttribute('data-card-priority');
+          cyclePriority(proj, cardId, this);
+        });
+      });
+
+      // Card sticky note (便利贴) click
+      container.querySelectorAll('[data-card-sticky]').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          var cardId = this.getAttribute('data-card-sticky');
+          openStickyNote(proj, cardId);
+        });
+      });
+
+      // Card delete
+      container.querySelectorAll('[data-card-delete]').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          var cardId = this.getAttribute('data-card-delete');
+          deleteCard(proj, cardId);
+        });
+      });
+
+      // ===== Drag and Drop =====
+      var draggedCardId = null;
+      var draggedColId = null;
+
+      container.querySelectorAll('.talent-card').forEach(function(card) {
+        card.addEventListener('dragstart', function(e) {
+          draggedCardId = this.getAttribute('data-card-id');
+          draggedColId = this.getAttribute('data-col-id');
+          this.classList.add('dragging');
+          e.dataTransfer.effectAllowed = 'move';
+          e.dataTransfer.setData('text/plain', draggedCardId);
+        });
+        card.addEventListener('dragend', function() {
+          this.classList.remove('dragging');
+          container.querySelectorAll('.column-body').forEach(function(b) {
+            b.classList.remove('drag-over');
+          });
+        });
+      });
+
+      // Column drag for reordering columns
+      container.querySelectorAll('.column-header[draggable="true"]').forEach(function(header) {
+        header.addEventListener('dragstart', function(e) {
+          var colId = this.getAttribute('data-col-id');
+          e.dataTransfer.setData('col-id', colId);
+          e.dataTransfer.effectAllowed = 'move';
+        });
+      });
+
+      container.querySelectorAll('.kanban-column').forEach(function(col) {
+        col.addEventListener('dragover', function(e) {
+          e.preventDefault();
+          e.dataTransfer.dropEffect = 'move';
+          var body = this.querySelector('.column-body');
+          if (body) body.classList.add('drag-over');
+        });
+        col.addEventListener('dragleave', function(e) {
+          if (!this.contains(e.relatedTarget)) {
+            var body = this.querySelector('.column-body');
+            if (body) body.classList.remove('drag-over');
+          }
+        });
+        col.addEventListener('drop', function(e) {
+          e.preventDefault();
+          var body = this.querySelector('column-body');
+          body = this.querySelector('.column-body');
+          if (body) body.classList.remove('drag-over');
+
+          var targetColId = this.getAttribute('data-col-id');
+          var colDragId = e.dataTransfer.getData('col-id');
+
+          // Column reorder
+          if (colDragId && colDragId !== targetColId) {
+            var fromIdx = -1, toIdx = -1;
+            proj.columns.forEach(function(c, i) {
+              if (c.id === colDragId) fromIdx = i;
+              if (c.id === targetColId) toIdx = i;
+            });
+            if (fromIdx >= 0 && toIdx >= 0) {
+              var moved = proj.columns.splice(fromIdx, 1)[0];
+              proj.columns.splice(toIdx, 0, moved);
+              updateProject(proj);
+              renderBoard();
+            }
+            return;
+          }
+
+          // Card move
+          if (draggedCardId) {
+            moveCard(proj, draggedCardId, targetColId);
+          }
+        });
+      });
+    }
+
+    function debounce(fn, ms) {
+      var timer = null;
+      return function() {
+        var args = arguments, ctx = this;
+        clearTimeout(timer);
+        timer = setTimeout(function() { fn.apply(ctx, args); }, ms);
+      };
+    }
+
+    // ============ Card Operations ============
+
+    function updateCardField(proj, cardId, field, value) {
+      var cards = loadCards(proj.id);
+      for (var i = 0; i < cards.length; i++) {
+        if (cards[i].id === cardId) {
+          cards[i][field] = value;
+          cards[i].updated = new Date().toISOString();
+          break;
+        }
+      }
+      saveCards(proj.id, cards);
+    }
+
+    function cyclePriority(proj, cardId, el) {
+      var cards = loadCards(proj.id);
+      var order = ['p0', 'p1', 'p2', 'p3'];
+      for (var i = 0; i < cards.length; i++) {
+        if (cards[i].id === cardId) {
+          var curIdx = order.indexOf(cards[i].priority || 'p3');
+          var nextIdx = (curIdx + 1) % order.length;
+          var newPri = order[nextIdx];
+          cards[i].priority = newPri;
+          cards[i].updated = new Date().toISOString();
+          saveCards(proj.id, cards);
+
+          // 局部更新：只刷新当前卡片的优先级徽标与左边框颜色 class
+          // 不调用 renderBoard() —— 全量重渲染会导致浏览器丢失滚动位置，页面跳回首行
+          var cardEl = el.closest('.talent-card');
+          if (cardEl) {
+            var priLabels = { p0: 'P0', p1: 'P1', p2: 'P2', p3: 'P3' };
+            el.textContent = priLabels[newPri];
+            el.className = 'card-priority ' + newPri;
+            cardEl.className = cardEl.className.replace(/priority-p\d/, 'priority-' + newPri);
+          } else {
+            // 兜底：找不到卡片元素时才全量渲染
+            renderBoard();
+          }
+          return;
+        }
+      }
+    }
+
+    function moveCard(proj, cardId, targetColId) {
+      var cards = loadCards(proj.id);
+      var moved = false;
+      for (var i = 0; i < cards.length; i++) {
+        if (cards[i].id === cardId) {
+          if (cards[i].columnId === targetColId) return;
+          cards[i].columnId = targetColId;
+          cards[i].updated = new Date().toISOString();
+          moved = true;
+          break;
+        }
+      }
+      if (moved) {
+        saveCards(proj.id, cards);
+        renderBoard();
+      }
+    }
+
+    function deleteCard(proj, cardId) {
+      var cards = loadCards(proj.id);
+      cards = cards.filter(function(c) { return c.id !== cardId; });
+      saveCards(proj.id, cards);
+      renderProjectBar();
+      renderBoard();
+      showToast('已删除');
+    }
+
+    function addCardToColumn(proj, colId) {
+      var cards = loadCards(proj.id);
+      var newCard = {
+        id: genId('card'),
+        columnId: colId,
+        name: '',
+        company: '',
+        title: '',
+        source: '',
+        contact: '',
+        notes: '',
+        stickyNotes: [],
+        priority: 'p2',
+        created: new Date().toISOString(),
+        updated: new Date().toISOString()
+      };
+      cards.push(newCard);
+      saveCards(proj.id, cards);
+      renderProjectBar();
+      renderBoard();
+
+      // Focus the name input of the new card
+      setTimeout(function() {
+        var input = document.querySelector('[data-card-id="' + newCard.id + '"][data-field="name"]');
+        if (input) input.focus();
+      }, 50);
+    }
+
+    // ============ Sticky Note (便利贴) ============
+
+    function fmtStickyTime() {
+      var d = new Date();
+      var p = function(n){ return (n < 10 ? '0' : '') + n; };
+      return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + ' ' + p(d.getHours()) + ':' + p(d.getMinutes());
+    }
+
+    function openStickyNote(proj, cardId) {
+      var cards = loadCards(proj.id);
+      var card = null;
+      for (var i = 0; i < cards.length; i++) {
+        if (cards[i].id === cardId) { card = cards[i]; break; }
+      }
+      if (!card) return;
+      var name = card.name || '(未命名)';
+
+      // 移除已有 modal
+      var existing = document.getElementById('tr-sticky-backdrop');
+      if (existing) existing.remove();
+
+      var backdrop = document.createElement('div');
+      backdrop.id = 'tr-sticky-backdrop';
+      backdrop.className = 'sticky-backdrop';
+      backdrop.innerHTML =
+        '<div class="sticky-modal">' +
+          '<div class="sticky-modal-header">' +
+            '<h3>📋 ' + esc(name) + ' · 详细备注</h3>' +
+            '<button class="sticky-modal-close" type="button" title="关闭">✕</button>' +
+          '</div>' +
+          '<div class="sticky-modal-body">' +
+            '<div class="sticky-list"></div>' +
+            '<div class="sticky-input-row">' +
+              '<textarea placeholder="记录详细备注：背景、关键项目、技术亮点、推荐理由、风险点、跟进计划...&#10;支持多行输入，Cmd/Ctrl + Enter 快速添加"></textarea>' +
+              '<button class="sticky-add-btn" type="button">+ 添加</button>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+      document.body.appendChild(backdrop);
+      requestAnimationFrame(function(){ backdrop.classList.add('show'); });
+
+      function close() {
+        backdrop.classList.remove('show');
+        setTimeout(function(){ backdrop.remove(); }, 200);
+        renderProjectBar();
+        renderBoard();
+      }
+      backdrop.querySelector('.sticky-modal-close').addEventListener('click', close);
+      backdrop.addEventListener('click', function(e){ if (e.target === backdrop) close(); });
+      document.addEventListener('keydown', function escHandler(e){
+        if (e.key === 'Escape' && document.getElementById('tr-sticky-backdrop')) {
+          close();
+          document.removeEventListener('keydown', escHandler);
+        }
+      });
+
+      function reloadCard() {
+        // 从最新 storage 重新读取（避免闭包旧值）
+        var fresh = loadCards(proj.id);
+        for (var k = 0; k < fresh.length; k++) {
+          if (fresh[k].id === cardId) { card = fresh[k]; break; }
+        }
+      }
+
+      function renderList() {
+        var listEl = backdrop.querySelector('.sticky-list');
+        card.stickyNotes = card.stickyNotes || [];
+        if (card.stickyNotes.length === 0) {
+          listEl.innerHTML = '<div class="sticky-empty">暂无备注记录<br><span style="font-size:11px;">在下方输入框添加第一条详细备注</span></div>';
+          return;
+        }
+        var sorted = card.stickyNotes.slice().sort(function(a, b){ return (b.time || '').localeCompare(a.time || ''); });
+        listEl.innerHTML = sorted.map(function(n){
+          var origIdx = card.stickyNotes.indexOf(n);
+          return '<div class="sticky-item">' +
+            '<div class="note-time">🕐 ' + esc(n.time || '') + '</div>' +
+            '<div class="note-text">' + esc(n.text || '') + '</div>' +
+            '<button class="note-del" data-note-idx="' + origIdx + '" title="删除">✕</button>' +
+          '</div>';
+        }).join('');
+        listEl.querySelectorAll('.note-del').forEach(function(btn){
+          btn.addEventListener('click', function(){
+            if (!confirm('删除这条备注？')) return;
+            var ni = parseInt(this.dataset.noteIdx, 10);
+            reloadCard();
+            card.stickyNotes.splice(ni, 1);
+            card.updated = new Date().toISOString();
+            saveCards(proj.id, loadCards(proj.id).map(function(c){
+              return c.id === cardId ? card : c;
+            }));
+            renderList();
+          });
+        });
+        listEl.scrollTop = 0;
+      }
+
+      backdrop.querySelector('.sticky-add-btn').addEventListener('click', function(){
+        var ta = backdrop.querySelector('.sticky-input-row textarea');
+        var text = (ta.value || '').trim();
+        if (!text) { showToast('请输入备注内容'); ta.focus(); return; }
+        reloadCard();
+        card.stickyNotes = card.stickyNotes || [];
+        card.stickyNotes.push({ time: fmtStickyTime(), text: text });
+        card.updated = new Date().toISOString();
+        saveCards(proj.id, loadCards(proj.id).map(function(c){
+          return c.id === cardId ? card : c;
+        }));
+        ta.value = '';
+        ta.focus();
+        renderList();
+        showToast('已添加备注');
+      });
+      // Cmd/Ctrl + Enter 快捷添加
+      backdrop.querySelector('.sticky-input-row textarea').addEventListener('keydown', function(e){
+        if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+          e.preventDefault();
+          backdrop.querySelector('.sticky-add-btn').click();
+        }
+      });
+
+      renderList();
+      setTimeout(function(){
+        var ta = backdrop.querySelector('.sticky-input-row textarea');
+        if (ta) ta.focus();
+      }, 100);
+    }
+
+    // ============ Column Operations ============
+
+    window.addColumn = function() {
+      var proj = getActiveProject();
+      proj.columns.push({
+        id: genColId(),
+        title: '新列',
+        color: COLUMN_COLORS[proj.columns.length % COLUMN_COLORS.length]
+      });
+      updateProject(proj);
+      renderBoard();
+      showToast('已添加新列');
+    };
+
+    function showColorPicker(dot, colId, proj) {
+      // Remove existing
+      var existing = document.querySelector('.col-color-menu');
+      if (existing) existing.remove();
+
+      var menu = document.createElement('div');
+      menu.className = 'col-color-menu';
+      menu.style.left = dot.offsetLeft + 'px';
+      menu.style.top = (dot.offsetTop + 16) + 'px';
+
+      var currentCol = proj.columns.find(function(c) { return c.id === colId; });
+
+      COLUMN_COLORS.forEach(function(color) {
+        var opt = document.createElement('div');
+        opt.className = 'col-color-opt' + (currentCol && currentCol.color === color ? ' selected' : '');
+        opt.style.background = color;
+        opt.addEventListener('click', function() {
+          currentCol.color = color;
+          updateProject(proj);
+          menu.remove();
+          renderBoard();
+        });
+        menu.appendChild(opt);
+      });
+
+      dot.parentElement.appendChild(menu);
+
+      // Close on outside click
+      setTimeout(function() {
+        document.addEventListener('click', function close(e) {
+          if (!menu.contains(e.target) && e.target !== dot) {
+            menu.remove();
+            document.removeEventListener('click', close);
+          }
+        });
+      }, 0);
+    }
+
+    // ============ Project Operations ============
+
+    window.editProjectInfo = function() {
+      var proj = getActiveProject();
+      showModal(
+        '项目设置',
+        '<div class="modal-field">' +
+          '<label>项目名称</label>' +
+          '<input type="text" id="modal-proj-name" value="' + esc(proj.name) + '">' +
+        '</div>' +
+        '<div class="modal-field">' +
+          '<label>项目描述</label>' +
+          '<textarea id="modal-proj-desc" rows="2" placeholder="项目说明（可选）">' + esc(proj.desc || '') + '</textarea>' +
+        '</div>',
+        [
+          { text: '取消', class: '' },
+          { text: '保存', class: 'primary', action: function() {
+            proj.name = document.getElementById('modal-proj-name').value || proj.name;
+            proj.desc = document.getElementById('modal-proj-desc').value;
+            updateProject(proj);
+            hideModal();
+            renderProjectBar();
+            renderBoard();
+            showToast('项目已更新');
+          }}
+        ]
+      );
+    };
+
+    function showAddProjectModal() {
+      showModal(
+        '新增项目',
+        '<div class="modal-field">' +
+          '<label>项目名称</label>' +
+          '<input type="text" id="modal-proj-name" placeholder="如：大模型团队扩充" autofocus>' +
+        '</div>' +
+        '<div class="modal-field">' +
+          '<label>项目描述</label>' +
+          '<textarea id="modal-proj-desc" rows="2" placeholder="项目说明（可选）"></textarea>' +
+        '</div>' +
+        '<div class="modal-field">' +
+          '<label>看板列设置</label>' +
+          '<div style="font-size:11px;color:var(--text-tertiary);margin-bottom:6px;">创建后可自由增删改列、拖拽排序</div>' +
+          '<div style="display:flex;gap:6px;align-items:center;">' +
+            '<label style="font-size:12px;cursor:pointer;"><input type="radio" name="col-preset" value="default" checked> 默认六列（待触达→已入职）</label>' +
+          '</div>' +
+          '<div style="display:flex;gap:6px;align-items:center;margin-top:4px;">' +
+            '<label style="font-size:12px;cursor:pointer;"><input type="radio" name="col-preset" value="empty"> 空白看板（仅一列）</label>' +
+          '</div>' +
+        '</div>',
+        [
+          { text: '取消', class: '' },
+          { text: '创建', class: 'primary', action: function() {
+            var name = document.getElementById('modal-proj-name').value.trim();
+            if (!name) { showToast('请输入项目名称'); return; }
+            var desc = document.getElementById('modal-proj-desc').value.trim();
+            var preset = document.querySelector('input[name="col-preset"]:checked').value;
+            var columns = preset === 'empty'
+              ? [{ id: genColId(), title: '待处理', color: '#95A5A6' }]
+              : JSON.parse(JSON.stringify(DEFAULT_COLUMNS));
+            columns.forEach(function(c) { c.id = genColId(); });
+
+            var newProj = {
+              id: genId('proj'),
+              name: name,
+              desc: desc,
+              columns: columns,
+              created: new Date().toISOString()
+            };
+            var list = loadProjects();
+            list.push(newProj);
+            saveProjects(list);
+            setActiveProjectId(newProj.id);
+            hideModal();
+            renderProjectBar();
+            renderBoard();
+            showToast('项目"' + name + '"已创建');
+          }}
+        ]
+      );
+    }
+
+    function deleteProject(projId) {
+      var list = loadProjects();
+      if (list.length <= 1) { showToast('至少保留一个项目'); return; }
+
+      var proj = list.find(function(p) { return p.id === projId; });
+      if (!confirm('确定删除项目"' + proj.name + '"？\n该项目下所有人才卡片将一并删除，且不可恢复。')) return;
+
+      list = list.filter(function(p) { return p.id !== projId; });
+      saveProjects(list);
+      localStorage.removeItem(getCardsKey(projId));
+
+      if (getActiveProjectId() === projId) {
+        setActiveProjectId(list[0].id);
+      }
+      renderProjectBar();
+      renderBoard();
+      showToast('项目已删除');
+    }
+
+    // ============ Add Card Prompt ============
+
+    window.addCardPrompt = function() {
+      var proj = getActiveProject();
+      var colOptions = proj.columns.map(function(c) {
+        return '<option value="' + c.id + '">' + esc(c.title) + '</option>';
+      }).join('');
+
+      showModal(
+        '添加人才',
+        '<div class="modal-field">' +
+          '<label>姓名 *</label>' +
+          '<input type="text" id="modal-card-name" placeholder="候选人姓名" autofocus>' +
+        '</div>' +
+        '<div class="modal-field">' +
+          '<label>组织 / 团队</label>' +
+          '<input type="text" id="modal-card-company" placeholder="当前组织">' +
+        '</div>' +
+        '<div class="modal-field">' +
+          '<label>职级 / 身份</label>' +
+          '<input type="text" id="modal-card-title" placeholder="如：高级研究员 / VP / Staff Engineer">' +
+        '</div>' +
+        '<div class="modal-field">' +
+          '<label>个人主页</label>' +
+          '<input type="text" id="modal-card-source" placeholder="GitHub / LinkedIn / 个人站 URL">' +
+        '</div>' +
+        '<div class="modal-field">' +
+          '<label>联系方式</label>' +
+          '<input type="text" id="modal-card-contact" placeholder="手机 / 微信 / 邮箱">' +
+        '</div>' +
+        '<div class="modal-field">' +
+          '<label>优先级</label>' +
+          '<select id="modal-card-priority">' +
+            PRIORITIES.map(function(p) { return '<option value="' + p.value + '">' + p.label + '</option>'; }).join('') +
+          '</select>' +
+        '</div>' +
+        '<div class="modal-field">' +
+          '<label>放入列</label>' +
+          '<select id="modal-card-col">' + colOptions + '</select>' +
+        '</div>' +
+        '<div style="font-size:11px;color:var(--text-tertiary);margin-top:4px;">' +
+          '提示：保存后可在卡片上点击「📋 详细备注」按钮添加多条详细备注便利贴' +
+        '</div>',
+        [
+          { text: '取消', class: '' },
+          { text: '添加', class: 'primary', action: function() {
+            var name = document.getElementById('modal-card-name').value.trim();
+            if (!name) { showToast('请输入姓名'); return; }
+            var colId = document.getElementById('modal-card-col').value;
+            var card = {
+              id: genId('card'),
+              columnId: colId,
+              name: name,
+              company: document.getElementById('modal-card-company').value.trim(),
+              title: document.getElementById('modal-card-title').value.trim(),
+              source: document.getElementById('modal-card-source').value.trim(),
+              contact: document.getElementById('modal-card-contact').value.trim(),
+              notes: '',
+              stickyNotes: [],
+              priority: document.getElementById('modal-card-priority').value,
+              created: new Date().toISOString(),
+              updated: new Date().toISOString()
+            };
+            var cards = loadCards(proj.id);
+            cards.push(card);
+            saveCards(proj.id, cards);
+            hideModal();
+            renderProjectBar();
+            renderBoard();
+            showToast('已添加：' + name);
+          }}
+        ]
+      );
+    };
+
+    // ============ Export ============
+
+    window.exportTSV = function() {
+      var proj = getActiveProject();
+      var cards = loadCards(proj.id);
+      if (cards.length === 0) { showToast('暂无数据可导出'); return; }
+
+      var colMap = {};
+      proj.columns.forEach(function(c) { colMap[c.id] = c.title; });
+
+      var header = '姓名\t组织\t职级/身份\t个人主页\t联系方式\t优先级\t所在列\t备注条数\t更新时间';
+      var lines = [header];
+      cards.forEach(function(c) {
+        var priLabel = 'P3';
+        PRIORITIES.forEach(function(p) { if (p.value === c.priority) priLabel = p.label.split(' ')[0]; });
+        var dateStr = c.updated ? new Date(c.updated).toLocaleString('zh-CN') : '';
+        var stickyN = (c.stickyNotes && c.stickyNotes.length) || 0;
+        lines.push([
+          c.name || '', c.company || '', c.title || '', c.source || '',
+          c.contact || '', priLabel, colMap[c.columnId] || '',
+          stickyN, dateStr
+        ].join('\t'));
+      });
+
+      var tsv = lines.join('\n');
+      copyToClipboard(tsv);
+      showToast('已复制 ' + cards.length + ' 条到剪贴板，可粘贴到在线表格/Excel');
+    };
+
+    window.exportJSON = function() {
+      var proj = getActiveProject();
+      var cards = loadCards(proj.id);
+      var data = { project: proj, cards: cards, exported: new Date().toISOString() };
+      var json = JSON.stringify(data, null, 2);
+      var blob = new Blob([json], { type: 'application/json' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = 'talent-reserve-' + proj.name + '-' + Date.now() + '.json';
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('JSON 已下载');
+    };
+
+    function copyToClipboard(text) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).catch(function() {
+          fallbackCopy(text);
+        });
+      } else {
+        fallbackCopy(text);
+      }
+    }
+
+    function fallbackCopy(text) {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.cssText = 'position:fixed;opacity:0;pointer-events:none;';
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); } catch(e) {}
+      document.body.removeChild(ta);
+    }
+
+    // ============ Modal ============
+
+    function showModal(title, bodyHTML, buttons) {
+      var overlay = document.getElementById('modal-overlay');
+      var content = document.getElementById('modal-content');
+
+      var actionsHTML = (buttons || []).map(function(btn, i) {
+        return '<button class="modal-btn ' + (btn.class || '') + '" data-modal-btn="' + i + '">' + esc(btn.text) + '</button>';
+      }).join('');
+
+      content.innerHTML =
+        '<h3>' + esc(title) + '</h3>' +
+        bodyHTML +
+        '<div class="modal-actions">' + actionsHTML + '</div>';
+
+      overlay.classList.remove('hidden');
+
+      // Bind buttons
+      if (buttons) {
+        buttons.forEach(function(btn, i) {
+          var el = content.querySelector('[data-modal-btn="' + i + '"]');
+          if (el) el.addEventListener('click', function() {
+            if (btn.action) btn.action();
+            else hideModal();
+          });
+        });
+      }
+
+      // Focus first input
+      setTimeout(function() {
+        var firstInput = content.querySelector('input, textarea, select');
+        if (firstInput) firstInput.focus();
+      }, 50);
+    }
+
+    function hideModal() {
+      document.getElementById('modal-overlay').classList.add('hidden');
+    }
+
+    // Close modal on overlay click
+    document.getElementById('modal-overlay').addEventListener('click', function(e) {
+      if (e.target === this) hideModal();
+    });
+
+    // Close modal on Escape
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') hideModal();
+    });
+
+    // ============ Back to Workbench ============
+
+    window.goBack = function() {
+      // Try to detect if we're in the same directory as index.html
+      var currentPath = window.location.pathname;
+      var dir = currentPath.substring(0, currentPath.lastIndexOf('/'));
+      var workbenchPath = dir + '/index.html';
+
+      // Check if we were opened from the workbench (has referrer or same directory)
+      if (document.referrer && document.referrer.indexOf('index.html') >= 0) {
+        history.back();
+      } else {
+        window.location.href = workbenchPath;
+      }
+    };
+
+    // ============ Init ============
+
+    renderProjectBar();
+    renderBoard();
+
+  })();
+  </script>
+</body>
+</html>
