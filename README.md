@@ -1,6 +1,6 @@
 # Recruiter Workbench
 
-[在线预览 Demo](https://7hu0v0.github.io/workspace4recruiter/demo.html?v=20260810-2045)
+[在线预览 Demo](https://7hu0v0.github.io/workspace4recruiter/demo.html?v=20260810-2055)
 
 一个可由 agent 定制的招聘个人工作台。默认版本不包含个人姓名、公司信息、私有文档链接或预置候选人数据，浏览器直接打开即可使用。
 
