@@ -2,6 +2,20 @@
 
 一个可由 agent 定制的招聘个人工作台。默认版本不包含个人姓名、公司信息、私有文档链接或预置候选人数据，浏览器直接打开即可使用。
 
+## Demo
+
+- [打开 Demo 展示页](demo.html)
+- [打开真实工作台](index.html)
+- [打开人才储备看板](talent-reserve.html)
+
+本地预览：
+
+```bash
+python3 -m http.server 8080
+```
+
+然后访问 `http://localhost:8080/demo.html`。
+
 ## 工作台启动
 
 把这个仓库交给 WorkBuddy、Codex、Claude Code 或其他代码 agent，然后说：
