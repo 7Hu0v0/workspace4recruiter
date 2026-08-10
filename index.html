@@ -4852,6 +4852,8 @@
         addTrackPeriod('track-monthly', 0);
         addTrackPeriod('track-halfyear', 0);
       }
+      state.selected = null;
+      localStorage.removeItem(STORAGE_PREFIX + 'last-selection');
       // 更新专项人才储备项目数
       try {
         var trProjects = JSON.parse(localStorage.getItem('recruiter-workbench-talent-reserve-projects') || '[]');
