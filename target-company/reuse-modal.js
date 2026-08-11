@@ -1,6 +1,6 @@
 /**
- * 目标组织模块 - 复用组织弹窗
- * 列出组织库所有组织+组织树，让用户勾选要复用到当前业务的节点。
+ * 目标公司模块 - 复用公司弹窗
+ * 列出公司库所有公司+组织树，让用户勾选要复用到当前业务的节点。
  * 已关联的节点会被禁用（不可勾选）。
  */
 (function (global) {
@@ -25,7 +25,7 @@
     var companies = TCStore.getCompanies();
     var existingTargets = TCStore.getBusinessTargets(businessId);
 
-    // 已关联集合：companyId|orgId 形式（orgId 为空表示组织本身）
+    // 已关联集合：companyId|orgId 形式（orgId 为空表示公司本身）
     var existingSet = new Set();
     existingTargets.forEach(function (t) {
       existingSet.add(t.companyId + '|' + (t.organizationId || ''));
@@ -37,7 +37,7 @@
     backdrop.id = 'tc-reuse-backdrop';
     backdrop.className = 'dm-modal-backdrop';
 
-    // 渲染组织+组织树（含 checkbox）
+    // 渲染公司+组织树（含 checkbox）
     function renderCompanyHtml(company) {
       var orgTree = TCTree.buildOrganizationTree(company.id);
 
@@ -75,17 +75,17 @@
     }
 
     var html = companies.length === 0
-      ? '<div class="empty-periods" style="padding:32px 0;">组织库为空，请先新增组织</div>'
+      ? '<div class="empty-periods" style="padding:32px 0;">公司库为空，请先新增公司</div>'
       : companies.map(renderCompanyHtml).join('');
 
     backdrop.innerHTML =
       '<div class="dm-modal tc-reuse-modal">' +
         '<div class="dm-modal-header">' +
-          '<h3>📥 复用组织到当前业务</h3>' +
+          '<h3>📥 复用公司到当前业务</h3>' +
           '<button class="dm-modal-close" id="tc-reuse-x" type="button">✕</button>' +
         '</div>' +
         '<div class="dm-modal-body tc-reuse-body">' +
-          '<div class="tc-reuse-tip">勾选要复用的组织或组织节点。已关联的节点已禁用。<br>勾选组织 = 关联组织本身；勾选组织 = 关联具体组织（父级不会自动加入）。</div>' +
+          '<div class="tc-reuse-tip">勾选要复用的公司或组织节点。已关联的节点已禁用。<br>勾选公司 = 关联公司本身；勾选组织 = 关联具体组织（父级不会自动加入）。</div>' +
           '<div class="tc-reuse-list">' + html + '</div>' +
         '</div>' +
         '<div class="dm-modal-footer">' +

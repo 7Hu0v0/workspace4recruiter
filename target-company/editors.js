@@ -1,5 +1,5 @@
 /**
- * 目标组织模块 - 组织/团队编辑器（modal 表单）
+ * 目标公司模块 - 公司/组织编辑器（modal 表单）
  * 提供：
  *   openCompanyEditor({ mode:'create'|'rename', companyId?, onDone })
  *   openOrganizationEditor({ mode:'create'|'rename', companyId, parentId?, organizationId?, onDone })
@@ -59,14 +59,14 @@
     setTimeout(function () { input.focus(); input.select(); }, 80);
   }
 
-  /** 组织编辑器。mode: 'create' | 'rename' */
+  /** 公司编辑器。mode: 'create' | 'rename' */
   function openCompanyEditor(opts) {
     var isCreate = opts.mode === 'create';
     var company = isCreate ? null : TCStore.getCompany(opts.companyId);
     openModal({
-      title: isCreate ? '➕ 新增组织' : '✏️ 修改组织名称',
-      label: '组织名称',
-      placeholder: '例如：目标组织 E / 目标组织 B / 目标组织 A',
+      title: isCreate ? '➕ 新增公司' : '✏️ 修改公司名称',
+      label: '公司名称',
+      placeholder: '例如：目标组织 A / 目标组织 B / 目标组织 C',
       initialValue: company ? company.name : '',
       okText: isCreate ? '创建' : '保存',
       onSubmit: function (name) {
@@ -93,7 +93,7 @@
     openModal({
       title: isCreate ? '➕ 新增子组织' : '✏️ 修改组织名称',
       label: '组织名称' + (breadcrumb ? '（位于 ' + breadcrumb + ' 下）' : ''),
-      placeholder: '例如：目标组织 E DeepMind / Gemini / Pre-training',
+      placeholder: '例如：目标组织 E 研究团队 / 产品线示例 / Pre-training',
       initialValue: org ? org.name : '',
       okText: isCreate ? '创建' : '保存',
       onSubmit: function (name) {

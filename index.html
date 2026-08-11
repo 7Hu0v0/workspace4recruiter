@@ -21,17 +21,18 @@
       --shadow-lg: 0 4px 24px rgba(0, 0, 0, 0.08);
       --radius: 8px;
       --radius-lg: 12px;
-      --sidebar-bg: #1F2937;
-      --sidebar-bg-2: #111827;
-      --sidebar-text: #E5E7EB;
-      --sidebar-muted: #9CA3AF;
-      --sidebar-border: rgba(255,255,255,0.08);
+      /* 磨砂玻璃风：黑灰半透明，去掉品牌蓝渐变 */
+      --sidebar-bg: rgba(15,15,15,0.72);
+      --sidebar-bg-2: rgba(5,5,5,0.85);
+      --sidebar-text: #FFFFFF;
+      --sidebar-muted: #999999;
+      --sidebar-border: rgba(255,255,255,0.12);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      /* 英文/数字/标点 → Monaco；汉字无 Monaco 字形，浏览器自动回退到楷书 */
-      font-family: "Monaco", "Menlo", "Kaiti SC", "STKaiti", "楷体", "KaiTi", "楷体_GB2312", serif;
+      /* 中文思源黑体（Noto Sans SC）：标题用 700/900，其他用 400/500；英文/标点 Monaco；失败回退 */
+      font-family: "Monaco", "Menlo", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", "微软雅黑", sans-serif;
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
@@ -92,170 +93,218 @@
       .app-shell.collapsed .main-content { padding-left: 36px; }
     }
 
-    /* ===== 主页面底部跳转栏 ===== */
-    .main-content { padding-bottom: 124px; }
+    /* ===== 主页面底部跳转栏（磨砂玻璃风 · 三段布局：左 JUMP / 中 HOME / 右 GUESS） ===== */
+    .main-content { padding-bottom: 168px; }
     .jump-bar {
       position: fixed;
       bottom: 0;
       left: 240px;
       right: 0;
       z-index: 40;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      padding: 10px 28px 14px;
-      background: #fff;
-      border-top: 1px solid var(--border);
-      box-shadow: 0 -4px 18px rgba(0, 0, 0, 0.06);
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 24px;
+      padding: 20px 36px 22px;
+      background: rgba(15,15,15,0.78);
+      backdrop-filter: blur(28px) saturate(140%);
+      -webkit-backdrop-filter: blur(28px) saturate(140%);
+      border-top: 1px solid rgba(255,255,255,0.18);
+      box-shadow: 0 -8px 32px rgba(0,0,0,0.55);
     }
     .app-shell.collapsed .jump-bar { left: 0; }
     @media (max-width: 900px) { .jump-bar { left: 0; } }
 
+    /* 左侧 JUMP 区域：靠左对齐 */
     .jump-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-    .jump-row-guess { gap: 10px; }
+    .jump-row-main { justify-content: flex-start; }
+    .jump-row-guess { justify-content: flex-end; gap: 10px; }
+    .jump-section-label {
+      font-size: 11px; letter-spacing: 1.8px; font-weight: 700;
+      color: #888888;
+      padding: 4px 10px;
+      border: 1px solid #2A2A2A;
+      background: rgba(255,255,255,0.02);
+      font-family: "Press Start 2P", "VT323", "Monaco", monospace;
+      text-transform: uppercase;
+    }
 
     .jump-row-main .jump-btn {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      height: 42px;
+      height: 44px;
       padding: 0 22px;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      background: #fff;
-      color: var(--text);
-      font-size: 15px;
-      font-weight: 600;
-      font-family: inherit;
+      border: 1px solid rgba(255,255,255,0.30);
+      border-radius: 0;
+      background: rgba(255,255,255,0.04);
+      color: #FFFFFF;
+      font-size: 14px;
+      font-weight: 500;
+      font-family: "Press Start 2P", "VT323", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", monospace;
       cursor: pointer;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
       transition: transform 0.15s, border-color 0.15s, color 0.15s, box-shadow 0.15s, background 0.15s;
     }
     .jump-row-main .jump-btn:hover {
-      border-color: var(--accent);
-      color: var(--accent);
+      border-color: #FFFFFF;
+      color: #FFFFFF;
+      background: rgba(255,255,255,0.12);
       transform: translateY(-1px);
-      box-shadow: 0 4px 14px rgba(0, 110, 255, 0.16);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.55);
     }
     .jump-row-main .jump-btn.active {
-      background: var(--accent);
-      border-color: var(--accent);
-      color: #fff;
+      background: #FFFFFF;
+      border-color: #FFFFFF;
+      color: #000000;
     }
 
-    .jump-guess-label { font-size: 12px; color: var(--text-secondary); user-select: none; }
+    /* 中间 HOME 按钮（绝对居中） */
+    .jump-home {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      height: 56px;
+      padding: 0 26px;
+      border: 2px solid #FFFFFF;
+      border-radius: 0;
+      background: #000000;
+      color: #FFFFFF;
+      font-family: "Press Start 2P", "VT323", "Monaco", monospace;
+      font-size: 13px;
+      font-weight: 400;
+      letter-spacing: 2.5px;
+      cursor: pointer;
+      box-shadow: 4px 4px 0 #1A1A1A;
+      transition: background 0.15s, color 0.15s, transform 0.15s steps(2), box-shadow 0.15s;
+      justify-self: center;
+    }
+    .jump-home:hover {
+      background: #FFFFFF;
+      color: #000000;
+      transform: translate(2px, 2px);
+      box-shadow: 2px 2px 0 #FFFFFF;
+    }
+    .jump-home:active {
+      transform: translate(4px, 4px);
+      box-shadow: 0 0 0 #FFFFFF;
+    }
+    .jump-home-icon { font-size: 22px; line-height: 1; }
+
+    .jump-guess-label {
+      font-size: 13px; color: #888888; user-select: none;
+      letter-spacing: 1px; padding-right: 4px;
+      font-family: "Press Start 2P", "VT323", "Monaco", monospace;
+    }
     .jump-link {
       display: inline-flex;
       align-items: center;
-      gap: 4px;
+      gap: 6px;
       font-size: 13px;
-      color: var(--accent);
+      font-weight: 500;
+      color: #FFFFFF;
       text-decoration: none;
       cursor: pointer;
-      padding: 4px 12px;
-      border: 1px dashed var(--accent-light);
-      border-radius: 999px;
-      background: rgba(0, 110, 255, 0.04);
-      transition: background 0.15s, border-color 0.15s, font-weight 0.15s;
+      padding: 8px 16px;
+      border: 1px dashed rgba(255,255,255,0.35);
+      border-radius: 0;
+      background: rgba(255,255,255,0.04);
+      font-family: "Press Start 2P", "VT323", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", monospace;
+      transition: background 0.15s, border-color 0.15s, font-weight 0.15s, transform 0.15s;
     }
-    .jump-link:hover { background: var(--accent-light); border-style: solid; }
+    .jump-link:hover { background: rgba(255,255,255,0.12); border-color: #FFFFFF; border-style: solid; transform: translateY(-1px); }
     .jump-link::after { content: '↗'; font-size: 11px; opacity: 0.7; }
-    .jump-link.active { background: var(--accent-light); border-style: solid; font-weight: 600; }
+    .jump-link.active { background: rgba(255,255,255,0.12); border-color: #FFFFFF; border-style: solid; font-weight: 600; }
 
-    /* ===== 系统导览页 ===== */
-    .overview-page { max-width: 940px; margin: 0 auto; }
-    .overview-hero { display: flex; align-items: center; gap: 16px; margin-bottom: 26px; }
-    .overview-hero-icon {
-      width: 56px; height: 56px; border-radius: 14px; flex-shrink: 0;
-      background: var(--accent-light); color: var(--accent);
-      display: grid; place-items: center; font-size: 28px;
+    /* 移动端：3 段改单列堆叠 */
+    @media (max-width: 860px) {
+      .jump-bar { grid-template-columns: 1fr; gap: 14px; padding: 18px 20px 20px; }
+      .jump-home { justify-self: center; }
+      .jump-row-main, .jump-row-guess { justify-content: center; }
     }
-    .overview-title { font-size: 24px; font-weight: 800; line-height: 1.2; }
-    .overview-sub { color: var(--text-secondary); font-size: 13px; margin-top: 4px; }
-    .overview-group { margin-bottom: 24px; }
-    .overview-group-head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
-    .overview-group-icon { font-size: 18px; }
-    .overview-group-head h2 { font-size: 15px; font-weight: 700; }
+
+    /* ===== 系统导览页（统一像素风黑白灰，无品牌蓝） ===== */
+    .overview-page { max-width: 1080px; margin: 0 auto; padding: 24px 0 40px; font-family: "Press Start 2P","VT323","Monaco",monospace; color: #FFFFFF; }
+    .overview-hero {
+      display: flex; align-items: center; gap: 20px;
+      padding: 28px 32px;
+      margin-bottom: 32px;
+      background: #0A0A0A;
+      border: 2px solid #FFFFFF;
+      box-shadow: 6px 6px 0 #1A1A1A;
+    }
+    .overview-hero-icon {
+      width: 64px; height: 64px;
+      background: #FFFFFF; color: #000000;
+      border: 1px solid #FFFFFF;
+      display: grid; place-items: center; font-size: 32px;
+      flex-shrink: 0;
+      padding: 14px;
+    }
+    .overview-hero-icon svg { width: 100%; height: 100%; display: block; }
+    .overview-group-icon {
+      font-size: 20px;
+      width: 24px; height: 24px;
+      display: inline-flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .overview-group-icon svg { width: 100%; height: 100%; display: block; }
+    .overview-title {
+      font-size: 32px; font-weight: 900; line-height: 1.0;
+      color: #FFFFFF;
+      letter-spacing: 1px;
+      font-family: "Press Start 2P", "VT323", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", "VT323", "Monaco", monospace;
+    }
+    .overview-sub {
+      color: #888888; font-size: 18px; margin-top: 8px; max-width: 720px;
+      font-family: "VT323","Press Start 2P","Monaco",monospace;
+      letter-spacing: 0.5px; line-height: 1.5;
+    }
+    .overview-group { margin-bottom: 28px; }
+    .overview-group-head { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+    .overview-group-icon { font-size: 20px; width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .overview-group-icon svg { width: 100%; height: 100%; display: block; }
+    .overview-group-head h2 {
+      font-size: 14px; font-weight: 400; letter-spacing: 1.5px;
+      color: #1D2129; text-transform: uppercase;  /* group h2 用黑色（浅底） */
+      font-family: "Press Start 2P","VT323","Monaco",monospace;
+    }
     .overview-group-count {
-      font-size: 11px; color: var(--text-secondary);
-      background: #F2F3F5; border-radius: 999px; padding: 1px 8px;
+      font-size: 11px; color: #888888;
+      padding: 2px 10px;
+      border: 1px solid #2A2A2A;
+      background: rgba(255,255,255,0.02);
+      font-family: "VT323","Press Start 2P","Monaco",monospace;
+      letter-spacing: 0.5px;
     }
     .overview-cards {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 12px;
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 0;
+      border-top: 2px solid #FFFFFF; border-left: 2px solid #FFFFFF;
     }
     .overview-card {
       display: flex; align-items: center; justify-content: space-between; gap: 8px;
-      text-align: left; padding: 14px 16px;
-      border: 1px solid var(--border); border-radius: 10px; background: #fff;
-      cursor: pointer; font-family: inherit; font-size: 14px; color: var(--text);
-      transition: transform 0.15s, border-color 0.15s, color 0.15s, box-shadow 0.15s;
+      text-align: left; padding: 16px 18px;
+      background: #0A0A0A; color: #FFFFFF;
+      border: 0; border-right: 2px solid #FFFFFF; border-bottom: 2px solid #FFFFFF;
+      cursor: pointer; font-family: "VT323","Press Start 2P","Monaco",monospace; font-size: 16px;
+      transition: background 0.12s, color 0.12s, transform 0.12s steps(2), box-shadow 0.12s;
+      box-shadow: 4px 4px 0 #1A1A1A;
     }
     .overview-card:hover {
-      border-color: var(--accent); color: var(--accent);
-      box-shadow: 0 4px 14px rgba(0, 110, 255, 0.12); transform: translateY(-1px);
+      background: #FFFFFF; color: #000000;
+      transform: translate(2px, 2px);
+      box-shadow: 2px 2px 0 #FFFFFF;
     }
-    .overview-card-arrow { opacity: 0.4; font-size: 12px; }
+    .overview-card-arrow { opacity: 0.5; font-size: 14px; color: inherit; transition: opacity 0.12s; }
     .overview-card:hover .overview-card-arrow { opacity: 1; }
-    .overview-empty { color: var(--text-tertiary); font-size: 13px; padding: 8px 2px; }
+    .overview-empty {
+      color: #888888; font-size: 14px; padding: 14px 18px;
+      border: 1px dashed #2A2A2A;
+      background: rgba(255,255,255,0.02);
+      font-family: "VT323","Monaco",monospace;
+    }
 
-    /* CRM 系统品牌蓝主题：深蓝 hero + 白色大按钮 + hover 变蓝填充 */
-    .overview-page.ov-tb { max-width: 980px; }
-    .overview-page.ov-tb .ov-tb-hero {
-      background: linear-gradient(135deg, #0B1E3F 0%, #0052D9 60%, #006EFF 100%);
-      color: #fff;
-      border-radius: 18px;
-      padding: 32px 36px;
-      margin-bottom: 32px;
-      box-shadow: 0 10px 32px rgba(0,82,217,0.32);
-    }
-    .overview-page.ov-tb .ov-tb-hero .overview-hero-icon {
-      background: rgba(255,255,255,0.18);
-      color: #fff;
-      width: 64px; height: 64px;
-      font-size: 32px;
-      border-radius: 16px;
-    }
-    .overview-page.ov-tb .ov-tb-hero .overview-title { color: #fff; font-size: 28px; }
-    .overview-page.ov-tb .ov-tb-hero .overview-sub { color: rgba(255,255,255,0.82); font-size: 13.5px; margin-top: 6px; max-width: 720px; }
-    .overview-page.ov-tb .ov-tb-group {
-      background: #fff;
-      border: 1px solid #E6F0FF;
-      border-radius: 14px;
-      padding: 22px 24px;
-      margin-bottom: 18px;
-      box-shadow: 0 2px 10px rgba(0,110,255,0.04);
-    }
-    .overview-page.ov-tb .ov-tb-group h2 { color: #0052D9; }
-    .overview-page.ov-tb .ov-tb-card {
-      border: 1.5px solid #E6F0FF;
-      background: linear-gradient(135deg, #fff 0%, #F5F9FF 100%);
-      color: var(--text);
-      padding: 18px 22px;
-      font-size: 15px;
-      font-weight: 600;
-      border-radius: 12px;
-      position: relative;
-      overflow: hidden;
-    }
-    .overview-page.ov-tb .ov-tb-card::before {
-      content: '';
-      position: absolute; left: 0; top: 0; bottom: 0;
-      width: 4px;
-      background: linear-gradient(180deg, #006EFF 0%, #0052D9 100%);
-      border-radius: 4px 0 0 4px;
-    }
-    .overview-page.ov-tb .ov-tb-card .overview-card-name { color: var(--text); font-weight: 600; }
-    .overview-page.ov-tb .ov-tb-card .overview-card-arrow { color: #006EFF; opacity: 0.6; font-size: 14px; }
-    .overview-page.ov-tb .ov-tb-card:hover {
-      background: linear-gradient(135deg, #006EFF 0%, #0052D9 100%);
-      color: #fff;
-      border-color: #0052D9;
-      transform: translateY(-2px);
-      box-shadow: 0 10px 24px rgba(0,110,255,0.35);
-    }
-    .overview-page.ov-tb .ov-tb-card:hover .overview-card-name { color: #fff; }
-    .overview-page.ov-tb .ov-tb-card:hover .overview-card-arrow { color: #fff; opacity: 1; }
-    .overview-page.ov-tb .ov-tb-card:hover::before { width: 6px; background: #fff; }
+    /* ===== 旧版品牌蓝 CRM 主题已废弃（统一为像素风黑白灰）===== */
 
     /* ============ Sidebar ============ */
     .sidebar {
@@ -396,7 +445,7 @@
       padding-left: 8px;
       border-left: 1px dashed rgba(255,255,255,0.08);
     }
-    /* 目标组织地图链接 */
+    /* 友商人才地图链接 */
     .competitor-link {
       display: flex;
       align-items: center;
@@ -897,7 +946,7 @@
       background: #fff;
       box-shadow: 0 0 0 2px rgba(0,110,255,0.08);
     }
-    /* 组织搜索下拉 */
+    /* 公司搜索下拉 */
     .comp-search-wrap { position: relative; }
     .comp-search-list {
       display: none;
@@ -1216,10 +1265,18 @@
     .breadcrumb span { color: var(--text-tertiary); }
     .breadcrumb .crumb-current { color: var(--text); font-weight: 600; }
 
+    /* 功能区小标题统一黑色 + Noto Sans SC 粗体（思源黑体 700） */
+    .page-header h2,
+    .overview-group-head h2,
+    .todo-col-header h4,
+    .todo-review-block h4,
+    .overview-title {
+      color: #1D2129 !important;  /* 黑色，不被覆盖 */
+      font-family: "Press Start 2P", "VT323", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif !important;
+      font-weight: 700;
+    }
     .page-header h2 {
       font-size: 26px;
-      font-weight: 700;
-      color: var(--text);
       display: flex;
       align-items: center;
       gap: 10px;
@@ -1423,88 +1480,321 @@
       color: var(--text-tertiary);
     }
 
-    /* ============ Editorial Nav Page (默认入口) ============ */
+    /* ============ Editorial Nav Page (默认入口 · 像素风 + abgd 兼容) ============ */
+    /* 像素字体：Press Start 2P（标题/8-bit）+ VT323（次级/终端感），失败回退 Monaco */
+    :root {
+      --font-pixel: "Press Start 2P", "VT323", "Monaco", "Menlo", "Microsoft YaHei", "微软雅黑", monospace;
+      --font-pixel-mono: "VT323", "Press Start 2P", "Monaco", "Menlo", monospace;
+    }
     .nav-page {
       position: fixed; inset: 0;
-      background: #0A0E1A;
-      background: radial-gradient(ellipse at 28% 18%, #141B30 0%, #0A0E1A 55%, #050810 100%);
-      color: #fff;
+      background: #000000;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+      background-size: 24px 24px;
+      color: #FFFFFF;
       overflow-y: auto;
       z-index: 5;
-      padding: 60px 64px 72px;
+      padding: 0 0 96px;
+      /* 中文 Noto Sans SC（标题/粗体）+ 英文 Press Start 2P/VT323/Monaco */
+      font-family: "Press Start 2P", "VT323", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", "微软雅黑", monospace;
     }
-    .nav-inner { max-width: 940px; margin: 0 auto; }
+    /* 关键标题：中文走 Noto Sans SC 700/900，英文保留像素字体 */
+    .nav-title,
+    .nav-title-sub,
+    .nav-sub,
+    .nav-card-name,
+    .nav-triple .nt-item,
+    .nav-card-cta,
+    .nav-card-status,
+    .nav-topbar,
+    .jump-section-label,
+    .jump-home,
+    .overview-title {
+      font-family: "Press Start 2P", "VT323", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", "VT323", "Monaco", monospace;
+    }
+    .nav-inner { max-width: 1280px; margin: 0 auto; padding: 0 56px; }
+
+    /* ---------- abgd 风格：顶部 nav 条（1px 下边线分隔） ---------- */
+    .nav-topbar {
+      display: grid;
+      grid-template-columns: auto 1fr auto auto;
+      align-items: center;
+      gap: 24px;
+      padding: 18px 0 14px;
+      border-bottom: 1px solid #FFFFFF;
+      margin-bottom: 56px;
+      font-size: 11px;
+      font-weight: 400;
+      letter-spacing: 1.5px;
+      color: #FFFFFF;
+      text-transform: uppercase;
+      font-family: var(--font-pixel);
+    }
+    .nav-topbar .nt-left { display: flex; align-items: center; gap: 14px; }
+    .nav-topbar .nt-left .nt-section {
+      color: #888888;
+      font-size: 11px;
+    }
+    .nav-topbar .nt-left .nt-sep { color: #444444; }
+    .nav-topbar .nt-center { text-align: center; letter-spacing: 2px; color: #FFFFFF; }
+    .nav-topbar .nt-right { display: flex; align-items: center; gap: 14px; }
+    .nav-topbar .nt-grid {
+      display: inline-flex; align-items: center; gap: 6px;
+      cursor: pointer;
+    }
+    .nav-topbar .nt-grid::after {
+      content: ''; width: 8px; height: 8px;
+      background: #FFFFFF; border-radius: 0;
+      box-shadow: 0 0 0 1px #FFFFFF inset, 0 0 0 2px #000000 inset;
+    }
+
+    /* Joshua Kaplan 风格：大字姓名 + 紧贴附属行（中间加大间距） */
     .nav-date-line {
-      font-size: 38px;
-      font-weight: 700;
-      font-family: "Monaco","Menlo",monospace;
-      letter-spacing: 0.5px;
-      color: #fff;
-      margin-bottom: 24px;
-      text-shadow: 0 2px 16px rgba(110, 168, 255, 0.18);
+      display: none;
+    }
+    .nav-title-block {
+      margin-bottom: 28px;
     }
     .nav-title {
-      font-size: 64px;
-      font-weight: 800;
-      line-height: 1.05;
+      font-family: "Press Start 2P", "VT323", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", monospace;
+      font-size: 56px;
+      font-weight: 900;  /* 汉字 Noto Sans SC 900 粗体；英文 Press Start 2P 像素 */
+      line-height: 1.15;
       letter-spacing: -0.5px;
-      color: #fff;
-      margin-bottom: 16px;
+      color: #FFFFFF;
+      margin-bottom: 24px;
+      text-shadow: 3px 3px 0 #1A1A1A;
+    }
+    .nav-title-sub {
+      font-family: "Press Start 2P", "VT323", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", monospace;
+      font-size: 32px;
+      font-weight: 700;
+      line-height: 1.2;
+      letter-spacing: 0.5px;
+      color: #FFFFFF;
+      margin-top: 0;
+      margin-bottom: 32px;
+      text-shadow: 2px 2px 0 #1A1A1A;
     }
     .nav-title .nav-waving { display: inline-block; animation: nav-wave 1.8s ease-in-out infinite; transform-origin: 70% 70%; }
     @keyframes nav-wave { 0%,60%,100%{transform:rotate(0)} 10%{transform:rotate(14deg)} 20%{transform:rotate(-8deg)} 30%{transform:rotate(14deg)} 40%{transform:rotate(-4deg)} }
     .nav-sub {
-      font-size: 24px;
-      font-weight: 600;
-      color: #FF7A8A;
-      margin-bottom: 18px;
-      line-height: 1.35;
+      font-family: "Press Start 2P", "VT323", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", monospace;
+      font-size: 16px;  /* 缩小 */
+      font-weight: 700;
+      color: #FFFFFF;
+      margin-bottom: 12px;
+      line-height: 1.4;
+      letter-spacing: 1px;
     }
     .nav-desc {
-      font-size: 15px;
-      line-height: 1.85;
-      color: #A0AABE;
-      max-width: 640px;
-      margin-bottom: 56px;
+      font-size: 13.5px;  /* 缩小 */
+      line-height: 1.75;
+      color: #888888;
+      max-width: 720px;
+      margin-bottom: 32px;
+      font-weight: 400;
     }
-    .nav-links { margin-bottom: 60px; }
-    .nav-link {
-      display: flex; align-items: center; gap: 20px;
-      padding: 24px 0;
-      border-top: 1px solid rgba(255,255,255,0.08);
-      background: none;
-      width: 100%;
+
+    /* ---------- 三大信息栏（仿 abgd 中部三栏） ---------- */
+    .nav-triple {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 0;
+      padding: 22px 0;
+      border-top: 1px solid #2A2A2A;
+      border-bottom: 1px solid #2A2A2A;
+      margin-bottom: 48px;
+    }
+    .nav-triple .nt-item {
+      font-family: var(--font-pixel);
+      font-size: 11px;
+      font-weight: 400;
+      letter-spacing: 1.8px;
+      color: #FFFFFF;
+      text-transform: uppercase;
+    }
+    .nav-triple .nt-item:not(:first-child) { border-left: 1px solid #2A2A2A; padding-left: 20px; }
+
+    /* ---------- 2x2 像素风卡片矩阵（默认黑底白字，hover 反色成白底黑字） ---------- */
+    .nav-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0;
+      margin-bottom: 48px;
+      border-top: 2px solid #FFFFFF;
+      border-left: 2px solid #FFFFFF;
+    }
+    .nav-card {
+      position: relative;
+      display: flex; flex-direction: column;
+      padding: 28px 28px 24px;
+      background: #0A0A0A;
+      color: #FFFFFF;
+      border: 0;
+      border-right: 2px solid #FFFFFF;
+      border-bottom: 2px solid #FFFFFF;
+      border-radius: 0;
       text-align: left;
       font-family: inherit;
       cursor: pointer;
-      color: inherit;
-      border-left: 0; border-right: 0; border-bottom: 0;
-      transition: padding-left 0.22s ease, color 0.18s;
+      transition: background 0.12s, color 0.12s, transform 0.12s steps(2), box-shadow 0.12s;
+      min-height: 280px;
+      box-shadow: 6px 6px 0 #1A1A1A;
     }
-    .nav-links .nav-link:last-child { border-bottom: 1px solid rgba(255,255,255,0.08); }
-    .nav-link:hover { padding-left: 12px; color: #6EA8FF; }
-    .nav-link-icon { font-size: 28px; width: 44px; flex-shrink: 0; text-align: center; }
-    .nav-link-body { flex: 1; }
-    .nav-link-name { font-size: 28px; font-weight: 700; line-height: 1.2; }
-    .nav-link-desc { font-size: 13px; color: #6B7591; margin-top: 4px; }
-    .nav-link:hover .nav-link-desc { color: #8FA3C7; }
-    .nav-link-arrow { font-size: 22px; opacity: 0.4; transition: transform 0.2s, opacity 0.2s; }
-    .nav-link:hover .nav-link-arrow { transform: translateX(6px); opacity: 1; }
+    .nav-card:hover {
+      background: #FFFFFF;
+      color: #000000;
+      transform: translate(2px, 2px);
+      box-shadow: 4px 4px 0 #FFFFFF;
+    }
+    /* hover 反色加深：所有子元素统一变白 */
+    .nav-card:hover .nav-card-tag { color: #000000 !important; }
+    .nav-card:hover .nav-card-desc { color: #1A1A1A !important; }
+    .nav-card:hover .nav-card-cta { color: #000000 !important; }
+    .nav-card:hover .nav-card-no { color: #000000 !important; }
+    .nav-card:hover .nav-card-name { color: #000000 !important; }
+    .nav-card:hover .nav-card-status { background: #000000; color: #FFFFFF; border-color: #000000; }
+    .nav-card:hover .nav-card-status::before { background: #FFFFFF; }
+    .nav-card:hover .nav-card-arrow { background: #000000; color: #FFFFFF; border-color: #000000; }
+    .nav-card:hover .nav-card-meta { border-color: #000000; }
+    .nav-card:hover .nav-card-meta .meta-chip { background: #FFFFFF; color: #000000; border-color: #000000; }
+
+    .nav-card-no {
+      position: absolute;
+      top: 22px; right: 28px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      color: #888888;
+      font-family: "VT323","Press Start 2P","Monaco","Menlo",monospace;
+    }
+    .nav-card-head {
+      display: flex; align-items: center; gap: 14px;
+      margin-bottom: 22px;
+    }
+    .nav-card-icon {
+      width: 52px; height: 52px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 26px;
+      border-radius: 0;
+      background: #FFFFFF;
+      color: #000000;
+      border: 1px solid #FFFFFF;
+      padding: 10px;  /* SVG 内边距，让 icon 不撑满 */
+    }
+    .nav-card-icon svg { width: 100%; height: 100%; display: block; }
+    .nav-card:hover .nav-card-icon { background: #000000; color: #FFFFFF; border-color: #000000; }
+    .nav-card-status {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 12px; letter-spacing: 1.2px; font-weight: 700;
+      color: #FFFFFF;
+      padding: 4px 10px;
+      border: 1px solid #FFFFFF;
+      background: #1A1A1A;
+      font-family: "Press Start 2P","Monaco","Menlo",monospace;
+      border-radius: 0;
+    }
+    .nav-card-status::before {
+      content: ''; width: 6px; height: 6px;
+      background: #FFFFFF;
+      animation: nav-pulse 1.2s steps(2) infinite;
+    }
+    @keyframes nav-pulse { 0%,49%{opacity:1} 50%,100%{opacity:0.2} }
+
+    .nav-card-name {
+      font-family: "Press Start 2P", "VT323", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", monospace;
+      font-size: 22px; font-weight: 900; line-height: 1.2;
+      color: #FFFFFF;
+      margin-bottom: 8px;
+      letter-spacing: 0.5px;
+    }
+    .nav-card-tag {
+      font-family: "Press Start 2P", "VT323", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", monospace;
+      font-size: 12px; letter-spacing: 1.5px; font-weight: 400;
+      color: #AAAAAA;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+    .nav-card-desc {
+      font-family: "Press Start 2P", "VT323", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", monospace;
+      font-size: 13px; line-height: 1.65;
+      color: #888888;
+      margin-bottom: 18px;
+      flex: 1;
+      font-weight: 400;
+    }
+    .nav-card-meta {
+      display: flex; gap: 8px; flex-wrap: wrap;
+      padding: 12px 0;
+      border-top: 1px solid #2A2A2A;
+      border-bottom: 1px solid #2A2A2A;
+      margin-bottom: 16px;
+    }
+    .nav-card:hover .nav-card-meta { border-color: #000000; }
+    .nav-card-meta .meta-chip {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-family: "Press Start 2P", "VT323", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", monospace;
+      font-size: 12px; font-weight: 500;
+      color: #FFFFFF;
+      padding: 4px 10px;
+      background: #1A1A1A;
+      border: 1px solid #2A2A2A;
+      border-radius: 0;
+      transition: background 0.12s, color 0.12s, border-color 0.12s;
+    }
+    .nav-card-foot {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-top: auto;
+    }
+    .nav-card-cta {
+      font-family: var(--font-pixel);
+      font-size: 10px; font-weight: 400; letter-spacing: 1.5px;
+      color: #888888;
+      text-transform: uppercase;
+    }
+    .nav-card-arrow {
+      width: 36px; height: 36px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px; font-weight: 700;
+      color: #FFFFFF;
+      border: 1px solid #FFFFFF;
+      border-radius: 0;
+      background: #1A1A1A;
+      transition: background 0.12s, color 0.12s, border-color 0.12s, transform 0.12s;
+    }
+
+    /* ---------- 像素风：移除彩色主题，全部黑/灰/白 ---------- */
+
     .nav-footer {
       display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px;
-      padding-top: 28px; border-top: 1px solid rgba(255,255,255,0.08);
-      font-size: 12.5px; color: #6B7591;
+      padding: 24px 0 0;
+      border-top: 1px solid #FFFFFF;
+      font-size: 11px; color: #888888;
+      letter-spacing: 1.2px;
     }
-    .nav-footer .nf-label { display: block; font-size: 10.5px; letter-spacing: 1px; color: #4B5570; margin-bottom: 6px; }
-    .nav-footer .nf-value { color: #C9D1E0; font-family: "Monaco","Menlo",monospace; }
-    .nav-footer .nf-link { color: #6EA8FF; cursor: pointer; }
+    .nav-footer .nf-label { display: block; font-size: 10px; letter-spacing: 1.5px; color: #555555; margin-bottom: 8px; font-family: "Monaco","Menlo",monospace; text-transform: uppercase; }
+    .nav-footer .nf-value { color: #FFFFFF; font-family: "Monaco","Menlo",monospace; }
+    .nav-footer .nf-link { color: #FFFFFF; cursor: pointer; }
     .nav-footer .nf-link:hover { text-decoration: underline; }
-    @media (max-width: 720px) {
-      .nav-page { padding: 40px 28px 48px; }
-      .nav-title { font-size: 44px; }
+
+    @media (max-width: 860px) {
+      .nav-inner { padding: 0 24px; }
+      .nav-title { font-size: 48px; }
       .nav-sub { font-size: 18px; }
-      .nav-link-name { font-size: 22px; }
+      .nav-triple { grid-template-columns: 1fr; gap: 12px; }
+      .nav-triple .nt-item:not(:first-child) { border-left: 0; border-top: 1px solid #2A2A2A; padding-left: 0; padding-top: 12px; }
+      .nav-grid { grid-template-columns: 1fr; }
+      .nav-card { min-height: auto; }
+      .nav-card-name { font-size: 32px; }
       .nav-footer { grid-template-columns: 1fr; gap: 18px; }
+      .nav-topbar { grid-template-columns: 1fr; gap: 8px; padding: 12px 0; }
+      .nav-topbar .nt-center { text-align: left; }
+    }
+    @media (max-width: 480px) {
+      .nav-card-meta .meta-chip { font-size: 10px; padding: 3px 7px; }
     }
 
     /* ============ Floating Bubble Sidebar ============ */
@@ -1517,62 +1807,62 @@
       z-index: 50;
       will-change: transform;
       overflow-y: auto;
+      background: linear-gradient(180deg, var(--sidebar-bg) 0%, var(--sidebar-bg-2) 100%);
+      backdrop-filter: blur(28px) saturate(140%);
+      -webkit-backdrop-filter: blur(28px) saturate(140%);
+      border-right: 1px solid rgba(255,255,255,0.10);
       /* Firefox */
       scrollbar-width: thin;
-      scrollbar-color: rgba(0,110,255,0.55) transparent;
+      scrollbar-color: rgba(255,255,255,0.35) transparent;
     }
-    /* 科技感自定义滚动条：细、品牌蓝渐变、圆角、内发光 */
-    .sidebar::-webkit-scrollbar { width: 6px; height: 6px; }
+    /* 磨砂风滚动条：细、白灰半透明 */
+    .sidebar::-webkit-scrollbar { width: 4px; height: 4px; }
     .sidebar::-webkit-scrollbar-track { background: transparent; }
     .sidebar::-webkit-scrollbar-thumb {
-      background: linear-gradient(180deg, rgba(0,110,255,0.35) 0%, rgba(0,82,217,0.6) 100%);
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.05);
-      box-shadow: inset 0 0 3px rgba(0,110,255,0.4);
+      background: rgba(255,255,255,0.25);
+      border-radius: 0;
+      border: 1px solid rgba(0,0,0,0.4);
     }
     .sidebar::-webkit-scrollbar-thumb:hover {
-      background: linear-gradient(180deg, rgba(0,110,255,0.75) 0%, rgba(0,82,217,0.95) 100%);
-      box-shadow: 0 0 8px rgba(0,110,255,0.65), inset 0 0 3px rgba(0,110,255,0.6);
-    }
-    .sidebar::-webkit-scrollbar-thumb:active {
-      background: linear-gradient(180deg, #006EFF 0%, #0052D9 100%);
-      box-shadow: 0 0 12px rgba(0,110,255,0.85);
+      background: rgba(255,255,255,0.55);
     }
     .sidebar::-webkit-scrollbar-button { display: none; height: 0; width: 0; }
     .sidebar::-webkit-scrollbar-corner { background: transparent; }
     .app-shell:not(.collapsed) .sidebar {
       transform: translateX(0);
-      box-shadow: 6px 0 28px rgba(0,0,0,0.38);
+      box-shadow: 6px 0 28px rgba(0,0,0,0.55);
     }
     .app-shell.collapsed .sidebar { transform: translateX(-100%); }
     .main-content { width: 100%; min-height: 100vh; }
     .jump-bar { left: 0 !important; }
     @media (max-width: 900px) { .jump-bar { left: 0 !important; } }
 
-    /* 气泡按钮：固定左边缘居中，展开时贴侧边栏右侧 */
+    /* 气泡按钮：固定左边缘居中，磨砂黑灰色调，展开时贴侧边栏右侧 */
     .sidebar-toggle {
       position: fixed; top: 50%; left: 12px;
       transform: translateY(-50%);
       width: 32px; height: 60px;
       display: grid; place-items: center;
-      border: 1px solid rgba(255,255,255,0.22);
-      border-radius: 16px;
-      background: var(--accent);
+      border: 1px solid rgba(255,255,255,0.45);
+      border-radius: 0;
+      background: rgba(15,15,15,0.78);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
       color: #fff;
       cursor: pointer; font-size: 15px; line-height: 1;
       font-family: inherit;
       z-index: 60;
-      box-shadow: 0 4px 14px rgba(0,110,255,0.4);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.45);
       transition: left 0.28s ease, background 0.15s, color 0.15s, border-color 0.15s;
     }
-    .sidebar-toggle:hover { background: var(--accent-dark); }
+    .sidebar-toggle:hover { background: rgba(40,40,40,0.85); border-color: #FFFFFF; }
     .app-shell:not(.collapsed) .sidebar-toggle {
       left: 252px;
-      background: #1F2937;
-      border-color: var(--sidebar-border);
-      box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+      background: rgba(15,15,15,0.78);
+      border-color: rgba(255,255,255,0.35);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.45);
     }
-    .app-shell:not(.collapsed) .sidebar-toggle:hover { background: #374151; }
+    .app-shell:not(.collapsed) .sidebar-toggle:hover { background: rgba(40,40,40,0.85); }
     @media (max-width: 900px) {
       .app-shell:not(.collapsed) .sidebar-toggle { left: 252px; }
     }
@@ -1870,24 +2160,30 @@
     .dm-key-list-item .c { font-size: 10px; color: var(--text-tertiary); flex-shrink: 0; }
 
   </style>
-  <!-- 目标组织模块样式 -->
+  <!-- 目标公司模块样式 -->
   <link rel="stylesheet" href="./target-company/target-company.css">
 </head>
 <body>
   <!-- 侧边栏折叠按钮：固定定位，保证折叠后依然可点击展开 -->
   <button class="sidebar-toggle" id="sidebar-toggle" type="button" title="折叠侧边栏" aria-label="折叠侧边栏">《</button>
 
-  <!-- 主页面底部跳转栏 -->
+  <!-- 主页面底部跳转栏：左跳转 / 中 HOME / 右猜你想用 -->
   <div class="jump-bar" id="jump-bar">
     <div class="jump-row jump-row-main">
-      <button class="jump-btn" data-jump="okr" type="button">📁 OKR系统</button>
-      <button class="jump-btn" data-jump="crm" type="button">📇 CRM系统</button>
-      <button class="jump-btn" data-jump="tools" type="button">🧰 招聘工具系统</button>
+      <span class="jump-section-label">JUMP</span>
+      <button class="jump-btn" data-jump="okr" type="button">📁 OKR system</button>
+      <button class="jump-btn" data-jump="crm" type="button">📇 CRM system</button>
+      <button class="jump-btn" data-jump="tools" type="button">🧰 Tool system</button>
     </div>
+    <button class="jump-home" id="jump-home-btn" type="button" title="回到导航栏">
+      <span class="jump-home-icon">⌂</span>
+      <span class="jump-home-label">HOME</span>
+    </button>
     <div class="jump-row jump-row-guess">
+      <span class="jump-section-label">GUESS</span>
       <span class="jump-guess-label">猜你想用</span>
       <a class="jump-link" data-jump="tpl" role="button" tabindex="0">话术模板</a>
-      <a class="jump-link" data-jump="target" role="button" tabindex="0">目标组织</a>
+      <a class="jump-link" data-jump="target" role="button" tabindex="0">目标公司</a>
       <a class="jump-link" data-jump="talent" role="button" tabindex="0">🗂 专项人才储备</a>
     </div>
   </div>
@@ -1904,11 +2200,11 @@
       </div>
 
       <div class="folder-tree" id="folder-tree">
-        <!-- ===== OKR 系统 ===== -->
+        <!-- ===== OKR system ===== -->
         <div class="crm-folder">
           <div class="crm-folder-title">
             <span>🎯</span>
-            <span>OKR 系统</span>
+            <span>OKR system</span>
           </div>
 
         <!-- Root folder: ToDo List -->
@@ -1965,8 +2261,8 @@
               <span class="sub-folder-count" id="opensource-count">2</span>
             </div>
             <div class="sub-folder-content" id="opensource-list">
-              <div class="period-item" data-type="target-company" data-label="目标组织">
-                <span class="period-label">🎯 目标组织</span>
+              <div class="period-item" data-type="target-company" data-label="目标公司">
+                <span class="period-label">🎯 目标公司</span>
                 <span style="opacity:0.35;font-size:10px;">→</span>
               </div>
               <div class="period-item" data-type="opensource" data-label="业务方向示例" data-url="">
@@ -2027,14 +2323,14 @@
         </div>
       </div>
 
-        </div><!-- /OKR 系统 -->
+        </div><!-- /OKR system -->
 
       <!-- CRM folder -->
       <div class="crm-folder" id="crm-folder">
         <div class="crm-folder-title crm-root-header" data-toggle="crm-folder">
           <span class="arrow">▼</span>
           <span>📁</span>
-          <span>CRM 系统</span>
+          <span>CRM system</span>
         </div>
         <!-- 日常运营看板 -->
         <div class="root-folder" id="root-tracking" data-key="tracking">
@@ -2107,8 +2403,8 @@
               <span class="period-label">人脉运营表格</span>
               <span style="opacity:0.35;font-size:10px;">↗</span>
             </div>
-            <div class="period-item" data-type="wechat-contacts" data-label="微信人脉">
-              <span class="period-label">微信人脉</span>
+            <div class="period-item" data-type="wechat-contacts" data-label="人脉档案">
+              <span class="period-label">人脉档案</span>
             </div>
           </div>
         </div>
@@ -2131,12 +2427,12 @@
 
       </div>
 
-      <!-- 招聘工具系统 -->
+      <!-- Tool system -->
       <div class="crm-folder" id="tools-folder">
         <div class="crm-folder-title crm-root-header" data-toggle="tools-folder">
           <span class="arrow">▼</span>
           <span>🧰</span>
-          <span>招聘工具系统</span>
+          <span>Tool system</span>
         </div>
         <!-- 话术模板 -->
         <div class="root-folder crm-root" id="root-template" data-key="template">
@@ -2152,12 +2448,12 @@
           <div class="sub-folder-content" id="template-list"></div>
         </div>
 
-        <!-- 目标组织地图 -->
+        <!-- 友商人才地图 -->
         <div class="root-folder crm-root" id="root-competitor-map">
           <div class="root-folder-header" data-toggle="root-competitor-map">
             <span class="arrow">▼</span>
             <span class="root-folder-icon">🗺</span>
-            <span>目标组织地图</span>
+            <span>友商人才地图</span>
             <span class="root-folder-count" id="competitor-map-count">7</span>
           </div>
           <div class="sub-folder-content" id="competitor-map-list">
@@ -2197,7 +2493,7 @@
       <div class="crm-folder" id="dm-folder">
         <div class="crm-folder-title">
           <span>⚙️</span>
-          <span>数据管理</span>
+          <span>Data system</span>
         </div>
         <button class="dm-entry-btn" id="dm-open-btn" type="button">
           <span class="dm-entry-icon">🗄</span>
@@ -2215,7 +2511,7 @@
   <!-- Toast -->
   <div class="toast" id="toast"></div>
 
-  <!-- 目标组织模块（数据层 → 树工具 → 组件 → 入口，需在主 IIFE 之前加载） -->
+  <!-- 目标公司模块（数据层 → 树工具 → 组件 → 入口，需在主 IIFE 之前加载） -->
   <script src="./target-company/data-store.js"></script>
   <script src="./target-company/tree-utils.js"></script>
   <script src="./target-company/progress-bar.js"></script>
@@ -2642,17 +2938,17 @@
     function jumpTo(key) {
       switch (key) {
         case 'okr': {
-          // 跳转 OKR 系统导览页
+          // 跳转 OKR system导览页
           selectPeriod('system-overview', 'okr');
           break;
         }
         case 'crm': {
-          // 跳转 CRM 系统导览页
+          // 跳转 CRM system导览页
           selectPeriod('system-overview', 'crm');
           break;
         }
         case 'tools': {
-          // 跳转 招聘工具系统 导览页
+          // 跳转 Tool system 导览页
           selectPeriod('system-overview', 'tools');
           break;
         }
@@ -2665,8 +2961,8 @@
           break;
         }
         case 'target': {
-          // 猜你想用：直达目标组织
-          selectPeriod('target-company', '目标组织');
+          // 猜你想用：直达目标公司
+          selectPeriod('target-company', '目标公司');
           break;
         }
         case 'talent': {
@@ -2694,30 +2990,38 @@
     }
 
     // ============ 系统导览页 ============
+    // 黑白像素风 SVG icon（24x24，stroke=currentColor，自适应颜色）
+    var PIXEL_ICONS = {
+      okr: '<svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter"><rect x="3" y="3" width="18" height="18"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2" fill="currentColor" stroke="none"/><line x1="12" y1="0" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="24"/><line x1="0" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="24" y2="12"/></svg>',
+      crm: '<svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter"><path d="M3 6 L9 6 L11 8 L21 8 L21 20 L3 20 Z"/><line x1="3" y1="11" x2="21" y2="11"/><line x1="7" y1="14" x2="17" y2="14"/><line x1="7" y1="17" x2="14" y2="17"/></svg>',
+      tools: '<svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter"><rect x="3" y="8" width="18" height="12"/><rect x="9" y="4" width="6" height="4"/><line x1="3" y1="13" x2="21" y2="13"/><rect x="10" y="11" width="4" height="4" fill="currentColor" stroke="none"/></svg>',
+      data: '<svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter"><ellipse cx="12" cy="5" rx="9" ry="2"/><line x1="3" y1="5" x2="3" y2="19"/><line x1="21" y1="5" x2="21" y2="19"/><ellipse cx="12" cy="19" rx="9" ry="2"/><path d="M3 12 A 9 2 0 0 0 21 12"/></svg>',
+      // 子模块 icon（简化版）
+      todo: '<svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter"><rect x="3" y="3" width="18" height="18"/><polyline points="7 12 11 16 17 8"/></svg>',
+      plan: '<svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter"><rect x="3" y="3" width="18" height="18"/><line x1="7" y1="8" x2="17" y2="8"/><line x1="7" y1="12" x2="17" y2="12"/><line x1="7" y1="16" x2="13" y2="16"/></svg>',
+      map: '<svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter"><polygon points="3 6 9 4 15 6 21 4 21 18 15 20 9 18 3 20"/><line x1="9" y1="4" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="20"/></svg>',
+      target: '<svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg>',
+      contacts: '<svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter"><rect x="3" y="5" width="18" height="14"/><line x1="3" y1="9" x2="21" y2="9"/><circle cx="8" cy="14" r="2"/><line x1="13" y1="13" x2="18" y2="13"/><line x1="13" y1="16" x2="18" y2="16"/></svg>',
+      briefcase: '<svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter"><rect x="3" y="7" width="18" height="13"/><rect x="8" y="4" width="8" height="3"/><line x1="3" y1="12" x2="21" y2="12"/></svg>',
+      board: '<svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter"><rect x="3" y="3" width="18" height="18"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg>',
+      tpl: '<svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter"><rect x="4" y="3" width="16" height="18"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="16" x2="13" y2="16"/></svg>',
+      competitor: '<svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter"><circle cx="7" cy="12" r="4"/><circle cx="17" cy="12" r="4"/></svg>'
+    };
     // 定义每个系统的下级内容（与侧边栏同源，动态读取存储，保证同步）
     var SYSTEM_META = {
-      okr:   { name: 'OKR 系统', icon: '🎯', desc: '规划、复盘与目标管理的总入口：ToDo、周/月/半年规划、开源方向与目标组织。' },
-      crm:   { name: 'CRM 系统', icon: '📁', desc: '候选人运营与日常追踪看板：周/月/半年运营、人脉运营表格、微信人脉与专项人才储备。' },
-      tools: { name: '招聘工具系统', icon: '🧰', desc: '话术模板与竞品情报工具箱：可复用触达话术、目标组织地图。' }
+      okr:   { name: 'OKR system', icon: PIXEL_ICONS.okr, desc: '规划、复盘与目标管理的总入口：ToDo、周/月/半年规划、开源方向与目标公司。' },
+      crm:   { name: 'CRM system', icon: PIXEL_ICONS.crm, desc: '候选人运营追踪：周/月/半年运营、人脉档案、专项人才储备。' },
+      tools: { name: 'Tool system', icon: PIXEL_ICONS.tools, desc: '话术模板与竞品情报工具箱：可复用触达话术、友商人才地图。' }
     };
-    function loadTargetOrgNames() {
-      try {
-        var raw = localStorage.getItem(STORAGE_PREFIX + 'target-org-names');
-        var list = raw ? JSON.parse(raw) : null;
-        if (Array.isArray(list) && list.length) return list;
-      } catch (e) {}
-      return ['目标组织 A', '目标组织 B', '目标组织 C'];
-    }
-
     function getSystemNav(key) {
       if (key === 'okr') {
         return [
           {
-            title: 'ToDo List', icon: '✅',
+            title: 'ToDo List', icon: PIXEL_ICONS.todo,
             items: loadTodoList().map(function (l) { return { name: l, type: 'todo', label: l }; })
           },
           {
-            title: '规划与复盘', icon: '📁',
+            title: '规划与复盘', icon: PIXEL_ICONS.plan,
             items: [].concat(
               loadList('weekly').map(function (l) { return { name: l, type: 'weekly', label: l }; }),
               loadList('monthly').map(function (l) { return { name: l, type: 'monthly', label: l }; }),
@@ -2725,10 +3029,10 @@
             )
           },
           {
-            title: '开源方向', icon: '🗺',
+            title: '开源方向', icon: PIXEL_ICONS.map,
             items: [
-              { name: '🎯 目标组织', type: 'target-company', label: '目标组织' },
-              { name: '💼 业务方向示例', type: 'opensource', label: '业务方向示例', url: '' }
+              { name: '目标公司', type: 'target-company', label: '目标公司' },
+              { name: '业务方向示例', type: 'opensource', label: '业务方向示例', url: '' }
             ]
           }
         ];
@@ -2742,7 +3046,7 @@
         } catch (e) {}
         return [
           {
-            title: '日常运营看板', icon: '📋',
+            title: '日常运营看板', icon: PIXEL_ICONS.board,
             items: [].concat(
               loadList('track-weekly').map(function (l) { return { name: l, type: 'track-weekly', label: l }; }),
               loadList('track-monthly').map(function (l) { return { name: l, type: 'track-monthly', label: l }; }),
@@ -2750,32 +3054,40 @@
             )
           },
           {
-            title: '人脉档案', icon: '📇',
+            title: '人脉档案', icon: PIXEL_ICONS.contacts,
             items: [
               { name: '人脉运营表格', type: 'mingdan', label: '人脉运营表格' },
-              { name: '微信人脉', type: 'wechat-contacts', label: '微信人脉' }
+              { name: '人脉档案', type: 'wechat-contacts', label: '人脉档案' }
             ]
           },
           {
-            title: '专项人才储备', icon: '🎯',
+            title: '专项人才储备', icon: PIXEL_ICONS.target,
             items: [
-              { name: '🗂 人才储备看板（' + trProjectsCount + ' 个项目）', type: 'talent-reserve', label: '人才储备看板' }
+              { name: '人才储备看板（' + trProjectsCount + ' 个项目）', type: 'talent-reserve', label: '人才储备看板' }
             ]
           }
         ];
       }
       if (key === 'tools') {
         var tpls = (loadTplStore().templates) || [];
-        var competitors = loadTargetOrgNames();
-        var compUrls = {};
+        var competitors = ['目标组织 A', '目标组织 B', '目标组织 C', '目标组织 D', '目标组织 E', '目标组织 F', '目标组织 G'];
+        var compUrls = {
+          '目标组织 A': '',
+          '目标组织 B': '',
+          '目标组织 C': '',
+          '目标组织 D': '',
+          '目标组织 E': '',
+          '目标组织 F': '',
+          '目标组织 G': ''
+        };
         return [
           {
-            title: '话术模板', icon: '💬',
+            title: '话术模板', icon: PIXEL_ICONS.tpl,
             items: tpls.map(function (t) { return { name: t.name || '未命名模板', type: 'template', label: t.id }; })
           },
           {
-            title: '目标组织地图', icon: '🗺',
-            items: competitors.map(function (c) { return { name: c, type: 'competitor', label: c, url: compUrls[c] || '' }; })
+            title: '友商人才地图', icon: PIXEL_ICONS.competitor,
+            items: competitors.map(function (c) { return { name: c, type: 'competitor', label: c, url: compUrls[c] }; })
           }
         ];
       }
@@ -2783,13 +3095,11 @@
     }
 
     function renderSystemOverview(key, main) {
-      var meta = SYSTEM_META[key] || { name: key, icon: '📁', desc: '' };
+      var meta = SYSTEM_META[key] || { name: key, icon: PIXEL_ICONS.crm, desc: '' };
       var nav = getSystemNav(key);
-      // CRM 系统走品牌蓝主题（深色渐变 hero + 白色大按钮 + hover 变蓝填充）
-      var isAccentTheme = (key === 'crm');
-      var pageCls = 'overview-page' + (isAccentTheme ? ' ov-tb' : '');
-      var html = '<div class="' + pageCls + '">';
-      html += '<div class="overview-hero' + (isAccentTheme ? ' ov-tb-hero' : '') + '">';
+      // 统一像素风黑白灰（v8 起不再走品牌蓝特殊样式）
+      var html = '<div class="overview-page">';
+      html += '<div class="overview-hero">';
       html += '<div class="overview-hero-icon">' + meta.icon + '</div>';
       html += '<div><h1 class="overview-title">' + esc(meta.name) + '</h1>';
       html += '<p class="overview-sub">' + esc(meta.desc) + '</p></div>';
@@ -2799,7 +3109,7 @@
         html += '<div class="overview-empty">暂无内容</div>';
       }
       nav.forEach(function (group) {
-        html += '<section class="overview-group' + (isAccentTheme ? ' ov-tb-group' : '') + '">';
+        html += '<section class="overview-group">';
         html += '<div class="overview-group-head"><span class="overview-group-icon">' + group.icon + '</span>';
         html += '<h2>' + esc(group.title) + '</h2>';
         html += '<span class="overview-group-count">' + group.items.length + '</span></div>';
@@ -2810,7 +3120,7 @@
           group.items.forEach(function (it) {
             var attr = 'data-type="' + esc(it.type) + '" data-label="' + esc(it.label) + '"';
             if (it.url) attr += ' data-url="' + esc(it.url) + '"';
-            html += '<button class="overview-card' + (isAccentTheme ? ' ov-tb-card' : '') + '" type="button" ' + attr + '>';
+            html += '<button class="overview-card" type="button" ' + attr + '>';
             html += '<span class="overview-card-name">' + esc(it.name) + '</span>';
             html += '<span class="overview-card-arrow">↗</span>';
             html += '</button>';
@@ -2886,7 +3196,7 @@
         return;
       }
 
-      // 目标组织模块（业务列表 + 业务 Mapping 页）
+      // 目标公司模块（业务列表 + 业务 Mapping 页）
       if (state.selected && state.selected.type === 'target-company') {
         main.style.maxWidth = 'none';
         main.style.padding = '28px 24px 24px';
@@ -2959,7 +3269,7 @@
       main.innerHTML =
         '<div class="page-header">' +
           '<div class="breadcrumb">' +
-            '<span>OKR 系统</span><span>›</span>' +
+            '<span>OKR system</span><span>›</span>' +
             '<span>规划与复盘</span>' +
             '<span>›</span>' +
             '<span>' + esc(meta.name) + '</span>' +
@@ -3280,7 +3590,7 @@
       }
 
       main.innerHTML = '<div class="page-header">' +
-        '<div class="breadcrumb"><span>OKR 系统</span><span>›</span><span>ToDo List</span><span>›</span><span class="crumb-current">' + esc(getTodoRangeLabel(label)) + (isToday ? ' · 今天' : '') + '</span></div>' +
+        '<div class="breadcrumb"><span>OKR system</span><span>›</span><span>ToDo List</span><span>›</span><span class="crumb-current">' + esc(getTodoRangeLabel(label)) + (isToday ? ' · 今天' : '') + '</span></div>' +
         '<div class="todo-save-row"><span class="todo-save-status" id="todo-save-status">✓ 已保存</span></div>' +
         '</div>' +
         '<div class="todo-date-nav">' +
@@ -3435,34 +3745,86 @@
       var weekMap = ['周日','周一','周二','周三','周四','周五','周六'];
       var dWeek = weekMap[now.getDay()];
 
-      // 4 个系统级链接（专项人才储备已归到 CRM 系统下，不再独立顶级入口）
+      // 4 个系统级链接（专项人才储备已归到 CRM system下，不再独立顶级入口）
+      // 像素风 + abgd 兼容：增加 P01-P04 编号，其他数据全部保留（功能不动）
       var links = [
-        { icon: '🎯', name: 'OKR 系统', desc: '规划、复盘与目标管理：周/月/半年规划、ToDo、开源方向与目标组织', action: 'select', target: 'okr' },
-        { icon: '📁', name: 'CRM 系统', desc: '候选人运营与日常追踪：周/月/半年运营、人脉档案、人脉运营表格、专项人才储备', action: 'select', target: 'crm' },
-        { icon: '🧰', name: '招聘工具系统', desc: '话术模板与目标组织地图：按你自己的目标组织与团队维护', action: 'select', target: 'tools' },
-        { icon: '⚙️', name: '数据管理', desc: '本地 + Git 仓库多层备份：快照、修订回滚、事件流、键值清单', action: 'open-dm' }
+        {
+          no: 'P01', icon: PIXEL_ICONS.okr,
+          name: 'OKR system', tag: 'OBJECTIVES · KEY RESULTS',
+          status: 'ACTIVE', desc: '规划、复盘与目标管理：周/月/半年规划、ToDo、开源方向与目标公司',
+          chips: ['📅 周规划', '🌗 半年复盘', '✅ ToDo'],
+          action: 'select', target: 'okr'
+        },
+        {
+          no: 'P02', icon: PIXEL_ICONS.crm,
+          name: 'CRM system', tag: 'CANDIDATE · RELATIONSHIP',
+          status: 'SYNCING', desc: '候选人运营追踪：周/月/半年运营、人脉档案、专项人才储备',
+          chips: ['👥 人脉档案', '📊 运营表格', '🗂 人才储备'],
+          action: 'select', target: 'crm'
+        },
+        {
+          no: 'P03', icon: PIXEL_ICONS.tools,
+          name: 'Tool system', tag: 'SOURCING · TOOLKIT',
+          status: 'READY', desc: '话术模板与友商人才地图：目标组织 A / 目标组织 B / 目标组织 C / 目标组织 D / 目标组织 E / 目标组织 F / 目标组织 G',
+          chips: ['📝 话术模板', '🗺 友商地图', '🎯 目标公司'],
+          action: 'select', target: 'tools'
+        },
+        {
+          no: 'P04', icon: PIXEL_ICONS.data,
+          name: 'Data system', tag: 'DATA · BACKUP CENTER',
+          status: 'BACKUP', desc: '本地 + Git 仓库多层备份：快照、修订回滚、事件流、键值清单',
+          chips: ['💾 快照', '🔄 修订回滚', '☁️ Git 同步'],
+          action: 'open-dm'
+        }
       ];
 
       var html = '<div class="nav-page">';
       html += '<div class="nav-inner">';
-      // ---- 第一行：今日日期（实时更新） + 欢迎语（实时更新）----
-      html += '<div class="nav-date-line" data-live="date">今天是 ' + dStr + ' · ' + dWeek + '</div>';
-      html += '<h1 class="nav-title"><span class="nav-greet-text" data-live="greet">' + greet + '</span>，使用者 <span class="nav-waving">👋</span></h1>';
-      html += '<h2 class="nav-sub">招聘与人才运营工作台</h2>';
-      html += '<p class="nav-desc">聚焦重点岗位、目标团队、候选人管道、人才地图、触达话术与复盘节奏。选择下方模块进入正式工作面板；侧边栏为悬浮气泡，点击左边缘呼出。</p>';
 
-      // ---- 4 个大链接 ----
-      html += '<div class="nav-links">';
-      links.forEach(function(l, i) {
-        var attr = 'data-idx="' + i + '" data-action="' + l.action + '"';
+      // ---- 顶部 nav 条（abgd 风格：1px 下划线 + 章节编号 + 标题 + 右侧 GRID） ----
+      html += '<div class="nav-topbar">';
+      html += '<div class="nt-left"><span>MENU</span><span class="nt-sep">|</span><span class="nt-section">01 / INTRO</span></div>';
+      html += '<div class="nt-center">招聘工作台 · TEMPLATE</div>';
+      html += '<div class="nt-right"><span>2026</span><span class="nt-grid">GRID</span></div>';
+      html += '</div>';
+
+      // ---- 标题块（仿 Joshua Kaplan：大字 + 紧贴附属行）----
+      html += '<div class="nav-title-block">';
+      html += '<h1 class="nav-title"><span class="nav-greet-text" data-live="greet">' + greet + '</span>，使用者 <span class="nav-waving">👋</span></h1>';
+      html += '<div class="nav-title-sub" data-live="date">今天是 ' + dStr + ' · ' + dWeek + '</div>';
+      html += '</div>';
+      html += '<h2 class="nav-sub">AI 高端人才寻访操作系统</h2>';
+      html += '<p class="nav-desc">聚焦大模型、多模态、世界模型、强化学习、后训练、AI Agent、Coding Agent、AI Infra、推理系统、GPU、CUDA、Kernel、AI 产品与技术管理者。选择下方模块进入正式工作面板；侧边栏为悬浮气泡，点击左边缘呼出。</p>';
+
+      // ---- abgd 风格三大信息栏（人 / 角色 / 地点） ----
+      html += '<div class="nav-triple">';
+      html += '<div class="nt-item">WORKBENCH USER</div>';
+      html += '<div class="nt-item">TECHNICAL RECRUITER</div>';
+      html += '<div class="nt-item">REMOTE / HYBRID</div>';
+      html += '</div>';
+
+      // ---- 2x2 像素风卡片矩阵（功能完全不动，仅增加 no 编号） ----
+      html += '<div class="nav-grid">';
+      links.forEach(function(l) {
+        var attr = 'class="nav-card" type="button"';
+        attr += ' data-action="' + l.action + '"';
         if (l.target) attr += ' data-target="' + l.target + '"';
-        html += '<button class="nav-link" type="button" ' + attr + '>';
-        html += '<span class="nav-link-icon">' + l.icon + '</span>';
-        html += '<span class="nav-link-body">';
-        html += '<span class="nav-link-name">' + l.name + '</span>';
-        html += '<span class="nav-link-desc">' + l.desc + '</span>';
-        html += '</span>';
-        html += '<span class="nav-link-arrow">→</span>';
+        html += '<button ' + attr + '>';
+        html += '<div class="nav-card-no">' + l.no + '</div>';
+        html += '<div class="nav-card-head">';
+        html += '<div class="nav-card-icon">' + l.icon + '</div>';
+        html += '<div class="nav-card-status">' + l.status + '</div>';
+        html += '</div>';
+        html += '<div class="nav-card-name">' + l.name + '</div>';
+        html += '<div class="nav-card-tag">' + l.tag + '</div>';
+        html += '<div class="nav-card-desc">' + l.desc + '</div>';
+        html += '<div class="nav-card-meta">';
+        l.chips.forEach(function(c) { html += '<span class="meta-chip">' + c + '</span>'; });
+        html += '</div>';
+        html += '<div class="nav-card-foot">';
+        html += '<span class="nav-card-cta">ENTER MODULE</span>';
+        html += '<span class="nav-card-arrow">→</span>';
+        html += '</div>';
         html += '</button>';
       });
       html += '</div>';
@@ -3471,7 +3833,7 @@
       main.innerHTML = html;
 
       // ---- 事件绑定 ----
-      Array.prototype.forEach.call(main.querySelectorAll('.nav-link'), function(btn) {
+      Array.prototype.forEach.call(main.querySelectorAll('.nav-card'), function(btn) {
         btn.addEventListener('click', function() {
           var action = btn.getAttribute('data-action');
           if (action === 'open-talent') { window.open('./talent-reserve.html', '_blank'); return; }
@@ -3674,7 +4036,7 @@
       if (tog) { e.stopPropagation(); var id = tog.dataset.toggle; state.collapsed[id] = !state.collapsed[id]; saveCollapsedState(state.collapsed); renderSidebar(); return; }
     });
 
-    // ============ 目标组织地图 侧边栏事件 ============
+    // ============ 友商人才地图 侧边栏事件 ============
     document.getElementById('root-competitor-map').addEventListener('click', function(e) {
       var t = e.target;
       var item = t.closest('.competitor-link');
@@ -3697,7 +4059,7 @@
           return;
         }
         if (item.dataset.type === 'wechat-contacts') {
-          selectPeriod('wechat-contacts', '微信人脉');
+          selectPeriod('wechat-contacts', '人脉档案');
           return;
         }
       }
@@ -3781,7 +4143,7 @@
     // ============ 话术模板 ============
     var TPL_KEY = STORAGE_PREFIX + 'tpl3';
     var TPL_SCENES = {
-      wechat: { icon: '💚', name: '微信' },
+      wechat: { icon: '💚', name: '即时沟通' },
       greet:  { icon: '👋', name: '打招呼' },
       email:  { icon: '✉️', name: '邮件' }
     };
@@ -3789,8 +4151,8 @@
     function loadTplStore() {
       try { var d = JSON.parse(localStorage.getItem(TPL_KEY)); if (d && Array.isArray(d.templates)) return d; } catch (e) {}
       var seed = { templates: [
-        { id: 'tpl-wb', name: 'Agent 工作台', scenes: blankScenes() },
-        { id: 'tpl-hy', name: 'For 目标岗位模板', scenes: blankScenes() }
+        { id: 'tpl-wb', name: '通用 Agent 工作台', scenes: blankScenes() },
+        { id: 'tpl-hy', name: '业务方向 B 模板', scenes: blankScenes() }
       ] };
       localStorage.setItem(TPL_KEY, JSON.stringify(seed));
       return seed;
@@ -3804,15 +4166,15 @@
 
     function copyText(text, msg) { msg = msg || '已复制'; function fb() { var t = document.createElement('textarea'); t.value = text; document.body.appendChild(t); t.select(); try { document.execCommand('copy'); showToast(msg); } catch (e) {} document.body.removeChild(t); } if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(text).then(function(){ showToast(msg); }, fb); } else { fb(); } }
     function noteBlock(f, lb, ph, v) { return '<div class="note-block"><div class="note-head"><span class="note-label">' + esc(lb) + '</span><button class="note-copy" data-cp="' + f + '">📋 复制内容</button></div><textarea class="note-area" data-note="' + f + '" placeholder="' + esc(ph) + '">' + esc(v || '') + '</textarea></div>'; }
-    function tplBreadcrumb(tplName, sub) { return '<div class="page-header"><div class="breadcrumb"><span>招聘工具系统</span><span>›</span><span>话术模板</span><span>›</span>' + (sub ? '<a href="#" class="crumb-link" id="tpl-home-link">' + esc(tplName) + '</a><span>›</span><span class="crumb-current">' + esc(sub) + '</span>' : '<span class="crumb-current">' + esc(tplName) + '</span>') + '</div></div>'; }
+    function tplBreadcrumb(tplName, sub) { return '<div class="page-header"><div class="breadcrumb"><span>Tool system</span><span>›</span><span>话术模板</span><span>›</span>' + (sub ? '<a href="#" class="crumb-link" id="tpl-home-link">' + esc(tplName) + '</a><span>›</span><span class="crumb-current">' + esc(sub) + '</span>' : '<span class="crumb-current">' + esc(tplName) + '</span>') + '</div></div>'; }
     function renderSceneNav(active) { var b = Object.keys(TPL_SCENES).map(function(k){ var s = TPL_SCENES[k]; return '<button class="tpl-nav-btn' + (k === active ? ' active' : '') + '" data-scene="' + k + '"><span class="tpl-nav-icon">' + s.icon + '</span><span class="tpl-nav-name">' + s.name + '</span></button>'; }).join(''); return '<div class="tpl-scene-nav">' + b + '</div>'; }
-    function renderVarBar() { var v = window._tplVars || {}; return '<div class="tpl-var-bar"><input type="text" class="tpl-var" data-var="name" placeholder="名字" value="' + esc(v.name || '') + '"><input type="text" class="tpl-var" data-var="company" placeholder="组织" value="' + esc(v.company || '') + '"><input type="text" class="tpl-var" data-var="field" placeholder="领域" value="' + esc(v.field || '') + '"><button class="tpl-var-fill">🔄 填入变量</button></div>'; }
-    function bindVarBar(m) { var btn = m.querySelector('.tpl-var-fill'); if (!btn) return; btn.addEventListener('click', function() { var name = (m.querySelector('.tpl-var[data-var=name]') || {}).value || ''; var company = (m.querySelector('.tpl-var[data-var=company]') || {}).value || ''; var field = (m.querySelector('.tpl-var[data-var=field]') || {}).value || ''; window._tplVars = { name: name, company: company, field: field }; if (!name && !company && !field) { showToast('请先填写至少一个变量'); return; } var rep = 0, app = 0; m.querySelectorAll('.note-area').forEach(function(ta) { var old = ta.value; ta.value = ta.value.replace(/\{name\}/g, name).replace(/\{company\}/g, company).replace(/\{field\}/g, field); if (ta.value !== old) { rep++; } else { var parts = []; if (name) parts.push('名字：' + name); if (company) parts.push('组织：' + company); if (field) parts.push('领域：' + field); if (parts.length > 0) { ta.value = ta.value + (ta.value ? '\n\n---\n' : '') + parts.join('\n'); app++; } } ta.dispatchEvent(new Event('input', { bubbles: true })); }); var msg = ''; if (rep > 0) msg += rep + ' 个便利贴已替换'; if (app > 0) msg += (msg ? '、' : '') + app + ' 个直接追加'; showToast(msg || '已填入'); }); }
+    function renderVarBar() { var v = window._tplVars || {}; return '<div class="tpl-var-bar"><input type="text" class="tpl-var" data-var="name" placeholder="名字" value="' + esc(v.name || '') + '"><input type="text" class="tpl-var" data-var="company" placeholder="公司" value="' + esc(v.company || '') + '"><input type="text" class="tpl-var" data-var="field" placeholder="领域" value="' + esc(v.field || '') + '"><button class="tpl-var-fill">🔄 填入变量</button></div>'; }
+    function bindVarBar(m) { var btn = m.querySelector('.tpl-var-fill'); if (!btn) return; btn.addEventListener('click', function() { var name = (m.querySelector('.tpl-var[data-var=name]') || {}).value || ''; var company = (m.querySelector('.tpl-var[data-var=company]') || {}).value || ''; var field = (m.querySelector('.tpl-var[data-var=field]') || {}).value || ''; window._tplVars = { name: name, company: company, field: field }; if (!name && !company && !field) { showToast('请先填写至少一个变量'); return; } var rep = 0, app = 0; m.querySelectorAll('.note-area').forEach(function(ta) { var old = ta.value; ta.value = ta.value.replace(/\{name\}/g, name).replace(/\{company\}/g, company).replace(/\{field\}/g, field); if (ta.value !== old) { rep++; } else { var parts = []; if (name) parts.push('名字：' + name); if (company) parts.push('公司：' + company); if (field) parts.push('领域：' + field); if (parts.length > 0) { ta.value = ta.value + (ta.value ? '\n\n---\n' : '') + parts.join('\n'); app++; } } ta.dispatchEvent(new Event('input', { bubbles: true })); }); var msg = ''; if (rep > 0) msg += rep + ' 个便利贴已替换'; if (app > 0) msg += (msg ? '、' : '') + app + ' 个直接追加'; showToast(msg || '已填入'); }); }
 
     var _tplScene = null;
     function renderTemplateView(label) { var m = document.getElementById('main-content'); var t = getTpl(label); if (!t) { _tplScene = null; return renderEmptyState(m); } if (!t.scenes) t.scenes = blankScenes(); if (!_tplScene) return renderTemplateHome(m, t); if (_tplScene === 'wechat') return renderSceneWechat(m, t); if (_tplScene === 'greet') return renderSceneGreet(m, t); if (_tplScene === 'email') return renderSceneEmail(m, t); return renderTemplateHome(m, t); }
     function renderTemplateHome(m, t) { var cards = Object.keys(TPL_SCENES).map(function(k){ var s = TPL_SCENES[k]; return '<button class="tpl-scene-card" data-scene="' + k + '"><span class="tpl-scene-icon">' + s.icon + '</span><span class="tpl-scene-name">' + s.name + '</span><span class="tpl-scene-desc">编辑' + s.name + '话术</span></button>'; }).join(''); m.innerHTML = tplBreadcrumb(t.name || '未命名模板') + '<input type="text" class="tpl-name-input" id="tpl-name" value="' + esc(t.name || '') + '" placeholder="模板名称"><p class="date-range" style="color:var(--text-secondary);margin:6px 0 20px">选择场景编辑话术</p><div class="tpl-scene-grid">' + cards + '</div>'; var ni = m.querySelector('#tpl-name'); if (ni) ni.addEventListener('input', function(){ updateTpl(t.id, function(x){ x.name = ni.value; }); renderTplList(); }); m.querySelectorAll('.tpl-scene-card').forEach(function(b){ b.addEventListener('click', function(){ _tplScene = b.dataset.scene; renderMain(); }); }); }
-    function renderSceneWechat(m, t) { var d = t.scenes.wechat || {}; m.innerHTML = tplBreadcrumb(t.name || '未命名模板', '微信') + renderSceneNav('wechat') + '<h2 style="margin-bottom:16px">💚 微信</h2><div class="tpl-scene-view">' + noteBlock('wechat.friend', '好友申请', '例如：你好，我是 XX 组织的招聘负责人…', d.friend) + noteBlock('wechat.intro', '自我介绍', '例如：简单介绍下我们团队…', d.intro) + '</div>' + renderVarBar(); bindTemplateScene(m, t); }
+    function renderSceneWechat(m, t) { var d = t.scenes.wechat || {}; m.innerHTML = tplBreadcrumb(t.name || '未命名模板', '即时沟通') + renderSceneNav('wechat') + '<h2 style="margin-bottom:16px">💚 即时沟通</h2><div class="tpl-scene-view">' + noteBlock('wechat.friend', '好友申请', '例如：你好，我是 XX 公司的招聘负责人…', d.friend) + noteBlock('wechat.intro', '自我介绍', '例如：简单介绍下我们团队…', d.intro) + '</div>' + renderVarBar(); bindTemplateScene(m, t); }
     function renderSceneGreet(m, t) { var d = t.scenes.greet || {}; m.innerHTML = tplBreadcrumb(t.name || '未命名模板', '打招呼') + renderSceneNav('greet') + '<h2 style="margin-bottom:16px">👋 打招呼</h2><p class="date-range" style="color:var(--text-secondary);margin-bottom:12px">LinkedIn 好友申请 / 脉脉打招呼</p><div class="tpl-scene-view">' + noteBlock('greet.body', '打招呼话术', '例如：Hi XXX, I came across your work…', d.body) + '</div>' + renderVarBar(); bindTemplateScene(m, t); }
     function renderSceneEmail(m, t) { var d = t.scenes.email || {}; var titles = Array.isArray(d.titles) ? d.titles : (d.titles ? [d.titles] : ['']); if (titles.length === 0) titles = ['']; var th = titles.map(function(ti, i){ return '<div class="tpl-title-row"><input type="text" class="tpl-mail-title" data-ti="' + i + '" placeholder="邮件标题" value="' + esc(ti || '') + '"><button class="tpl-title-copy" data-ct="' + i + '">📋 复制标题</button>' + (titles.length > 1 ? '<button class="tpl-title-del" data-dt="' + i + '" title="删除">✕</button>' : '') + '</div>'; }).join(''); m.innerHTML = tplBreadcrumb(t.name || '未命名模板', '邮件') + renderSceneNav('email') + '<h2 style="margin-bottom:16px">✉️ 邮件</h2><p class="date-range" style="color:var(--text-secondary);margin-bottom:12px">邮件 / LinkedIn InMail</p><div class="tpl-scene-view"><div class="tpl-title-bar"><div class="tpl-title-actions"><button class="tpl-dashed" id="tpl-add-title">+ 新增标题</button></div>' + th + '</div>' + noteBlock('email.body', '邮件正文', '例如：您好，我是…', d.body) + '</div>' + renderVarBar(); bindTemplateScene(m, t); }
     function bindTemplateScene(m, t) { m.querySelectorAll('.tpl-scene-nav .tpl-nav-btn').forEach(function(b){ b.addEventListener('click', function(){ _tplScene = b.dataset.scene; renderMain(); }); }); bindVarBar(m); var hl = m.querySelector('#tpl-home-link'); if (hl) hl.addEventListener('click', function(e){ e.preventDefault(); _tplScene = null; renderMain(); }); m.querySelectorAll('.note-area').forEach(function(ta){ ta.addEventListener('input', function(){ var p = ta.dataset.note.split('.'); updateTpl(t.id, function(x){ x.scenes[p[0]] = x.scenes[p[0]] || {}; x.scenes[p[0]][p[1]] = ta.value; }); }); }); m.querySelectorAll('.note-copy').forEach(function(b){ b.addEventListener('click', function(){ var ta = m.querySelector('.note-area[data-note="' + b.dataset.cp + '"]'); copyText(ta ? ta.value : '', '已复制内容'); }); }); var ab = m.querySelector('#tpl-add-title'); if (ab) ab.addEventListener('click', function(){ updateTpl(t.id, function(x){ var titles = Array.isArray(x.scenes.email.titles) ? x.scenes.email.titles : ['']; titles.push(''); x.scenes.email.titles = titles; }); renderMain(); }); m.querySelectorAll('.tpl-mail-title').forEach(function(inp){ inp.addEventListener('input', function(){ updateTpl(t.id, function(x){ var titles = Array.isArray(x.scenes.email.titles) ? x.scenes.email.titles.slice() : ['']; titles[parseInt(inp.dataset.ti, 10)] = inp.value; x.scenes.email.titles = titles; }); }); }); m.querySelectorAll('.tpl-title-copy').forEach(function(b){ b.addEventListener('click', function(){ var inp = m.querySelector('.tpl-mail-title[data-ti="' + b.dataset.ct + '"]'); copyText(inp ? inp.value : '', '已复制标题'); }); }); m.querySelectorAll('.tpl-title-del').forEach(function(b){ b.addEventListener('click', function(){ updateTpl(t.id, function(x){ var titles = Array.isArray(x.scenes.email.titles) ? x.scenes.email.titles.slice() : ['']; titles.splice(parseInt(b.dataset.dt, 10), 1); if (titles.length === 0) titles = ['']; x.scenes.email.titles = titles; }); renderMain(); }); }); }
@@ -3826,7 +4188,7 @@
       if (!url) {
         main.innerHTML =
           '<div class="page-header">' +
-            '<div class="breadcrumb"><span>CRM 系统</span><span>›</span><span>人脉运营表格</span></div>' +
+            '<div class="breadcrumb"><span>CRM system</span><span>›</span><span>人脉运营表格</span></div>' +
             '<div class="mingdan-title-row"><h2>人脉运营表格</h2><button class="mingdan-set-link" onclick="promptMingdanUrl()">⚙ 设置链接</button></div>' +
           '</div>' +
           '<div class="empty-state">' +
@@ -3840,9 +4202,9 @@
       var zoomPct = Math.round(zoom * 100);
       main.innerHTML =
         '<div class="page-header">' +
-          '<div class="breadcrumb"><span>CRM 系统</span><span>›</span><span>人脉运营表格</span></div>' +
+          '<div class="breadcrumb"><span>CRM system</span><span>›</span><span>人脉运营表格</span></div>' +
           '<div class="mingdan-title-row"><h2>人脉运营表格</h2><button class="mingdan-set-link" onclick="promptMingdanUrl()">⚙ 设置链接</button></div>' +
-          '<p class="date-range"><span style="font-size:11px;color:var(--text-tertiary);">User 开源规划 & 人脉名单</span></p>' +
+          '<p class="date-range"><span style="font-size:11px;color:var(--text-tertiary);">开源模板 开源规划 & 人脉名单</span></p>' +
           '<div class="mingdan-zoom-bar">' +
             '<span class="zoom-label">缩放</span>' +
             '<button class="zoom-btn" id="mingdan-zoom-out" title="缩小">−</button>' +
@@ -4178,7 +4540,7 @@
       }).join('');
     }
 
-    // ============ 目标组织地图 嵌入式视图 ============
+    // ============ 友商人才地图 嵌入式视图 ============
     function renderCompetitorView(name, url) {
       var main = document.getElementById('main-content');
       main.style.maxWidth = 'none';
@@ -4189,7 +4551,7 @@
       var zoom = getZoom();
       main.innerHTML =
         '<div class="page-header">' +
-          '<div class="breadcrumb"><span>招聘工具系统</span><span>›</span><span>目标组织地图</span><span>›</span><span>' + esc(name) + '</span></div>' +
+          '<div class="breadcrumb"><span>Tool system</span><span>›</span><span>友商人才地图</span><span>›</span><span>' + esc(name) + '</span></div>' +
           '<h2>' + esc(name) + '</h2>' +
           '<div class="mingdan-zoom-bar">' +
             '<span class="zoom-label">缩放</span>' +
@@ -4239,15 +4601,15 @@
       });
     }
 
-    // ============ 微信人脉 待更新页面 ============
+    // ============ 人脉档案 待更新页面 ============
     function renderWechatContactsView() {
       var main = document.getElementById('main-content');
       main.style.maxWidth = '';
       main.style.padding = '';
       main.innerHTML =
         '<div class="page-header">' +
-          '<div class="breadcrumb"><span>CRM 系统</span><span>›</span><span>人脉档案</span><span>›</span><span>微信人脉</span></div>' +
-          '<h2>微信人脉</h2>' +
+          '<div class="breadcrumb"><span>CRM system</span><span>›</span><span>人脉档案</span><span>›</span><span>人脉档案</span></div>' +
+          '<h2>人脉档案</h2>' +
         '</div>' +
         '<div class="empty-state" style="padding:60px 0;">' +
           '<div class="empty-icon">📱</div>' +
@@ -4264,7 +4626,7 @@
       if (!url) {
         main.innerHTML =
           '<div class="page-header">' +
-            '<div class="breadcrumb"><span>OKR 系统</span><span>›</span><span>规划与复盘</span><span>›</span><span>开源方向</span><span>›</span><span>' + esc(name) + '</span></div>' +
+            '<div class="breadcrumb"><span>OKR system</span><span>›</span><span>规划与复盘</span><span>›</span><span>开源方向</span><span>›</span><span>' + esc(name) + '</span></div>' +
             '<h2>' + esc(name) + '</h2>' +
           '</div>' +
           '<div class="empty-state">' +
@@ -4279,7 +4641,7 @@
       var zoom = getZoom();
       main.innerHTML =
         '<div class="page-header">' +
-          '<div class="breadcrumb"><span>OKR 系统</span><span>›</span><span>规划与复盘</span><span>›</span><span>开源方向</span><span>›</span><span>' + esc(name) + '</span></div>' +
+          '<div class="breadcrumb"><span>OKR system</span><span>›</span><span>规划与复盘</span><span>›</span><span>开源方向</span><span>›</span><span>' + esc(name) + '</span></div>' +
           '<h2>' + esc(name) + '</h2>' +
           '<div class="mingdan-zoom-bar">' +
             '<span class="zoom-label">缩放</span>' +
@@ -4409,7 +4771,7 @@
               ((entry.stickyNotes && entry.stickyNotes.length > 0) ? '<span class="sticky-count">' + entry.stickyNotes.length + '</span>' : '') +
             '</button>' +
           '</td>' +
-          '<td><div class="comp-search-wrap"><input type="text" class="comp-search-input" data-track-idx="' + origIdx + '" data-track-field="company" value="' + esc(entry.company || '') + '" placeholder="搜索组织" autocomplete="off"><ul class="comp-search-list">' + compOptions + '</ul></div></td>' +
+          '<td><div class="comp-search-wrap"><input type="text" class="comp-search-input" data-track-idx="' + origIdx + '" data-track-field="company" value="' + esc(entry.company || '') + '" placeholder="搜索公司" autocomplete="off"><ul class="comp-search-list">' + compOptions + '</ul></div></td>' +
           '<td><input type="text" data-track-idx="' + origIdx + '" data-track-field="org1" value="' + esc(entry.org1 || '') + '" placeholder="一级组织"></td>' +
           '<td><input type="text" data-track-idx="' + origIdx + '" data-track-field="org2" value="' + esc(entry.org2 || '') + '" placeholder="二级组织"></td>' +
           '<td><input type="text" data-track-idx="' + origIdx + '" data-track-field="report" value="' + esc(entry.report || '') + '" placeholder="+3/+2/+1"></td>' +
@@ -4428,7 +4790,7 @@
             '<option value="已推荐"' + (entry.progress === '已推荐' ? ' selected' : '') + '>已推荐</option>' +
             '<option value="流程中"' + (entry.progress === '流程中' ? ' selected' : '') + '>流程中</option>' +
           '</select></td>' +
-          '<td><input type="text" data-track-idx="' + origIdx + '" data-track-field="contact" value="' + esc(entry.contact || '') + '" placeholder="手机/微信/邮箱"></td>' +
+          '<td><input type="text" data-track-idx="' + origIdx + '" data-track-field="contact" value="' + esc(entry.contact || '') + '" placeholder="联系方式"></td>' +
           '<td><input type="text" data-track-idx="' + origIdx + '" data-track-field="notes" value="' + esc(entry.notes || '') + '" placeholder="备注信息"></td>' +
           (topic && topic !== 'general' ? '<td><input type="text" data-track-idx="' + origIdx + '" data-track-field="workshop" value="' + esc(entry.workshop || '') + '" placeholder="workshop 链接"></td>' : '') +
           '<td><button class="delete-btn" data-track-delete="' + origIdx + '" title="删除">✕</button></td>' +
@@ -4483,7 +4845,7 @@
                 '<thead><tr>' +
                   '<th style="width:30px"></th>' +
                   '<th style="width:12%">姓名 / 档案</th>' +
-                  '<th style="width:10%">当前组织</th>' +
+                  '<th style="width:10%">目前公司</th>' +
                   '<th style="width:8%">一级组织</th>' +
                   '<th style="width:8%">二级组织</th>' +
                   '<th style="width:7%">直属领导</th>' +
@@ -4555,8 +4917,8 @@
           // Build TSV: headers + rows
           var isKdd = topic && topic !== 'general';
           var headerRow = isKdd
-            ? '姓名\t当前组织\t一级组织\t二级组织\t直属\t线索来源\t当前进度\t联系方式\t备注\tworkshop\t日期: ' + label
-            : '姓名\t当前组织\t一级组织\t二级组织\t直属\t线索来源\t当前进度\t联系方式\t备注\t日期: ' + label;
+            ? '姓名\t目前公司\t一级组织\t二级组织\t直属\t线索来源\t当前进度\t联系方式\t备注\tworkshop\t日期: ' + label
+            : '姓名\t目前公司\t一级组织\t二级组织\t直属\t线索来源\t当前进度\t联系方式\t备注\t日期: ' + label;
           var lines = [headerRow];
           entries.forEach(function(e) {
             var row = [e.name || '', e.company || '', e.org1 || '', e.org2 || '', e.report || '', e.source || '', e.progress || '', e.contact || '', e.notes || ''];
@@ -4695,7 +5057,7 @@
             else { li.style.display = 'none'; }
           });
           if (!hasMatch) {
-            var nm = list.querySelector('.no-match'); if (!nm) { nm = document.createElement('li'); nm.className = 'no-match'; nm.textContent = '无匹配组织'; list.appendChild(nm); }
+            var nm = list.querySelector('.no-match'); if (!nm) { nm = document.createElement('li'); nm.className = 'no-match'; nm.textContent = '无匹配公司'; list.appendChild(nm); }
             nm.style.display = '';
           } else {
             var nm2 = list.querySelector('.no-match'); if (nm2) nm2.style.display = 'none';
@@ -4819,6 +5181,10 @@
     // ============ Init ============
     function init() {
      try {
+      // Set default mingdan URL if not already set
+      if (!getMingdanUrl()) {
+        // Public template: keep online-sheet URL empty until the user sets it.
+      }
       // Migrate old tracking data if exists
       var oldEntries = localStorage.getItem(STORAGE_PREFIX + 'tracking-entries');
       if (oldEntries) {
@@ -4852,8 +5218,6 @@
         addTrackPeriod('track-monthly', 0);
         addTrackPeriod('track-halfyear', 0);
       }
-      state.selected = null;
-      localStorage.removeItem(STORAGE_PREFIX + 'last-selection');
       // 更新专项人才储备项目数
       try {
         var trProjects = JSON.parse(localStorage.getItem('recruiter-workbench-talent-reserve-projects') || '[]');
@@ -4880,7 +5244,7 @@
       // 云端 http/https 访问时默认同源（baseUrl 留空 → 用 window.location.origin）
       // 本地 file:// 访问时默认 localhost:8787
       var isHttp = window.location.protocol === 'http:' || window.location.protocol === 'https:';
-      return { baseUrl: isHttp ? '' : '', token: '', autoSync: false, snapshotBeforeBackup: true };
+      return { baseUrl: '', token: '', autoSync: false, snapshotBeforeBackup: true };
     }
     function loadBackendConfig() {
       try {
@@ -4890,7 +5254,7 @@
         return {
           baseUrl: (c.baseUrl || '').replace(/\/+$/, ''),
           token: c.token || '',
-          autoSync: c.autoSync !== false,
+          autoSync: c.autoSync === true,
           snapshotBeforeBackup: c.snapshotBeforeBackup !== false
         };
       } catch (e) { return defaultBackendConfig(); }
@@ -4909,12 +5273,12 @@
       window.localStorage.setItem(WB_SYNC_STATE_KEY, JSON.stringify(s));
     }
 
+    // ============ 后端 API 封装 ============
     function getWorkbenchActor() {
       try { return localStorage.getItem(STORAGE_PREFIX + 'user-name') || 'local-user'; }
       catch (e) { return 'local-user'; }
     }
 
-    // ============ 后端 API 封装 ============
     var WBAPI = {
       _headers: function() {
         var cfg = loadBackendConfig();
@@ -5193,8 +5557,8 @@
       }
       main.innerHTML =
         '<div class="page-header">' +
-          '<div class="breadcrumb"><span>数据管理</span><span>›</span><span class="crumb-current">备份 / 恢复 / 回滚</span></div>' +
-          '<h2>⚙️ 数据管理</h2>' +
+          '<div class="breadcrumb"><span>Data system</span><span>›</span><span class="crumb-current">备份 / 恢复 / 回滚</span></div>' +
+          '<h2>⚙️ Data system</h2>' +
           '<p class="date-range">本地 localStorage 与后端 zhaopin_xiaomalou 联动 · 数据加密存储于本机后端</p>' +
         '</div>' +
         '<div class="dm-view">' +
@@ -5578,12 +5942,12 @@
 
     // ============ 数据管理入口绑定 ============
     document.getElementById('dm-open-btn').addEventListener('click', function() {
-      state.selected = { type: 'data-manager', label: '数据管理' };
+      state.selected = { type: 'data-manager', label: 'Data system' };
       renderSidebar();
       renderDataManagerView();
     });
 
-    // ============ 招聘工具系统 折叠 handler（tools-folder 是 sidebar 直接子级，不在 folder-tree 内，需独立绑定） ============
+    // ============ Tool system 折叠 handler（tools-folder 是 sidebar 直接子级，不在 folder-tree 内，需独立绑定） ============
     document.getElementById('tools-folder').addEventListener('click', function(e) {
       var tog = e.target.closest('[data-toggle]');
       if (tog) { e.stopPropagation(); var id = tog.dataset.toggle; state.collapsed[id] = !state.collapsed[id]; saveCollapsedState(state.collapsed); renderSidebar(); }
@@ -5598,11 +5962,22 @@
       });
     })();
 
-    // 底部跳转栏：事件委托
+    // 底部跳转栏：事件委托 + HOME 按钮
     (function bindJumpBar() {
       var bar = document.getElementById('jump-bar');
       if (!bar) return;
       bar.addEventListener('click', function(e) {
+        // HOME 按钮：回到导航页
+        var home = e.target.closest('#jump-home-btn');
+        if (home) {
+          e.preventDefault();
+          state.selected = null;
+          localStorage.removeItem(STORAGE_PREFIX + 'last-selection');
+          renderSidebar();
+          renderMain();
+          refreshJumpBar();
+          return;
+        }
         var el = e.target.closest('[data-jump]');
         if (!el) return;
         e.preventDefault();
@@ -5610,6 +5985,16 @@
       });
       bar.addEventListener('keydown', function(e) {
         if (e.key !== 'Enter' && e.key !== ' ') return;
+        var home = e.target.closest('#jump-home-btn');
+        if (home) {
+          e.preventDefault();
+          state.selected = null;
+          localStorage.removeItem(STORAGE_PREFIX + 'last-selection');
+          renderSidebar();
+          renderMain();
+          refreshJumpBar();
+          return;
+        }
         var el = e.target.closest('[data-jump]');
         if (!el) return;
         e.preventDefault();
