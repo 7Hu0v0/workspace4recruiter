@@ -21,7 +21,7 @@ Suggested first response:
 2. 你主要招聘哪些岗位/方向？
 3. 你想预置哪些目标组织、团队或业务方向？
 4. 首页导览、底部快捷入口、ToDo、OKR、CRM、目标组织、人才储备、话术模板、数据管理这些模块里，哪些要保留或改名？
-5. 是否要接入在线表格或同步后端？没有也可以先用本地模式。
+5. 是否需要嵌入外部文档或接入同步后端？没有也可以先用本地模式。
 ```
 
 ## Customization Workflow
@@ -42,7 +42,7 @@ Use placeholders when the target is a reusable public template. Use real names, 
 - Homepage: update the four system cards in `renderEmptyState()` and the bottom shortcut labels/handlers together.
 - Recruiting scope: update the landing-page subtitle/description and planning placeholders.
 - Target organizations: update `loadTargetOrgNames()` in `index.html`, and update seed businesses in `target-company/data-store.js`.
-- Online sheet: keep the default empty in public templates; for a private copy, set it through the UI or update the `MINGDAN_KEY` initialization.
+- Embeddable document: keep the default empty in public templates. For a private copy, ask the user for a URL that permits iframe embedding, then set it through the UI or update the `MINGDAN_KEY` initialization.
 - Backend sync: keep `autoSync: false` and `baseUrl: ''` by default. Only set `baseUrl` or token in a private local copy.
 - Module naming: update sidebar labels, `SYSTEM_META`, breadcrumbs, and matching `data-type` labels together.
 - Data manager: treat snapshots, revisions, event logs, and git backup as private-user features. Keep public templates free of real repository URLs, tokens, and sync endpoints.
