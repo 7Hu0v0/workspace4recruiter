@@ -1,11 +1,11 @@
 /**
- * 目标组织模块 - 树形表格（便利贴布局）
+ * 目标公司模块 - 树形表格（便利贴布局）
  *
- * 每家组织渲染为一张「便利贴卡片」，卡片内部用表格展示该组织的组织树。
- * 组织间纵向排列，一排一张便利贴。
+ * 每家公司渲染为一张「便利贴卡片」，卡片内部用表格展示该公司的组织树。
+ * 公司间纵向排列，一排一张便利贴。
  *
  * 功能：
- *   - 组织/团队名称行内可编辑（双击或点 ✏️）
+ *   - 公司/组织名称行内可编辑（双击或点 ✏️）
  *   - 任意层级行内新增下级组织（➕）
  *   - 进度条可拖拽
  *   - 修改后自动保存
@@ -23,7 +23,7 @@
    * @param {HTMLElement} container
    * @param {object} opts
    *   - businessId
-   *   - tree: 组织节点数组
+   *   - tree: 公司节点数组
    *   - expandedSet: Set<nodeKey>
    *   - readOnly: boolean  继承模式下整体只读
    *   - onToggle(nodeKey)
@@ -44,12 +44,12 @@
       container.innerHTML =
         '<div class="tc-tree-empty">' +
           '<div class="empty-icon">🗺</div>' +
-          '<div class="empty-text">当前业务还未关联任何组织<br>点击右上角「复用组织」或「新增组织」开始</div>' +
+          '<div class="empty-text">当前业务还未关联任何公司<br>点击右上角「复用公司」或「新增公司」开始</div>' +
         '</div>';
       return;
     }
 
-    // 每家组织一张便利贴
+    // 每家公司一张便利贴
     tree.forEach(function (companyNode) {
       var note = document.createElement('div');
       note.className = 'tc-company-note';
@@ -61,7 +61,7 @@
       table.innerHTML =
         '<thead><tr>' +
           '<th class="col-tier">梯队</th>' +
-          '<th class="col-name">组织 / 团队</th>' +
+          '<th class="col-name">公司 / 组织</th>' +
           '<th class="col-progress">当前进度</th>' +
           '<th class="col-actions">操作</th>' +
         '</tr></thead>';
@@ -242,7 +242,7 @@
       var wrap = document.createElement('div');
       wrap.className = 'tc-actions';
 
-      // ➕ 新增下级组织（组织行也可新增一级组织）
+      // ➕ 新增下级组织（公司行也可新增一级组织）
       var addBtn = mkBtn('➕', node.nodeType === 'company' ? '新增一级组织' : '新增子组织', function () {
         TCEditors.openOrganizationEditor({
           mode: 'create',
@@ -269,7 +269,7 @@
       // 🗑 从业务移除
       var removeBtn = mkBtn('🗑', '从当前业务移除', function () {
         if (node.nodeType === 'company') {
-          if (!confirm('从当前业务移除「' + node.name + '」？\n\n仅删除本业务下的关联数据，共享的组织与组织保留。')) return;
+          if (!confirm('从当前业务移除「' + node.name + '」？\n\n仅删除本业务下的关联数据，共享的公司与组织保留。')) return;
           TCTree.removeOrganizationFromBusiness(businessId, { companyId: node.companyId });
         } else {
           if (!confirm('从当前业务移除「' + node.name + '」及其所有后代组织？')) return;

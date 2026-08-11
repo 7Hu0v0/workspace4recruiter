@@ -1,5 +1,5 @@
 /**
- * 目标组织模块 - 入口
+ * 目标公司模块 - 入口
  * 负责：种子数据初始化、对外暴露统一渲染接口。
  *
  * 与宿主页面（index.html）的集成约定：
@@ -24,7 +24,7 @@
     var biz = businessId ? TCStore.getBusiness(businessId) : null;
     var bizList = TCStore.getBusinesses();
     var targets = TCStore.getBusinessTargets();
-    console.log('===== 目标组织模块诊断 =====');
+    console.log('===== 目标公司模块诊断 =====');
     console.log('所有业务：', bizList);
     if (businessId) {
       console.log('当前业务：', biz);
@@ -38,7 +38,7 @@
       console.log('当前业务读取到的 targets（含继承解析）：', curTargets);
     }
     console.log('全部 targets：', targets);
-    console.log('全部组织：', TCStore.getCompanies());
+    console.log('全部公司：', TCStore.getCompanies());
     console.log('全部组织：', TCStore.getOrganizations());
     console.log('============================');
   };

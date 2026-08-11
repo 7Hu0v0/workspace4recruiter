@@ -1,5 +1,5 @@
 /**
- * 目标组织模块 - 数据访问层
+ * 目标公司模块 - 数据访问层
  *
  * 所有 localStorage 操作集中在这里，UI 组件不直接读写 localStorage。
  * 数据模型：
@@ -9,7 +9,7 @@
  *   businessTargets  [{ id, businessId, companyId, organizationId|null, tier, progress }]
  *
  * 关联规则：
- *   - organizationId 为 null 表示关联到组织本身（组织节点）
+ *   - organizationId 为 null 表示关联到公司本身（公司节点）
  *   - (businessId, companyId, organizationId) 三元组唯一，不可重复
  *   - 进度仅允许 10 的倍数（0-100）
  */
@@ -109,7 +109,7 @@
     return cur;
   }
 
-  // ---------- 组织 ----------
+  // ---------- 公司 ----------
   function getCompanies() {
     return read(KEY.companies, []);
   }
@@ -140,7 +140,7 @@
     saveCompanies(list);
     return list[idx];
   }
-  /** 删除共享组织。若仍被任何业务引用则返回 false，不删除。 */
+  /** 删除共享公司。若仍被任何业务引用则返回 false，不删除。 */
   function deleteCompanyIfOrphan(id) {
     var refs = getBusinessTargets().filter(function (t) { return t.companyId === id; });
     if (refs.length > 0) return { ok: false, reason: 'referenced', count: refs.length };
@@ -292,7 +292,7 @@
     saveAllTargets(all);
     return all.length < before;
   }
-  /** 把某业务下某组织的全部关联移除（不删除共享组织/团队）。 */
+  /** 把某业务下某公司的全部关联移除（不删除共享公司/组织）。 */
   function removeCompanyFromBusiness(businessId, companyId) {
     var all = read(KEY.targets, []);
     var before = all.length;
@@ -340,12 +340,12 @@
   // ---------- 种子数据 ----------
   function isSeeded() { return read(KEY.seeded, false); }
   function markSeeded() { write(KEY.seeded, true); }
-  /** 首次进入时写入 3 个空业务，不预置任何组织/团队模板。 */
+  /** 首次进入时写入 3 个空业务，不预置任何公司/组织模板。 */
   function seedIfEmpty() {
     if (isSeeded()) return false;
     if (getBusinesses().length > 0) { markSeeded(); return false; }
 
-    // 仅初始化 3 个业务，组织库与组织树保持空
+    // 仅初始化 3 个业务，公司库与组织树保持空
     saveBusinesses([
       { id: 'biz-direction-a', name: '业务方向 A', emoji: '🌐', order: 0 },
       { id: 'biz-direction-b', name: '业务方向 B', emoji: '🤖', order: 1 },
@@ -366,7 +366,7 @@
     saveBusinesses: saveBusinesses,
     resolveInheritRoot: resolveInheritRoot,
     isInheriting: isInheriting,
-    // 组织
+    // 公司
     getCompanies: getCompanies,
     getCompany: getCompany,
     createCompany: createCompany,

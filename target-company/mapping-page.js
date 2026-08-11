@@ -1,6 +1,6 @@
 /**
- * 目标组织模块 - 业务 Mapping 页面（第二层）
- * 展示某业务下的组织树表，支持展开/折叠、新增、复用、编辑、移除。
+ * 目标公司模块 - 业务 Mapping 页面（第二层）
+ * 展示某业务下的公司树表，支持展开/折叠、新增、复用、编辑、移除。
  */
 (function (global) {
   'use strict';
@@ -36,17 +36,17 @@
         '<div class="breadcrumb">' +
           '<span>OKR 系统</span><span>›</span>' +
           '<span>开源方向</span><span>›</span>' +
-          '<span class="crumb-link" id="tc-back-list">目标组织</span><span>›</span>' +
+          '<span class="crumb-link" id="tc-back-list">目标公司</span><span>›</span>' +
           '<span class="crumb-current">' + esc(business.name) + '</span>' +
         '</div>' +
         '<div class="tc-mapping-title-row">' +
-          '<h2>' + esc(business.emoji || '🎯') + ' ' + esc(business.name) + ' · 组织 Mapping</h2>' +
+          '<h2>' + esc(business.emoji || '🎯') + ' ' + esc(business.name) + ' · 公司 Mapping</h2>' +
           '<div class="tc-toolbar">' +
             '<button class="tc-btn" id="tc-expand-all" type="button">⊕ 全部展开</button>' +
             '<button class="tc-btn" id="tc-collapse-all" type="button">⊖ 全部折叠</button>' +
             '<button class="tc-btn" id="tc-inherit" type="button">' + (isInheriting ? '🔗 解除继承' : '🔀 设置继承') + '</button>' +
-            (isInheriting ? '' : '<button class="tc-btn" id="tc-new-company" type="button">➕ 新增组织</button>') +
-            (isInheriting ? '' : '<button class="tc-btn tc-btn-primary" id="tc-reuse-company" type="button">📥 复用组织</button>') +
+            (isInheriting ? '' : '<button class="tc-btn" id="tc-new-company" type="button">➕ 新增公司</button>') +
+            (isInheriting ? '' : '<button class="tc-btn tc-btn-primary" id="tc-reuse-company" type="button">📥 复用公司</button>') +
           '</div>' +
         '</div>' +
       '</div>' +
@@ -83,7 +83,7 @@
 
     // 返回业务列表
     main.querySelector('#tc-back-list').addEventListener('click', function () {
-      ctx.selectPeriod('target-company', '目标组织');
+      ctx.selectPeriod('target-company', '目标公司');
     });
 
     // 全部展开
@@ -111,7 +111,7 @@
     main.querySelector('#tc-inherit').addEventListener('click', function () {
       if (isInheriting) {
         // 解除继承
-        if (!confirm('解除继承？\n\n解除后本业务将拥有独立的进度数据（当前仍跟随 ' + sourceName + '）。\n注意：解除瞬间本业务会显示为空（无任何组织关联），需要重新复用组织。')) return;
+        if (!confirm('解除继承？\n\n解除后本业务将拥有独立的进度数据（当前仍跟随 ' + sourceName + '）。\n注意：解除瞬间本业务会显示为空（无任何公司关联），需要重新复用公司。')) return;
         TCStore.updateBusiness(businessId, { inheritFrom: null });
         ctx.showToast('已解除继承');
         render(main, businessId, ctx); // 重新渲染整页
@@ -126,7 +126,7 @@
       });
     });
 
-    // 新增组织（仅非继承模式）
+    // 新增公司（仅非继承模式）
     var newCoBtn = main.querySelector('#tc-new-company');
     if (newCoBtn) newCoBtn.addEventListener('click', function () {
       TCEditors.openCompanyEditor({
@@ -142,7 +142,7 @@
       });
     });
 
-    // 复用组织（仅非继承模式）
+    // 复用公司（仅非继承模式）
     var reuseBtn = main.querySelector('#tc-reuse-company');
     if (reuseBtn) reuseBtn.addEventListener('click', function () {
       TCReuseModal.open({

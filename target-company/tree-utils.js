@@ -1,12 +1,12 @@
 /**
- * 目标组织模块 - 树形工具与核心业务逻辑
+ * 目标公司模块 - 树形工具与核心业务逻辑
  * 依赖 TCStore（data-store.js）
  */
 (function (global) {
   'use strict';
 
   /**
-   * 把某组织下的所有组织构建成树。
+   * 把某公司下的所有组织构建成树。
    * @param {string} companyId
    * @returns {Array} 根组织节点数组（parentId 为 null 的）。节点：{ id, name, companyId, parentId, order, children: [] }
    */
@@ -42,7 +42,7 @@
   }
 
   /**
-   * 为某业务构建完整「组织 → 组织」树。
+   * 为某业务构建完整「公司 → 组织」树。
    * 每个节点：
    * {
    *   nodeKey, nodeType ('company'|'org'),
@@ -56,12 +56,12 @@
    *   hasTargetInSubtree: boolean                   // 子树内是否有任何业务关联
    * }
    *
-   * 注意：仅返回当前业务已关联的组织。未关联组织不展示。
+   * 注意：仅返回当前业务已关联的公司。未关联公司不展示。
    */
   function getBusinessCompanyTree(businessId) {
     var targets = TCStore.getBusinessTargets(businessId);
     var companies = TCStore.getCompanies();
-    // 按组织分组 targets
+    // 按公司分组 targets
     var companyIds = [];
     var byCompany = {};
     targets.forEach(function (t) {
@@ -76,13 +76,13 @@
       var node = buildCompanyNode(businessId, company, byCompany[cid]);
       if (node) result.push(node);
     });
-    // 按组织名排序
+    // 按公司名排序
     result.sort(function (a, b) { return a.name.localeCompare(b.name); });
     return result;
   }
 
   /**
-   * 为某业务构建单个组织节点（含其子树）。
+   * 为某业务构建单个公司节点（含其子树）。
    * 只保留「子树内有业务关联」的节点；子树内无关联的节点不展示。
    */
   function buildCompanyNode(businessId, company, targetsForCompany) {
@@ -194,7 +194,7 @@
   }
 
   /**
-   * 从业务中移除组织或组织。
+   * 从业务中移除公司或组织。
    * @param {string} businessId
    * @param {object} opts  { companyId, organizationId? }
    * @returns {number} 移除的关联数
@@ -207,7 +207,7 @@
   }
 
   /**
-   * 检查共享组织/团队是否仍被任何业务引用（用于删除前的安全检查）。
+   * 检查共享公司/组织是否仍被任何业务引用（用于删除前的安全检查）。
    */
   function isCompanyReferenced(companyId) {
     return TCStore.getBusinessTargets().some(function (t) { return t.companyId === companyId; });

@@ -1,5 +1,5 @@
 /**
- * 目标组织模块 - 业务卡片列表（第一层）
+ * 目标公司模块 - 业务卡片列表（第一层）
  * 展示所有业务为大卡片，点击进入 Mapping 页面。
  * 业务来自 TCStore.getBusinesses()，新增业务只需调用 TCStore.createBusiness()。
  */
@@ -13,7 +13,7 @@
   }
 
   /**
-   * 统计某业务的概况（组织数 / 组织关联数 / 平均进度）。
+   * 统计某业务的概况（公司数 / 组织关联数 / 平均进度）。
    */
   function businessStats(businessId) {
     var targets = TCStore.getBusinessTargets(businessId);
@@ -40,15 +40,15 @@
         '<div class="breadcrumb">' +
           '<span>OKR 系统</span><span>›</span>' +
           '<span>开源方向</span><span>›</span>' +
-          '<span class="crumb-current">目标组织</span>' +
+          '<span class="crumb-current">目标公司</span>' +
         '</div>' +
         '<div class="tc-mapping-title-row">' +
-          '<h2>🎯 目标组织 · 业务列表</h2>' +
+          '<h2>🎯 目标公司 · 业务列表</h2>' +
           '<div class="tc-toolbar">' +
             '<button class="tc-btn" id="tc-add-business" type="button">➕ 新增业务</button>' +
           '</div>' +
         '</div>' +
-        '<p class="tc-page-desc">按业务维度管理目标组织 Mapping。组织/团队为共享数据，梯队与进度按业务独立维护。</p>' +
+        '<p class="tc-page-desc">按业务维度管理目标公司 Mapping。公司/组织为共享数据，梯队与进度按业务独立维护。</p>' +
       '</div>' +
       '<div class="tc-biz-grid" id="tc-biz-grid"></div>';
 
@@ -73,7 +73,7 @@
           '<div class="tc-biz-name">' + esc(b.name) + '</div>' +
           inheritTag +
           '<div class="tc-biz-stats">' +
-            '<span class="tc-biz-stat"><b>' + stats.companyCount + '</b> 组织</span>' +
+            '<span class="tc-biz-stat"><b>' + stats.companyCount + '</b> 公司</span>' +
             '<span class="tc-biz-stat-divider">·</span>' +
             '<span class="tc-biz-stat"><b>' + stats.targetCount + '</b> 关联</span>' +
             (stats.avgProgress != null

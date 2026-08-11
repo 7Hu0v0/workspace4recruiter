@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Talent Reserve | Recruiter Workbench</title>
+  <title>专项人才储备 | Recruiter Workbench</title>
   <style>
     :root {
       --accent: #006EFF;
@@ -26,14 +26,14 @@
       --sidebar-text: #E5E7EB;
       --sidebar-muted: #9CA3AF;
       --sidebar-border: rgba(255,255,255,0.08);
-      --p0-color: #E74C3C;
-      --p1-color: #E67E22;
-      --p2-color: #2ECC71;
+      --p0-color: #000000;
+      --p1-color: #555555;
+      --p2-color: #999999;
       --p3-color: #95A5A6;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: "Monaco", "Menlo", "Kaiti SC", "STKaiti", "楷体", "KaiTi", "楷体_GB2312", serif;
+      font-family: "Monaco", "Menlo", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", "微软雅黑", sans-serif;
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
@@ -43,47 +43,51 @@
     /* ===== Top Bar ===== */
     .topbar {
       position: sticky; top: 0; z-index: 50;
-      background: linear-gradient(135deg, var(--sidebar-bg) 0%, var(--sidebar-bg-2) 100%);
-      color: var(--sidebar-text);
+      background: #0A0A0A;
+      color: #FFFFFF;
       padding: 0 24px;
       display: flex; align-items: center;
       height: 56px;
       gap: 16px;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+      border-bottom: 2px solid #FFFFFF;
+      box-shadow: 0 4px 0 #1A1A1A;
     }
     .back-btn {
       display: flex; align-items: center; gap: 6px;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid var(--sidebar-border);
-      color: var(--sidebar-text);
+      background: #FFFFFF;
+      border: 1px solid #FFFFFF;
+      color: #000000;
       padding: 6px 14px;
-      border-radius: var(--radius);
+      border-radius: 0;
       cursor: pointer;
       font-size: 13px;
       font-family: inherit;
-      transition: background 0.15s;
+      font-weight: 500;
+      transition: background 0.15s, color 0.15s;
       white-space: nowrap;
     }
-    .back-btn:hover { background: rgba(0,110,255,0.3); }
+    .back-btn:hover { background: #000000; color: #FFFFFF; }
     .topbar-title {
       font-size: 18px; font-weight: 700;
       display: flex; align-items: center; gap: 8px;
+      font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
     }
     .topbar-title .emoji { font-size: 22px; }
     .topbar-spacer { flex: 1; }
     .topbar-actions { display: flex; gap: 8px; align-items: center; }
     .topbar-btn {
-      background: rgba(255,255,255,0.08);
-      border: 1px solid var(--sidebar-border);
-      color: var(--sidebar-text);
+      background: #FFFFFF;
+      border: 1px solid #FFFFFF;
+      color: #000000;
       padding: 6px 14px;
-      border-radius: var(--radius);
+      border-radius: 0;
       cursor: pointer;
       font-size: 13px;
       font-family: inherit;
-      transition: background 0.15s;
+      font-weight: 500;
+      transition: background 0.15s, color 0.15s;
     }
-    .topbar-btn:hover { background: rgba(0,110,255,0.3); }
+    .topbar-btn:hover { background: #000000; color: #FFFFFF; }
 
     /* ===== Project Tab Bar ===== */
     .project-bar {
@@ -95,26 +99,26 @@
     }
     .project-tab {
       padding: 8px 18px;
-      border: 1px solid var(--border);
+      border: 1px solid #000000;
       border-bottom: none;
-      background: #f3f4f6;
-      border-radius: 8px 8px 0 0;
+      background: #FFFFFF;
+      color: #000000;
       cursor: pointer;
       font-size: 13px;
-      color: var(--text-secondary);
       transition: all 0.15s;
       user-select: none;
       font-weight: 500;
       position: relative; top: 1px;
       white-space: nowrap;
       display: flex; align-items: center; gap: 6px;
+      font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
     }
-    .project-tab:hover { color: var(--accent); }
+    .project-tab:hover { background: #000000; color: #FFFFFF; }
     .project-tab.active {
-      background: var(--accent);
-      color: #fff;
-      border-color: var(--accent);
-      font-weight: 600;
+      background: #000000;
+      color: #FFFFFF;
+      border-color: #000000;
+      font-weight: 700;
     }
     .project-tab .tab-count {
       font-size: 11px; opacity: 0.7;
@@ -128,18 +132,19 @@
     .project-tab .tab-delete:hover { opacity: 1; color: var(--p0-color); }
     .project-add-btn {
       padding: 8px 14px;
-      border: 1px dashed var(--border);
+      border: 1px dashed #000000;
       border-bottom: none;
       background: transparent;
-      border-radius: 8px 8px 0 0;
+      border-radius: 0;
       cursor: pointer;
       font-size: 13px;
-      color: var(--text-secondary);
-      font-family: inherit;
+      color: #1D2129;
+      font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+      font-weight: 500;
       transition: all 0.15s;
       position: relative; top: 1px;
     }
-    .project-add-btn:hover { color: var(--accent); border-color: var(--accent); }
+    .project-add-btn:hover { background: #000000; color: #FFFFFF; border-color: #000000; }
 
     /* ===== Board Container ===== */
     .board-container {
@@ -151,31 +156,34 @@
       margin-bottom: 16px;
     }
     .board-header h2 {
-      font-size: 22px; font-weight: 700; color: var(--text);
+      font-size: 22px; font-weight: 700; color: #1D2129;
+      font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
     }
     .board-header .board-desc {
-      font-size: 13px; color: var(--text-secondary); margin-top: 4px;
+      font-size: 13px; color: #6B7280; margin-top: 4px;
+      font-weight: 400;
     }
     .board-toolbar {
       display: flex; gap: 8px; align-items: center;
     }
     .tool-btn {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      color: var(--text);
+      background: #FFFFFF;
+      border: 1px solid #000000;
+      color: #000000;
       padding: 6px 14px;
-      border-radius: var(--radius);
+      border-radius: 0;
       cursor: pointer;
       font-size: 13px;
-      font-family: inherit;
+      font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+      font-weight: 500;
       transition: all 0.15s;
       display: flex; align-items: center; gap: 4px;
     }
-    .tool-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .tool-btn:hover { background: #000000; color: #FFFFFF; }
     .tool-btn.primary {
-      background: var(--accent); color: #fff; border-color: var(--accent);
+      background: #000000; color: #FFFFFF; border-color: #000000;
     }
-    .tool-btn.primary:hover { background: var(--accent-dark); color: #fff; }
+    .tool-btn.primary:hover { background: #FFFFFF; color: #000000; }
 
     /* ===== Kanban Board ===== */
     .kanban {
@@ -188,49 +196,53 @@
     .kanban-column {
       flex: 0 0 300px;
       background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow);
+      /* ===== Column / Card ===== */
+    .column {
+      border: 1px solid #000000;
+      background: #FFFFFF;
+      box-shadow: 3px 3px 0 #1A1A1A;
       display: flex;
       flex-direction: column;
       max-height: calc(100vh - 220px);
     }
     .column-header {
       padding: 12px 14px 10px;
-      border-bottom: 1px solid var(--border-light);
+      border-bottom: 1px solid #000000;
       display: flex; align-items: center; justify-content: space-between;
       cursor: grab;
+      background: #FFFFFF;
     }
     .column-header:active { cursor: grabbing; }
     .column-title-wrap {
       display: flex; align-items: center; gap: 6px;
     }
     .column-title {
-      font-size: 14px; font-weight: 600; color: var(--text);
+      font-size: 14px; font-weight: 700; color: #1D2129;
       border: none; background: transparent;
-      font-family: inherit;
+      font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
       outline: none;
       width: 160px;
     }
     .column-title:focus {
-      border-bottom: 1px dashed var(--accent);
+      border-bottom: 1px dashed #000000;
     }
     .column-count {
-      font-size: 11px; color: var(--text-secondary);
-      background: var(--bg);
-      padding: 2px 8px; border-radius: 10px;
+      font-size: 11px; color: #1D2129;
+      background: #F3F4F6;
+      padding: 2px 8px; border-radius: 0;
+      font-weight: 700;
     }
     .column-actions { display: flex; gap: 4px; }
     .column-action-btn {
       border: none; background: transparent;
       cursor: pointer; font-size: 14px;
-      color: var(--text-tertiary);
-      padding: 2px 4px; border-radius: 4px;
+      color: #6B7280;
+      padding: 2px 4px;
       transition: all 0.15s;
       font-family: inherit;
     }
-    .column-action-btn:hover { color: var(--text); background: var(--bg); }
-    .column-action-btn.danger:hover { color: var(--p0-color); }
+    .column-action-btn:hover { color: #1D2129; background: #F3F4F6; }
+    .column-action-btn.danger:hover { color: #1D2129; }
 
     .column-body {
       flex: 1;
@@ -240,31 +252,30 @@
       min-height: 60px;
     }
     .column-body.drag-over {
-      background: var(--accent-light);
-      border: 2px dashed var(--accent);
-      border-radius: 6px;
+      background: #F3F4F6;
+      border: 2px dashed #000000;
       margin: 2px;
       padding: 8px;
     }
 
-    /* ===== Talent Card ===== */
+    /* ===== Talent Card（黑白像素风，左侧条统一深灰） ===== */
     .talent-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-left: 3px solid var(--p3-color);
-      border-radius: var(--radius);
+      background: #FFFFFF;
+      border: 1px solid #000000;
+      border-left: 3px solid #000000;
       padding: 10px 12px;
       cursor: grab;
-      transition: box-shadow 0.15s, opacity 0.15s;
+      transition: box-shadow 0.12s, transform 0.12s steps(2), opacity 0.15s;
       position: relative;
+      box-shadow: 2px 2px 0 #1A1A1A;
     }
-    .talent-card:hover { box-shadow: var(--shadow-lg); }
+    .talent-card:hover { transform: translate(-1px, -1px); box-shadow: 3px 3px 0 #1A1A1A; }
     .talent-card:active { cursor: grabbing; }
     .talent-card.dragging { opacity: 0.4; }
-    .talent-card.priority-p0 { border-left-color: var(--p0-color); }
-    .talent-card.priority-p1 { border-left-color: var(--p1-color); }
-    .talent-card.priority-p2 { border-left-color: var(--p2-color); }
-    .talent-card.priority-p3 { border-left-color: var(--p3-color); }
+    .talent-card.priority-p0 { border-left: 3px solid #000000; border-left-width: 5px; }
+    .talent-card.priority-p1 { border-left: 3px solid #555555; }
+    .talent-card.priority-p2 { border-left: 3px solid #AAAAAA; }
+    .talent-card.priority-p3 { border-left: 3px solid #DDDDDD; }
 
     .card-top {
       display: flex; align-items: flex-start; justify-content: space-between; gap: 8px;
@@ -288,10 +299,10 @@
       padding: 1px 6px; border-radius: 4px;
       white-space: nowrap;
     }
-    .card-priority.p0 { background: var(--p0-color); color: #fff; }
-    .card-priority.p1 { background: var(--p1-color); color: #fff; }
-    .card-priority.p2 { background: var(--p2-color); color: #fff; }
-    .card-priority.p3 { background: var(--p3-color); color: #fff; }
+    .card-priority.p0 { background: #000000; color: #FFFFFF; border: 1px solid #000000; }
+    .card-priority.p1 { background: #FFFFFF; color: #000000; border: 1px solid #000000; }
+    .card-priority.p2 { background: #FFFFFF; color: #555555; border: 1px solid #555555; }
+    .card-priority.p3 { background: #FFFFFF; color: #888888; border: 1px solid #888888; }
 
     .card-field {
       display: flex; align-items: center; gap: 4px;
@@ -403,102 +414,118 @@
     }
     .sticky-backdrop {
       position: fixed; inset: 0;
-      background: rgba(0,0,0,0.45);
+      background: transparent;  /* 悬浮模式：不遮挡看板 */
       z-index: 100;
-      display: flex; align-items: center; justify-content: center;
+      display: block;  /* 不再用 flex 居中，由 sticky-modal 自己定位 */
       opacity: 0; transition: opacity 0.18s;
+      pointer-events: none;  /* 让背景可点击（看板可操作） */
     }
     .sticky-backdrop.show { opacity: 1; }
     .sticky-modal {
-      background: var(--surface);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow-lg);
-      width: 560px; max-width: 92vw;
-      max-height: 80vh; display: flex; flex-direction: column;
+      position: fixed;
+      top: 80px; right: 32px;
+      background: #FFFFFF;
+      border: 2px solid #000000;
+      border-radius: 0;
+      box-shadow: 6px 6px 0 #1A1A1A;
+      width: 380px; max-width: 92vw;
+      max-height: 70vh; display: flex; flex-direction: column;
       overflow: hidden;
+      pointer-events: auto;  /* 浮窗本身可交互 */
+      font-family: "Press Start 2P", "VT323", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", monospace;
     }
     .sticky-modal-header {
       display: flex; align-items: center; justify-content: space-between;
-      padding: 16px 20px;
-      border-bottom: 1px solid var(--border);
-      background: linear-gradient(180deg, #FFFBEB 0%, #FFFFFF 100%);
+      padding: 12px 16px;
+      border-bottom: 2px solid #000000;
+      background: #000000;
+      color: #FFFFFF;
+      cursor: move;  /* 可拖动 */
+      user-select: none;
     }
     .sticky-modal-header h3 {
-      font-size: 15px; font-weight: 700; color: var(--text);
+      font-size: 12px; font-weight: 700; color: #FFFFFF;
       display: flex; align-items: center; gap: 6px;
+      letter-spacing: 1px;
     }
     .sticky-modal-close {
-      border: none; background: transparent;
-      font-size: 18px; color: var(--text-secondary);
-      cursor: pointer; padding: 4px 8px; border-radius: 4px;
+      border: 1px solid #FFFFFF; background: transparent;
+      font-size: 14px; color: #FFFFFF;
+      cursor: pointer; padding: 2px 8px; border-radius: 0;
       font-family: inherit;
+      transition: background 0.12s, color 0.12s;
     }
-    .sticky-modal-close:hover { background: var(--bg); color: var(--text); }
+    .sticky-modal-close:hover { background: #FFFFFF; color: #000000; }
     .sticky-modal-body {
       flex: 1; display: flex; flex-direction: column;
       max-height: 60vh; overflow: hidden;
     }
     .sticky-list {
-      flex: 1; overflow-y: auto; padding: 12px 20px;
+      flex: 1; overflow-y: auto; padding: 12px 16px;
       display: flex; flex-direction: column; gap: 8px;
-      background: #FFFDF5;
+      background: #FFFFFF;
       min-height: 120px;
     }
     .sticky-empty {
-      text-align: center; padding: 32px 16px;
-      color: var(--text-tertiary); font-size: 12px;
+      text-align: center; padding: 24px 12px;
+      color: #888888; font-size: 12px;
     }
     .sticky-item {
-      background: #FFFBEB; border: 1px solid #FDE68A;
-      border-radius: 6px; padding: 8px 12px; position: relative;
+      background: #FFFFFF; border: 1px solid #000000;
+      border-left: 3px solid #000000;
+      border-radius: 0; padding: 8px 12px; position: relative;
       box-shadow: 0 1px 3px rgba(0,0,0,0.04);
     }
     .sticky-item .note-time {
-      font-size: 10px; color: #B45309;
-      font-family: "Monaco","Menlo",monospace;
-      margin-bottom: 4px; font-weight: 600;
+      font-size: 10px; color: #888888;
+      font-family: "Press Start 2P","VT323","Monaco",monospace;
+      margin-bottom: 4px; font-weight: 700;
+      letter-spacing: 0.5px;
     }
     .sticky-item .note-text {
-      font-size: 13px; color: var(--text);
+      font-size: 13px; color: #1D2129;
       line-height: 1.6;
       white-space: pre-wrap; word-break: break-word;
       padding-right: 22px;
+      font-weight: 400;
     }
     .sticky-item .note-del {
       position: absolute; top: 6px; right: 6px;
-      width: 18px; height: 18px; border: none;
-      background: transparent; color: #D97706;
+      width: 18px; height: 18px; border: 1px solid transparent;
+      background: transparent; color: #888888;
       cursor: pointer; font-size: 12px; padding: 0;
-      border-radius: 3px; opacity: 0; transition: opacity 0.12s;
+      border-radius: 0; opacity: 0; transition: opacity 0.12s, background 0.12s, color 0.12s;
     }
     .sticky-item:hover .note-del { opacity: 1; }
-    .sticky-item .note-del:hover { background: #FDE68A; color: #92400E; }
+    .sticky-item .note-del:hover { background: #000000; color: #FFFFFF; border-color: #000000; }
     .sticky-input-row {
-      border-top: 1px solid #FDE68A;
-      background: #FFFBEB;
-      padding: 10px 16px;
+      border-top: 1px solid #000000;
+      background: #FFFFFF;
+      padding: 10px 14px;
       display: flex; gap: 8px; align-items: flex-end;
     }
     .sticky-input-row textarea {
-      flex: 1; min-height: 56px; max-height: 140px; resize: vertical;
-      border: 1px solid #FDE68A; border-radius: 6px;
+      flex: 1; min-height: 60px; max-height: 140px; resize: vertical;
+      border: 1px solid #000000; border-radius: 0;
       padding: 8px 10px;
-      font-size: 13px; font-family: inherit; line-height: 1.5;
-      background: #fff;
+      font-size: 13px; font-family: "Press Start 2P","VT323","Noto Sans SC","PingFang SC","Microsoft YaHei",monospace;
+      line-height: 1.5; font-weight: 400;
+      background: #FFFFFF; color: #1D2129;
     }
     .sticky-input-row textarea:focus {
-      outline: none; border-color: var(--accent);
-      box-shadow: 0 0 0 2px rgba(0,110,255,0.1);
+      outline: none; border-color: #000000;
+      box-shadow: 2px 2px 0 #1A1A1A;
     }
+    .sticky-input-row textarea::placeholder { color: #888888; }
     .sticky-add-btn {
-      padding: 8px 16px;
-      border: 1px solid var(--accent); border-radius: 6px;
-      background: var(--accent); color: #fff;
-      font-size: 12px; font-weight: 600;
+      padding: 8px 14px;
+      border: 1px solid #000000; border-radius: 0;
+      background: #000000; color: #FFFFFF;
+      font-size: 12px; font-weight: 700;
       cursor: pointer; font-family: inherit; white-space: nowrap;
-      transition: opacity 0.12s;
+      transition: background 0.12s, color 0.12s;
     }
-    .sticky-add-btn:hover { opacity: 0.9; }
+    .sticky-add-btn:hover { background: #FFFFFF; color: #000000; }
 
     /* ===== Add Card Button ===== */
     .add-card-btn {
@@ -567,24 +594,25 @@
     }
     .modal-btn {
       padding: 8px 20px;
-      border-radius: var(--radius);
+      border-radius: 0;
       cursor: pointer;
       font-size: 13px;
-      font-family: inherit;
-      border: 1px solid var(--border);
-      background: var(--surface);
-      color: var(--text);
+      font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+      font-weight: 500;
+      border: 1px solid #000000;
+      background: #FFFFFF;
+      color: #000000;
       transition: all 0.15s;
     }
-    .modal-btn:hover { border-color: var(--accent); }
+    .modal-btn:hover { background: #000000; color: #FFFFFF; }
     .modal-btn.primary {
-      background: var(--accent); color: #fff; border-color: var(--accent);
+      background: #000000; color: #FFFFFF; border-color: #000000;
     }
-    .modal-btn.primary:hover { background: var(--accent-dark); }
+    .modal-btn.primary:hover { background: #FFFFFF; color: #000000; }
     .modal-btn.danger {
-      color: var(--p0-color); border-color: var(--p0-color);
+      color: #000000; border-color: #000000;
     }
-    .modal-btn.danger:hover { background: var(--p0-color); color: #fff; }
+    .modal-btn.danger:hover { background: #000000; color: #FFFFFF; }
 
     /* ===== Column editor inline ===== */
     .column-editor {
@@ -936,10 +964,10 @@
           '<input type="text" class="card-name-input" data-card-id="' + card.id + '" data-field="name" value="' + esc(card.name || '') + '" placeholder="姓名">' +
           '<span class="card-priority ' + (card.priority || 'p3') + '" data-card-priority="' + card.id + '">' + (priLabel || 'P3') + '</span>' +
         '</div>' +
-        // 第 2 行：组织
+        // 第 2 行：公司
         '<div class="card-field">' +
-          '<label>组织</label>' +
-          '<input type="text" data-card-id="' + card.id + '" data-field="company" value="' + esc(card.company || '') + '" placeholder="组织/团队">' +
+          '<label>公司</label>' +
+          '<input type="text" data-card-id="' + card.id + '" data-field="company" value="' + esc(card.company || '') + '" placeholder="公司/组织">' +
         '</div>' +
         // 第 3 行：职级/身份
         '<div class="card-field">' +
@@ -957,7 +985,7 @@
         // 第 5 行：联系方式
         '<div class="card-field">' +
           '<label>联系</label>' +
-          '<input type="text" data-card-id="' + card.id + '" data-field="contact" value="' + esc(card.contact || '') + '" placeholder="手机 / 微信 / 邮箱">' +
+          '<input type="text" data-card-id="' + card.id + '" data-field="contact" value="' + esc(card.contact || '') + '" placeholder="联系方式">' +
         '</div>' +
         // 便利贴按钮：点开是详细备注
         '<div class="card-sticky-row">' +
@@ -1298,13 +1326,42 @@
         renderBoard();
       }
       backdrop.querySelector('.sticky-modal-close').addEventListener('click', close);
-      backdrop.addEventListener('click', function(e){ if (e.target === backdrop) close(); });
+      backdrop.addEventListener('click', function(e){ if (e.target === backdrop) { /* 悬浮模式：点击背景不关闭，让用户继续操作看板 */ } });
       document.addEventListener('keydown', function escHandler(e){
         if (e.key === 'Escape' && document.getElementById('tr-sticky-backdrop')) {
           close();
           document.removeEventListener('keydown', escHandler);
         }
       });
+
+      // ===== 拖动逻辑：按住 header 拖动整个便利贴 =====
+      (function enableDrag() {
+        var modal = backdrop.querySelector('.sticky-modal');
+        var header = backdrop.querySelector('.sticky-modal-header');
+        if (!modal || !header) return;
+        var dragging = false, startX = 0, startY = 0, origX = 0, origY = 0;
+        header.addEventListener('mousedown', function(e){
+          // 不拖动 close 按钮
+          if (e.target.closest('.sticky-modal-close')) return;
+          dragging = true;
+          startX = e.clientX; startY = e.clientY;
+          var rect = modal.getBoundingClientRect();
+          origX = rect.left; origY = rect.top;
+          // 切换为 left/top 定位（脱离 right 锚定）
+          modal.style.left = origX + 'px';
+          modal.style.top = origY + 'px';
+          modal.style.right = 'auto';
+          e.preventDefault();
+        });
+        document.addEventListener('mousemove', function(e){
+          if (!dragging) return;
+          var dx = e.clientX - startX;
+          var dy = e.clientY - startY;
+          modal.style.left = (origX + dx) + 'px';
+          modal.style.top = (origY + dy) + 'px';
+        });
+        document.addEventListener('mouseup', function(){ dragging = false; });
+      })();
 
       function reloadCard() {
         // 从最新 storage 重新读取（避免闭包旧值）
@@ -1545,8 +1602,8 @@
           '<input type="text" id="modal-card-name" placeholder="候选人姓名" autofocus>' +
         '</div>' +
         '<div class="modal-field">' +
-          '<label>组织 / 团队</label>' +
-          '<input type="text" id="modal-card-company" placeholder="当前组织">' +
+          '<label>公司 / 组织</label>' +
+          '<input type="text" id="modal-card-company" placeholder="目前公司">' +
         '</div>' +
         '<div class="modal-field">' +
           '<label>职级 / 身份</label>' +
@@ -1558,7 +1615,7 @@
         '</div>' +
         '<div class="modal-field">' +
           '<label>联系方式</label>' +
-          '<input type="text" id="modal-card-contact" placeholder="手机 / 微信 / 邮箱">' +
+          '<input type="text" id="modal-card-contact" placeholder="联系方式">' +
         '</div>' +
         '<div class="modal-field">' +
           '<label>优先级</label>' +
@@ -1615,7 +1672,7 @@
       var colMap = {};
       proj.columns.forEach(function(c) { colMap[c.id] = c.title; });
 
-      var header = '姓名\t组织\t职级/身份\t个人主页\t联系方式\t优先级\t所在列\t备注条数\t更新时间';
+      var header = '姓名\t公司\t职级/身份\t个人主页\t联系方式\t优先级\t所在列\t备注条数\t更新时间';
       var lines = [header];
       cards.forEach(function(c) {
         var priLabel = 'P3';
