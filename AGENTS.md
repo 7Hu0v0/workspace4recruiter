@@ -11,7 +11,7 @@ When the user says `工作台启动`, treat this repository as a customizable re
    - role or recruiting scope
    - target organization names
    - preferred module labels
-   - online sheet URL, if any
+   - embeddable document URL, if any
    - backend sync URL and token, if any
 4. Keep all user-specific data local to the user's copy. Do not commit private names, company data, tokens, contacts, or document links back to this template repository.
 5. After editing, scan for obvious private residue before finishing.

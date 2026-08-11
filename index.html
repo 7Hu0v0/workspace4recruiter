@@ -726,7 +726,7 @@
       position: relative;
     }
 
-    /* 拉宽在线表格内容：把 iframe 渲染成比容器更大的尺寸，
+    /* 拉宽外部文档内容：把 iframe 渲染成比容器更大的尺寸，
        再用 transform: scale 等比缩放回容器宽度，
        使表格列、单元格变大、横向空白消失。 */
     .mingdan-iframe-wrapper iframe {
@@ -2399,8 +2399,8 @@
             <span class="root-folder-count" id="contacts-count">2</span>
           </div>
           <div class="sub-folder-content" id="contacts-list">
-            <div class="period-item" data-type="mingdan" data-label="人脉运营表格">
-              <span class="period-label">人脉运营表格</span>
+            <div class="period-item" data-type="mingdan" data-label="外部文档嵌入">
+              <span class="period-label">外部文档嵌入</span>
               <span style="opacity:0.35;font-size:10px;">↗</span>
             </div>
             <div class="period-item" data-type="wechat-contacts" data-label="人脉档案">
@@ -3056,7 +3056,7 @@
           {
             title: '人脉档案', icon: PIXEL_ICONS.contacts,
             items: [
-              { name: '人脉运营表格', type: 'mingdan', label: '人脉运营表格' },
+              { name: '外部文档嵌入', type: 'mingdan', label: '外部文档嵌入' },
               { name: '人脉档案', type: 'wechat-contacts', label: '人脉档案' }
             ]
           },
@@ -4055,7 +4055,7 @@
       var item = t.closest('.period-item');
       if (item) {
         if (item.dataset.type === 'mingdan') {
-          selectPeriod('mingdan', '人脉运营表格');
+          selectPeriod('mingdan', '外部文档嵌入');
           return;
         }
         if (item.dataset.type === 'wechat-contacts') {
@@ -4110,8 +4110,8 @@
       archiveOldTodos();
     });
 
-    // ============ 人脉运营表格 ============
-    var MINGDAN_KEY = STORAGE_PREFIX + 'mingdan-url';
+    // ============ 外部文档嵌入 ============
+    var MINGDAN_KEY = STORAGE_PREFIX + 'embedded-document-url';
     var MINGDAN_ZOOM_KEY = STORAGE_PREFIX + 'mingdan-zoom';
     var MINGDAN_ZOOM_DEFAULT = 1.5;
     var MINGDAN_ZOOM_MIN = 0.5;
@@ -4128,13 +4128,14 @@
     function promptMingdanUrl() {
       var current = getMingdanUrl();
       var url = prompt(
-        '请输入人脉运营表格（在线表格）的链接地址：\n\n' +
+        '请输入可嵌入文档链接：\n\n' +
+        '建议使用你自己的文档、表格、白板或知识库页面，并确认该页面允许 iframe 嵌入。\n\n' +
         '当前: ' + (current || '未设置'),
         current
       );
       if (url !== null) {
         localStorage.setItem(MINGDAN_KEY, url);
-        showToast('人脉运营表格链接已更新');
+        showToast('嵌入文档链接已更新');
         if (state.selected && state.selected.type === 'mingdan') renderMain();
       }
     }
@@ -4181,20 +4182,21 @@
 
     function renderMingdanView() {
       var main = document.getElementById('main-content');
-      // 人脉运营表格：去掉 max-width 限制，铺满整个内容区
+      // 外部文档嵌入：去掉 max-width 限制，铺满整个内容区
       main.style.maxWidth = 'none';
       main.style.padding = '28px 24px 24px';
       var url = getMingdanUrl();
       if (!url) {
         main.innerHTML =
           '<div class="page-header">' +
-            '<div class="breadcrumb"><span>CRM system</span><span>›</span><span>人脉运营表格</span></div>' +
-            '<div class="mingdan-title-row"><h2>人脉运营表格</h2><button class="mingdan-set-link" onclick="promptMingdanUrl()">⚙ 设置链接</button></div>' +
+            '<div class="breadcrumb"><span>CRM system</span><span>›</span><span>外部文档嵌入</span></div>' +
+            '<div class="mingdan-title-row"><h2>外部文档嵌入</h2><button class="mingdan-set-link" onclick="promptMingdanUrl()">⚙ 设置嵌入链接</button></div>' +
           '</div>' +
           '<div class="empty-state">' +
-            '<div class="empty-icon">📊</div>' +
-            '<div class="empty-text">尚未设置人脉运营表格链接</div>' +
-            '<button class="empty-action" onclick="promptMingdanUrl()">设置链接</button>' +
+            '<div class="empty-icon">▣</div>' +
+            '<div class="empty-text">公开模板不预置任何外部文档</div>' +
+            '<p class="date-range" style="max-width:560px;margin:10px auto 18px;color:var(--text-secondary);line-height:1.8;">在你的私人副本里，可以粘贴允许 iframe 嵌入的文档、表格、白板或知识库链接。链接只会保存在当前浏览器的 localStorage 中。</p>' +
+            '<button class="empty-action" onclick="promptMingdanUrl()">设置嵌入链接</button>' +
           '</div>';
         return;
       }
@@ -4202,9 +4204,9 @@
       var zoomPct = Math.round(zoom * 100);
       main.innerHTML =
         '<div class="page-header">' +
-          '<div class="breadcrumb"><span>CRM system</span><span>›</span><span>人脉运营表格</span></div>' +
-          '<div class="mingdan-title-row"><h2>人脉运营表格</h2><button class="mingdan-set-link" onclick="promptMingdanUrl()">⚙ 设置链接</button></div>' +
-          '<p class="date-range"><span style="font-size:11px;color:var(--text-tertiary);">开源模板 开源规划 & 人脉名单</span></p>' +
+          '<div class="breadcrumb"><span>CRM system</span><span>›</span><span>外部文档嵌入</span></div>' +
+          '<div class="mingdan-title-row"><h2>外部文档嵌入</h2><button class="mingdan-set-link" onclick="promptMingdanUrl()">⚙ 设置嵌入链接</button></div>' +
+          '<p class="date-range"><span style="font-size:11px;color:var(--text-tertiary);">当前页面仅负责嵌入展示，不迁移、不托管外部文档内容。</span></p>' +
           '<div class="mingdan-zoom-bar">' +
             '<span class="zoom-label">缩放</span>' +
             '<button class="zoom-btn" id="mingdan-zoom-out" title="缩小">−</button>' +
@@ -4828,11 +4830,11 @@
         '<div class="tracking-view">' +
           topicBar +
           '<div class="track-toolbar">' +
-            '<button class="sync-btn" id="btn-sync-table" title="复制为表格格式，粘贴到在线表格">📋 同步到表格</button>' +
+            '<button class="sync-btn" id="btn-sync-table" title="复制为 TSV，可粘贴到你自己的工具">📋 复制 TSV</button>' +
             (type === 'track-weekly' && !isAggregate ? '<button class="sync-btn" id="btn-add-topic" title="新建一个专场看板，数据独立存储">➕ 新增专场</button>' : '') +
             (isAggregate
               ? '<button class="btn-agg-sync" id="btn-agg-sync">🔄 同步本' + (type === 'track-monthly' ? '月' : '半年') + '数据</button>'
-              : '<span class="track-toolbar-hint" style="font-size:11px;color:#999;">一键复制数据，粘贴进在线表格即可</span>') +
+              : '<span class="track-toolbar-hint" style="font-size:11px;color:#999;">一键复制数据，粘贴到你自己的表格或文档工具即可</span>') +
           '</div>' +
           filterBar +
           aggInfoLine +
@@ -4911,7 +4913,7 @@
         syncBtn.addEventListener('click', function() {
           var entries = loadTrackEntries(type, label, topic);
           if (entries.length === 0) {
-            showToast('暂无数据可同步');
+            showToast('暂无数据可复制');
             return;
           }
           // Build TSV: headers + rows
@@ -4929,7 +4931,7 @@
           // Copy to clipboard
           if (navigator.clipboard && navigator.clipboard.writeText) {
             navigator.clipboard.writeText(tsv).then(function() {
-              showToast('已复制 ' + entries.length + ' 条数据到剪贴板，请粘贴到在线表格');
+              showToast('已复制 ' + entries.length + ' 条数据到剪贴板，请粘贴到你自己的表格或文档工具');
             });
           } else {
             // Fallback
