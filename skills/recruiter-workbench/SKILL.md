@@ -27,8 +27,8 @@ Suggested first response:
 ## Customization Workflow
 
 1. Inspect `README.md` and `AGENTS.md` for repository-level rules.
-2. If opening the workbench locally, start a static server first with `npm start`; then open the Workbench URL printed in the terminal.
-3. If `localhost` shows `ERR_CONNECTION_REFUSED`, the static server is not running or the wrong port is open. Start/restart the server and use the printed URL before changing HTML. If port 8080 is busy, `npm start` automatically chooses the next available port.
+2. If opening the workbench locally, start a static server first with `npm start`; then open the Workbench URL printed in the terminal. Prefer the printed `127.0.0.1` URL over `localhost`.
+3. If `localhost` shows `ERR_CONNECTION_REFUSED` or `ERR_EMPTY_RESPONSE`, the static server is not running, the wrong port is open, or `localhost` resolved to another local service. Start/restart the server and use the printed `127.0.0.1` URL before changing HTML. If port 8080 is busy, `npm start` automatically chooses the next available port.
 4. Inspect `index.html` for visible labels and defaults.
 5. Inspect `target-company/data-store.js` when changing default business directions.
 6. Inspect `talent-reserve.html` when changing talent reserve fields or copy.
@@ -67,7 +67,7 @@ For static validation, run a local server and open the workbench:
 npm start
 ```
 
-Then open `http://localhost:8080/index.html`. `python3 -m http.server 8080` is an equivalent fallback.
+Then open the printed Workbench URL, usually `http://127.0.0.1:8080/index.html`. `python3 -m http.server 8080` is an equivalent fallback, but prefer `127.0.0.1` over `localhost` when opening the browser.
 
 If the terminal says port 8080 was busy, open the alternative Workbench URL printed by `npm start`.
 
