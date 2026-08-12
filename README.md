@@ -1,6 +1,6 @@
 # Recruiter Workbench
 
-[在线预览 Demo](https://7hu0v0.github.io/workspace4recruiter/demo.html?v=20260812-startup)
+[在线预览 Demo](https://7hu0v0.github.io/workspace4recruiter/demo.html?v=20260812-local-ip)
 
 一个可由 agent 定制的招聘个人工作台。默认版本不包含个人姓名、公司信息、私有文档链接或预置候选人数据。
 
@@ -34,13 +34,13 @@ agent 应先阅读 [AGENTS.md](AGENTS.md) 和 [skills/recruiter-workbench/SKILL.
 
 ## 直接使用
 
-推荐用本地静态服务器打开。只在浏览器输入 `localhost` 不会自动启动服务；如果看到 `ERR_CONNECTION_REFUSED`，说明服务还没启动或端口不对。
+推荐用本地静态服务器打开。只在浏览器输入 `localhost` 不会自动启动服务；如果看到 `ERR_CONNECTION_REFUSED` 或 `ERR_EMPTY_RESPONSE`，说明服务还没启动、端口不对，或 `localhost` 被系统解析到了另一个本地服务。
 
 ```bash
 npm start
 ```
 
-然后访问 `http://localhost:8080/index.html`。
+然后访问终端打印出来的 `Workbench` 地址，默认是 `http://127.0.0.1:8080/index.html`。
 
 如果 `8080` 被占用，启动脚本会自动换到下一个可用端口，并在终端打印实际访问地址。
 
@@ -50,7 +50,7 @@ npm start
 python3 -m http.server 8080
 ```
 
-也可以直接打开 `index.html`。如果要使用模块间跳转和浏览器权限，推荐用静态服务器。
+也可以直接打开 `index.html`。如果要使用模块间跳转和浏览器权限，推荐用静态服务器，并优先使用终端打印的 `127.0.0.1` 地址。
 
 ## 数据与隐私
 

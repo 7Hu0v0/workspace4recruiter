@@ -58,10 +58,10 @@ function listen(port) {
     console.error(err && err.message ? err.message : err);
     process.exit(1);
   });
-  server.listen(port, '127.0.0.1', () => {
+server.listen(port, '127.0.0.1', () => {
     console.log(`Recruiter Workbench is running:`);
-    console.log(`  Demo:      http://localhost:${port}/demo.html`);
-    console.log(`  Workbench: http://localhost:${port}/index.html`);
+    console.log(`  Demo:      http://127.0.0.1:${port}/demo.html`);
+    console.log(`  Workbench: http://127.0.0.1:${port}/index.html`);
     if (port !== startPort) {
       console.log(`Port ${startPort} was busy, so ${port} is being used.`);
     }
