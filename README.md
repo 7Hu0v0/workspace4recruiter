@@ -42,6 +42,8 @@ npm start
 
 然后访问 `http://localhost:8080/index.html`。
 
+如果 `8080` 被占用，启动脚本会自动换到下一个可用端口，并在终端打印实际访问地址。
+
 等价 Python 命令：
 
 ```bash
