@@ -4,7 +4,7 @@
   "private": true,
   "description": "A local-first recruiter workbench static site.",
   "scripts": {
-    "start": "python3 -m http.server 8080",
-    "serve": "python3 -m http.server 8080"
+    "start": "node scripts/serve.js",
+    "serve": "node scripts/serve.js"
   }
 }

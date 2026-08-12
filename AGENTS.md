@@ -5,8 +5,8 @@ When the user says `工作台启动`, treat this repository as a customizable re
 ## Startup Flow
 
 1. Read `skills/recruiter-workbench/SKILL.md`.
-2. Before opening a localhost URL, start a static server from the repository root with `npm start` or `python3 -m http.server 8080`, keep that process running, then open `http://localhost:8080/index.html`.
-3. If the browser shows `ERR_CONNECTION_REFUSED`, do not debug the HTML first. Start or restart the static server and retry the same URL.
+2. Before opening a localhost URL, start a static server from the repository root with `npm start`, keep that process running, then open the Workbench URL printed in the terminal.
+3. If the browser shows `ERR_CONNECTION_REFUSED`, do not debug the HTML first. Start or restart the static server and retry the printed URL. If port 8080 is busy, `npm start` automatically chooses the next available port.
 4. Inspect `index.html`, `talent-reserve.html`, and `target-company/` only as needed.
 5. Ask for missing customization details before writing personal data:
    - display name

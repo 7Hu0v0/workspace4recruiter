@@ -27,8 +27,8 @@ Suggested first response:
 ## Customization Workflow
 
 1. Inspect `README.md` and `AGENTS.md` for repository-level rules.
-2. If opening the workbench locally, start a static server first with `npm start` or `python3 -m http.server 8080`; then open `http://localhost:8080/index.html`.
-3. If `localhost` shows `ERR_CONNECTION_REFUSED`, the static server is not running or the wrong port is open. Start/restart the server before changing HTML.
+2. If opening the workbench locally, start a static server first with `npm start`; then open the Workbench URL printed in the terminal.
+3. If `localhost` shows `ERR_CONNECTION_REFUSED`, the static server is not running or the wrong port is open. Start/restart the server and use the printed URL before changing HTML. If port 8080 is busy, `npm start` automatically chooses the next available port.
 4. Inspect `index.html` for visible labels and defaults.
 5. Inspect `target-company/data-store.js` when changing default business directions.
 6. Inspect `talent-reserve.html` when changing talent reserve fields or copy.
@@ -68,6 +68,8 @@ npm start
 ```
 
 Then open `http://localhost:8080/index.html`. `python3 -m http.server 8080` is an equivalent fallback.
+
+If the terminal says port 8080 was busy, open the alternative Workbench URL printed by `npm start`.
 
 Check that `index.html` loads, target organization mapping opens, and `talent-reserve.html` opens from the CRM module. Keep the server process running while the browser tab is open.
 
