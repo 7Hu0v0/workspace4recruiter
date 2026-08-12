@@ -27,12 +27,14 @@ Suggested first response:
 ## Customization Workflow
 
 1. Inspect `README.md` and `AGENTS.md` for repository-level rules.
-2. Inspect `index.html` for visible labels and defaults.
-3. Inspect `target-company/data-store.js` when changing default business directions.
-4. Inspect `talent-reserve.html` when changing talent reserve fields or copy.
-5. Inspect the homepage navigation in `renderEmptyState()`, `SYSTEM_META`, and bottom jump bar handlers when changing first-screen modules.
-6. Make scoped edits. Do not add private defaults to this template repository.
-7. Run a residue scan before finishing.
+2. If opening the workbench locally, start a static server first with `npm start` or `python3 -m http.server 8080`; then open `http://localhost:8080/index.html`.
+3. If `localhost` shows `ERR_CONNECTION_REFUSED`, the static server is not running or the wrong port is open. Start/restart the server before changing HTML.
+4. Inspect `index.html` for visible labels and defaults.
+5. Inspect `target-company/data-store.js` when changing default business directions.
+6. Inspect `talent-reserve.html` when changing talent reserve fields or copy.
+7. Inspect the homepage navigation in `renderEmptyState()`, `SYSTEM_META`, and bottom jump bar handlers when changing first-screen modules.
+8. Make scoped edits. Do not add private defaults to this template repository.
+9. Run a residue scan before finishing.
 
 Use placeholders when the target is a reusable public template. Use real names, links, and tokens only in a user's private fork or local copy after explicit instruction.
 
@@ -62,9 +64,11 @@ Review matches manually. Some generic words such as `token` may be valid UI labe
 For static validation, run a local server and open the workbench:
 
 ```bash
-python3 -m http.server 8080
+npm start
 ```
 
-Check that `index.html` loads, target organization mapping opens, and `talent-reserve.html` opens from the CRM module.
+Then open `http://localhost:8080/index.html`. `python3 -m http.server 8080` is an equivalent fallback.
+
+Check that `index.html` loads, target organization mapping opens, and `talent-reserve.html` opens from the CRM module. Keep the server process running while the browser tab is open.
 
 Also check that the first screen shows the feature-introduction/navigation cards and that the `使用工作台` link in `demo.html` enters `index.html`.

@@ -1,8 +1,8 @@
 # Recruiter Workbench
 
-[在线预览 Demo](https://7hu0v0.github.io/workspace4recruiter/demo.html?v=20260811-embed-doc)
+[在线预览 Demo](https://7hu0v0.github.io/workspace4recruiter/demo.html?v=20260812-startup)
 
-一个可由 agent 定制的招聘个人工作台。默认版本不包含个人姓名、公司信息、私有文档链接或预置候选人数据，浏览器直接打开即可使用。
+一个可由 agent 定制的招聘个人工作台。默认版本不包含个人姓名、公司信息、私有文档链接或预置候选人数据。
 
 ## 工作台启动
 
@@ -34,11 +34,19 @@ agent 应先阅读 [AGENTS.md](AGENTS.md) 和 [skills/recruiter-workbench/SKILL.
 
 ## 直接使用
 
+推荐用本地静态服务器打开。只在浏览器输入 `localhost` 不会自动启动服务；如果看到 `ERR_CONNECTION_REFUSED`，说明服务还没启动或端口不对。
+
 ```bash
-python3 -m http.server 8080
+npm start
 ```
 
 然后访问 `http://localhost:8080/index.html`。
+
+等价 Python 命令：
+
+```bash
+python3 -m http.server 8080
+```
 
 也可以直接打开 `index.html`。如果要使用模块间跳转和浏览器权限，推荐用静态服务器。
 
